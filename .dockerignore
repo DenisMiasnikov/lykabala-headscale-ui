@@ -1,0 +1,34 @@
+# Ignore everything by default
+*
+# Then allow only specific files/folders to be copied into the Docker image
+!Dockerfile
+!package.json
+!package-lock.json
+!next.config.cjs
+!tsconfig.json
+!public/
+!styles/
+!components/
+!features/
+!lib/
+!pages/
+!utils/
+!next-env.d.ts
+
+# Ignore build outputs
+.next/
+dist/
+
+# Ignore dependencies
+node_modules/
+
+# Ignore environment files (keep .env.local.example for reference)
+.env
+.env.local
+.env.*.local
+
+# Misc
+*.log
+.DS_Store
+.idea/
+.vscode/
