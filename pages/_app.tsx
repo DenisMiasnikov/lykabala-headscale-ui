@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
       {showNavbar && (
         <>
           <nav className="navbar">
-            <div className="nav-brand">Headscale</div>
+            <div className="nav-brand">Lykabala UI</div>
             <div className="nav-links">
               {navLinks.map((link) => (
                 <Link
@@ -86,7 +86,10 @@ export default function App({ Component, pageProps }: AppProps) {
               </div>
             </div>
           </div>
-          <div className={`mobile-backdrop ${mobileMenuOpen ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}></div>
+          <div
+            className={`mobile-backdrop ${mobileMenuOpen ? "active" : ""}`}
+            onClick={() => setMobileMenuOpen(false)}
+          ></div>
         </>
       )}
       <Component {...pageProps} />
