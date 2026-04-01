@@ -28,8 +28,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response = await headscaleFetch(`/api/v1/node/${id}/user/${namespaceId}`, {
-      method: "POST"
+    const response = await headscaleFetch(`/api/v1/node/${id}/user`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user: namespaceId })
     });
 
     let data;
