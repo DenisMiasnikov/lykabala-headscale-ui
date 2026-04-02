@@ -2,40 +2,36 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { headscaleFetch } from "../../../../lib/headscale";
 import { requireAuth } from "../../_auth";
 
-function validId(id: string | string[] | undefined) {
+function validId(id: string | string[] | undefined): boolean {
   return /^[0-9]+$/.test(String(id || ""));
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!requireAuth(req, res)) return;
-  const { id } = req.query;
-
-  if (!validId(id)) {
-    return res.status(400).json({ error: "Invalid machine id" });
-  }
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { namespaceId } = req.body || {};
-  if (!namespaceId) {
-    return res.status(400).json({ error: "Missing namespaceId" });
+  const { id } = req.query;
+  if (!validId(id)) {
+    return res.status(400).json({ error: "Invalid node id" });
   }
 
-  if (!validId(namespaceId)) {
-    return res.status(400).json({ error: "Invalid namespace id" });
+  const { tags } = req.body || {};
+  if (!Array.isArray(tags)) {
+    return res.status(400).json({ error: "Tags must be an array of strings" });
   }
 
   try {
-    const response = await headscaleFetch(`/api/v1/node/${id}/user`, {
+    const response = await headscaleFetch(`/api/v1/node/${id}/tags`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user: namespaceId })
+      body: JSON.stringify({ tags })
     });
 
-    let data;
     const text = await response.text();
+    let data;
     try {
       data = JSON.parse(text);
     } catch {
@@ -43,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (!response.ok) {
-      console.error("Headscale move node error:", response.status, data);
+      console.error("Headscale set tags error:", response.status, data);
       return res.status(502).json({ error: data?.message || data?.error || `Headscale error ${response.status}` });
     }
 

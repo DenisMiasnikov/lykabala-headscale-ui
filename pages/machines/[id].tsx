@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
 import { getAuthRedirect } from "../../utils/requireAuth";
-import { MoveIcon } from "../../components/Icons";
 
 type MachineDetailsProps = {
   id: string;
@@ -13,21 +12,17 @@ type MachineDetails = {
   availableRoutes?: string[];
   approvedRoutes?: string[];
   user?: { name?: string };
-};
-
-type Namespace = {
-  id?: string;
-  name: string;
+  tags?: string[];
 };
 
 export default function MachineDetails({ id }: MachineDetailsProps) {
   const [details, setDetails] = useState<MachineDetails | null>(null);
-  const [namespaces, setNamespaces] = useState<Namespace[]>([]);
-  const [selectedNamespace, setSelectedNamespace] = useState("");
   const [error, setError] = useState("");
   const [nameInput, setNameInput] = useState("");
   const [routeSelections, setRouteSelections] = useState<string[]>([]);
   const [actionMessage, setActionMessage] = useState("");
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
 
   async function loadDetails() {
     const res = await fetch(`/api/machines/${id}`);
@@ -43,20 +38,8 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
     if (Array.isArray(data?.approvedRoutes)) {
       setRouteSelections(data.approvedRoutes);
     }
-  }
-
-  async function loadNamespaces() {
-    try {
-      const res = await fetch("/api/namespaces");
-      const data = await res.json();
-      if (!res.ok) {
-        console.error("Failed to load namespaces:", data.error);
-        return;
-      }
-      const list = Array.isArray(data.namespaces) ? data.namespaces : [];
-      setNamespaces(list);
-    } catch (err) {
-      console.error("Failed to load namespaces:", err);
+    if (Array.isArray(data?.tags)) {
+      setTags(data.tags);
     }
   }
 
@@ -103,54 +86,43 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
     await loadDetails();
   }
 
-  async function moveMachine() {
+  async function addTag() {
+    const trimmed = tagInput.trim();
+    if (!trimmed || tags.includes(trimmed)) return;
+    const newTags = [...tags, trimmed];
+    setTagInput("");
+    await saveTags(newTags);
+  }
+
+  async function removeTag(tagToRemove: string) {
+    const newTags = tags.filter(t => t !== tagToRemove);
+    await saveTags(newTags);
+  }
+
+  async function saveTags(newTags: string[]) {
     setError("");
     setActionMessage("");
-    if (!selectedNamespace) {
-      setError("Select a namespace");
-      return;
+    try {
+      const res = await fetch(`/api/machines/${id}/tags`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tags: newTags })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Failed to save tags");
+        return;
+      }
+      setTags(newTags);
+      setActionMessage("Tags updated");
+    } catch (err) {
+      setError("Network error");
     }
-
-    const targetNamespace = namespaces.find(ns => ns.name === selectedNamespace);
-    if (!targetNamespace?.id) {
-      setError("Invalid namespace");
-      return;
-    }
-
-    const res = await fetch(`/api/machines/${id}/move`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ namespaceId: targetNamespace.id })
-    });
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || "Failed to move machine");
-      return;
-    }
-
-    setActionMessage("Machine moved to namespace");
-    await loadDetails();
   }
 
   useEffect(() => {
     loadDetails();
-    loadNamespaces();
   }, []);
-
-  // Set selected namespace when details and namespaces are loaded
-  useEffect(() => {
-    if (details?.user?.name && namespaces.length > 0) {
-      // Check if current namespace exists in the list
-      const exists = namespaces.find(ns => ns.name === details.user?.name);
-      if (exists) {
-        setSelectedNamespace(details.user.name);
-      } else {
-        // If not found (e.g., deleted), set to first namespace or empty
-        setSelectedNamespace(namespaces[0]?.name || "");
-      }
-    }
-  }, [details, namespaces]);
 
   return (
     <div className="page">
@@ -179,30 +151,17 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
               </button>
             </div>
           </div>
-           <div className="row" style={{ marginTop: 16, alignItems: "center" }}>
-             <div style={{ flex: 1, minWidth: 220 }}>
-               <label>Namespace</label>
-               <select
-                 className="input"
-                 value={selectedNamespace}
-                 onChange={(event) => setSelectedNamespace(event.target.value)}
-               >
-                 {namespaces.map((ns) => (
-                   <option key={ns.id || ns.name} value={ns.name}>
-                     {ns.name}
-                   </option>
-                 ))}
-               </select>
-             </div>
-             <div style={{ alignSelf: "flex-end" }}>
-               <button className="button" onClick={moveMachine}>
-                 <MoveIcon /> Move
-               </button>
-             </div>
-           </div>
-           <div className="row" style={{ marginTop: 16, alignItems: "center" }}>
-             <div style={{ flex: 1 }}>
-               <label>Approved Routes</label>
+          <div className="row" style={{ marginTop: 16 }}>
+            <div style={{ flex: 1 }}>
+              <label>Namespace</label>
+              <div className="subtitle" style={{ marginTop: 4 }}>
+                {details?.user?.name || "Unknown"}
+              </div>
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: 16, alignItems: "flex-start" }}>
+            <div style={{ flex: 1 }}>
+              <label>Approved Routes</label>
               {details?.availableRoutes?.length ? (
                 <div style={{ marginTop: 8 }}>
                   {details.availableRoutes.map((route) => (
@@ -228,10 +187,68 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
                 </div>
               )}
             </div>
-            <div style={{ alignSelf: "flex-end" }}>
+            <div style={{ alignSelf: "flex-end", marginLeft: 16 }}>
               <button className="button" onClick={saveApprovedRoutes}>
                 Save Routes
               </button>
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: 16, alignItems: "flex-start" }}>
+            <div style={{ flex: 1 }}>
+              <label>Tags</label>
+              <div style={{ marginTop: 4 }}>
+                {tags.length > 0 ? (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        style={{
+                          background: "#e0e0e0",
+                          padding: "4px 8px",
+                          borderRadius: 4,
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 4
+                        }}
+                      >
+                        {tag}
+                        <button
+                          onClick={() => removeTag(tag)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            padding: 0,
+                            color: "#666"
+                          }}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="subtitle">No tags.</div>
+                )}
+              </div>
+              <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                <input
+                  className="input"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addTag();
+                    }
+                  }}
+                  placeholder="Add tag..."
+                  style={{ flex: 1 }}
+                />
+                <button className="button" onClick={addTag}>
+                  Add
+                </button>
+              </div>
             </div>
           </div>
           {details ? (
@@ -250,6 +267,21 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
           <div className="row" style={{ marginTop: 16 }}>
             <button className="button secondary" onClick={expireMachine}>
               Expire
+            </button>
+            <button
+              className="button secondary"
+              onClick={async () => {
+                if (!confirm("Backfill IPs for all nodes? This may update IP addresses.")) return;
+                const res = await fetch(`/api/machines/backfill-ips?confirmed=true`, { method: "POST" });
+                if (res.ok) {
+                  alert("Backfill completed");
+                  await loadDetails();
+                } else {
+                  alert("Backfill failed");
+                }
+              }}
+            >
+              Backfill IPs
             </button>
             <a className="button" href="/machines">
               Back

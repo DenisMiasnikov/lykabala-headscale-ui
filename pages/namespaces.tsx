@@ -9,6 +9,19 @@ type Namespace = {
   createdAt?: string;
   displayName?: string;
   email?: string;
+  pictureUrl?: string;
+};
+
+type PreAuthKey = {
+  id: string;
+  key: string;
+  reusable: boolean;
+  ephemeral: boolean;
+  used: boolean;
+  createdAt: string;
+  expiration?: string;
+  aclTags?: string[];
+  user: { name: string };
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -19,20 +32,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function NamespacesPage() {
   const [namespaces, setNamespaces] = useState<Namespace[]>([]);
+  const [preauthKeys, setPreauthKeys] = useState<PreAuthKey[]>([]);
   const [newNamespace, setNewNamespace] = useState("");
-  const [preauthKey, setPreauthKey] = useState("");
+  const [newDisplayName, setNewDisplayName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newPictureUrl, setNewPictureUrl] = useState("");
+  const [generatedKey, setGeneratedKey] = useState("");
+  const [keyError, setKeyError] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [editDisplayName, setEditDisplayName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editPictureUrl, setEditPictureUrl] = useState("");
   const [isExitNode, setIsExitNode] = useState(false);
+  
+  // Key generation options
+  const [keyReusable, setKeyReusable] = useState(true);
+  const [keyEphemeral, setKeyEphemeral] = useState(false);
+  const [keyExpiration, setKeyExpiration] = useState("");
+  const [keyAclTags, setKeyAclTags] = useState("");
+  const [selectedNamespace, setSelectedNamespace] = useState("");
 
-  const command = `tailscale up --reset \\
+  const command = generatedKey ? `tailscale up --reset \\
   --login-server https://muxtadir-homelab.fun \\
-  --authkey "${preauthKey}"${
+  --authkey "${generatedKey}"${
     isExitNode ? " \\\n  --advertise-exit-node" : ""
-  }`;
-
+  }` : "";
 
   async function loadData() {
     setError("");
@@ -40,7 +67,7 @@ export default function NamespacesPage() {
       const res = await fetch("/api/namespaces");
       const data = await res.json();
       if (!res.ok) {
-        new Error(data.error || "Failed to load namespaces");
+        throw new Error(data.error || "Failed to load namespaces");
       }
       const nsList = Array.isArray(data.namespaces) ? data.namespaces : [];
       setNamespaces(nsList);
@@ -50,8 +77,21 @@ export default function NamespacesPage() {
     }
   }
 
+  async function loadPreAuthKeys() {
+    try {
+      const res = await fetch("/api/preauthkey/list");
+      const data = await res.json();
+      if (res.ok) {
+        setPreauthKeys(data.preAuthKeys || []);
+      }
+    } catch (err) {
+      console.error("Failed to load preauth keys:", err);
+    }
+  }
+
   useEffect(() => {
     loadData();
+    loadPreAuthKeys();
   }, []);
 
   async function createNamespace() {
@@ -59,7 +99,12 @@ export default function NamespacesPage() {
     const res = await fetch("/api/namespaces", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newNamespace.trim() })
+      body: JSON.stringify({
+        name: newNamespace.trim(),
+        displayName: newDisplayName.trim() || undefined,
+        email: newEmail.trim() || undefined,
+        pictureUrl: newPictureUrl.trim() || undefined
+      })
     });
 
     if (!res.ok) {
@@ -69,36 +114,86 @@ export default function NamespacesPage() {
     }
 
     setNewNamespace("");
+    setNewDisplayName("");
+    setNewEmail("");
+    setNewPictureUrl("");
     await loadData();
   }
 
-  async function generateKey(name: string) {
-    setPreauthKey("");
+  async function generateKey() {
+    setGeneratedKey("");
+    setKeyError("");
     setMessage("");
-    const res = await fetch("/api/preauthkeys", {
+    if (!selectedNamespace) {
+      setKeyError("Select a namespace");
+      return;
+    }
+
+    const ns = namespaces.find(n => n.name === selectedNamespace);
+    if (!ns?.id) {
+      setKeyError("Invalid namespace");
+      return;
+    }
+
+    const body: any = {
+      user: parseInt(ns.id),
+      reusable: keyReusable
+    };
+    if (keyExpiration) {
+      body.expiration = keyExpiration;
+    }
+    if (keyEphemeral) {
+      body.ephemeral = true;
+    }
+    if (keyAclTags.trim()) {
+      body.aclTags = keyAclTags.split(',').map(t => t.trim()).filter(t => t);
+    }
+
+    const res = await fetch("/api/preauthkey", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ namespace: name })
+      body: JSON.stringify(body)
     });
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(data.error || "Failed to generate key");
+      setKeyError(data.error || "Failed to generate key");
       return;
     }
 
-    setPreauthKey(data.key || "");
-    setMessage(`Key generated for ${name}`);
+    setGeneratedKey(data.preAuthKey?.key || data.key || "");
+    setMessage(`Key generated for ${selectedNamespace}`);
+    await loadPreAuthKeys();
   }
 
-  function startRename(ns: Namespace) {
+  async function deletePreAuthKey(id: string) {
+    if (!confirm(`Delete pre-auth key?`)) return;
+    try {
+      const res = await fetch(`/api/preauthkey/delete?id=${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setKeyError(data.error || "Failed to delete key");
+        return;
+      }
+      await loadPreAuthKeys();
+    } catch (err) {
+      setKeyError("Network error");
+    }
+  }
+
+   function startEdit(ns: Namespace, e: React.MouseEvent) {
+     e.preventDefault();
+     e.stopPropagation();
     setEditingId(ns.id);
     setEditName(ns.name);
+    setEditDisplayName(ns.displayName || "");
+    setEditEmail(ns.email || "");
+    setEditPictureUrl(ns.pictureUrl || "");
     setError("");
     setMessage("");
   }
 
-  async function saveRename(id: string) {
+  async function saveEdit(id: string) {
     const trimmed = editName.trim();
     if (!trimmed) {
       setError("Name cannot be empty");
@@ -108,18 +203,22 @@ export default function NamespacesPage() {
     const res = await fetch(`/api/namespaces/${id}/rename`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: trimmed })
+      body: JSON.stringify({
+        name: trimmed,
+        displayName: editDisplayName.trim() || undefined,
+        email: editEmail.trim() || undefined,
+        pictureUrl: editPictureUrl.trim() || undefined
+      })
     });
 
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(data.error || "Failed to rename namespace");
+      setError(data.error || "Failed to update namespace");
       return;
     }
 
     setEditingId(null);
-    setEditName("");
-    setMessage("Namespace renamed");
+    setMessage("Namespace updated");
     await loadData();
   }
 
@@ -141,11 +240,17 @@ export default function NamespacesPage() {
     await loadData();
   }
 
+  const commandString = generatedKey ? `tailscale up --reset \\
+  --login-server https://muxtadir-homelab.fun \\
+  --authkey "${generatedKey}"${
+    isExitNode ? " \\\n  --advertise-exit-node" : ""
+  }` : "";
+
   return (
     <div className="page">
       <div className="container">
         <h1 className="title">Headscale Control</h1>
-        <p className="subtitle">Manage namespaces.</p>
+        <p className="subtitle">Manage namespaces and pre-auth keys.</p>
 
         {error && <div className="error">{error}</div>}
         {message && (
@@ -158,9 +263,9 @@ export default function NamespacesPage() {
           <h2 className="title" style={{ fontSize: 22 }}>
             Create Namespace
           </h2>
-          <div className="row" style={{ alignItems: "center" }}>
+          <div className="row" style={{ alignItems: "flex-start", gap: 16 }}>
             <div style={{ flex: 1, minWidth: 200 }}>
-              <label>Name</label>
+              <label>Name *</label>
               <input
                 className="input"
                 value={newNamespace}
@@ -171,11 +276,41 @@ export default function NamespacesPage() {
                 }}
               />
             </div>
-            <div style={{ alignSelf: "flex-end" }}>
-              <button className="button secondary" onClick={createNamespace}>
-                Add
-              </button>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label>Display Name</label>
+              <input
+                className="input"
+                value={newDisplayName}
+                onChange={(e) => setNewDisplayName(e.target.value)}
+                placeholder="e.g. Personal Space"
+              />
             </div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label>Email</label>
+              <input
+                className="input"
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="user@example.com"
+              />
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: 16, alignItems: "flex-start" }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label>Picture URL</label>
+              <input
+                className="input"
+                value={newPictureUrl}
+                onChange={(e) => setNewPictureUrl(e.target.value)}
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <button className="button secondary" onClick={createNamespace}>
+              Add Namespace
+            </button>
           </div>
         </div>
 
@@ -190,8 +325,11 @@ export default function NamespacesPage() {
               <table className="table">
                 <thead>
                   <tr>
-                    <th style={{ textAlign: "center" }}>Name</th>
-                    <th style={{ textAlign: "center" }}>Actions</th>
+                    <th>Name</th>
+                    <th>Display Name</th>
+                    <th>Email</th>
+                    <th>Created</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -204,7 +342,7 @@ export default function NamespacesPage() {
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
                             onKeyDown={(e) => {
-                              if (e.key === "Enter") saveRename(ns.id);
+                              if (e.key === "Enter") saveEdit(ns.id);
                               if (e.key === "Escape") setEditingId(null);
                             }}
                             autoFocus
@@ -213,12 +351,35 @@ export default function NamespacesPage() {
                           <a href={`/namespaces/${ns.id}`}>{ns.name}</a>
                         )}
                       </td>
+                      <td>
+                        {editingId === ns.id ? (
+                          <input
+                            className="input"
+                            value={editDisplayName}
+                            onChange={(e) => setEditDisplayName(e.target.value)}
+                          />
+                        ) : (
+                          ns.displayName || "-"
+                        )}
+                      </td>
+                      <td>
+                        {editingId === ns.id ? (
+                          <input
+                            className="input"
+                            value={editEmail}
+                            onChange={(e) => setEditEmail(e.target.value)}
+                          />
+                        ) : (
+                          ns.email || "-"
+                        )}
+                      </td>
+                      <td>{ns.createdAt ? new Date(ns.createdAt).toLocaleDateString() : "-"}</td>
                       <td className="actions-cell">
                         {editingId === ns.id ? (
                           <div className="action-buttons-group">
                             <button
                               className="button action-button"
-                              onClick={() => saveRename(ns.id)}
+                              onClick={() => saveEdit(ns.id)}
                               title="Save"
                             >
                               <CheckIcon />
@@ -237,19 +398,23 @@ export default function NamespacesPage() {
                           <div className="action-buttons-group">
                             <button
                               className="button action-button"
-                              onClick={() => startRename(ns)}
-                              title="Rename"
+                              onClick={(e) => startEdit(ns, e)}
+                              title="Edit"
                             >
                               <EditIcon />
-                              <span className="button-label">Rename</span>
+                              <span className="button-label">Edit</span>
                             </button>
                             <button
                               className="button secondary action-button"
-                              onClick={() => generateKey(ns.name)}
+                              onClick={() => {
+                                setSelectedNamespace(ns.name);
+                                setKeyError("");
+                                setGeneratedKey("");
+                              }}
                               title="Generate Key"
                             >
                               <KeyIcon />
-                              <span className="button-label">Generate Key</span>
+                              <span className="button-label">Key</span>
                             </button>
                             <button
                               className="button action-button delete-button"
@@ -270,32 +435,141 @@ export default function NamespacesPage() {
           )}
         </div>
 
-        {preauthKey ? (
-          <div className="card" style={{marginTop: 24}}>
-            <h2 className="title" style={{fontSize: 22}}>
+        <div className="card" style={{ marginTop: 24 }}>
+          <h2 className="title" style={{ fontSize: 22 }}>
+            Generate Pre-Auth Key
+          </h2>
+          <div className="row" style={{ alignItems: "flex-start", gap: 16 }}>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label>Namespace</label>
+              <select
+                className="input"
+                value={selectedNamespace}
+                onChange={(e) => setSelectedNamespace(e.target.value)}
+              >
+                <option value="">Select a namespace...</option>
+                {namespaces.map((ns) => (
+                  <option key={ns.id} value={ns.name}>{ns.name}</option>
+                ))}
+              </select>
+            </div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label>Expiration (optional)</label>
+              <input
+                type="datetime-local"
+                className="input"
+                value={keyExpiration}
+                onChange={(e) => setKeyExpiration(e.target.value)}
+              />
+            </div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label>ACL Tags (comma-separated)</label>
+              <input
+                className="input"
+                value={keyAclTags}
+                onChange={(e) => setKeyAclTags(e.target.value)}
+                placeholder="tag:admin, tag:server"
+              />
+            </div>
+          </div>
+          <div className="row" style={{ marginTop: 16, alignItems: "center" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, marginRight: 24 }}>
+              <input
+                type="checkbox"
+                checked={keyReusable}
+                onChange={(e) => setKeyReusable(e.target.checked)}
+              />
+              Reusable (key can be used multiple times)
+            </label>
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                type="checkbox"
+                checked={keyEphemeral}
+                onChange={(e) => setKeyEphemeral(e.target.checked)}
+              />
+              Ephemeral (expires after first use)
+            </label>
+          </div>
+          {keyError && <div className="error" style={{ marginTop: 8 }}>{keyError}</div>}
+          <button className="button" onClick={generateKey} style={{ marginTop: 16 }}>
+            Generate Key
+          </button>
+        </div>
+
+        {generatedKey ? (
+          <div className="card" style={{ marginTop: 24 }}>
+            <h2 className="title" style={{ fontSize: 22 }}>
               Generated Key
             </h2>
-            <div className="keybox">{preauthKey}</div>
-            <p className="subtitle" style={{marginTop: 8}}>
-              Use this key to register a node:{" "}
-              <pre>
-                <code style={{background: "#eee", padding: "2px 6px", borderRadius: 4}}>
-                   {command}
+            <div className="keybox">{generatedKey}</div>
+            <p className="subtitle" style={{ marginTop: 8 }}>
+              Use this key to register a node:
+              <pre style={{ marginTop: 8 }}>
+                <code style={{ background: "#eee", padding: "8px", borderRadius: 4, display: "block", whiteSpace: "pre" }}>
+                  {commandString}
                 </code>
               </pre>
             </p>
-            <label key={'isExitNode'} style={{ display: "flex", alignItems: "center", gap:'8px' }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <input
                 type="checkbox"
                 checked={isExitNode}
-                onChange={(event) => {
-                  setIsExitNode(event.target.checked)
-                }}
+                onChange={(event) => setIsExitNode(event.target.checked)}
               />
-              {'Use as an exit node'}
+              Use as an exit node
             </label>
           </div>
         ) : null}
+
+        <div className="card" style={{ marginTop: 24 }}>
+          <h2 className="title" style={{ fontSize: 22 }}>
+            Pre-Auth Keys
+          </h2>
+          {preauthKeys.length === 0 ? (
+            <div className="subtitle">No pre-auth keys generated yet.</div>
+          ) : (
+            <div className="table-wrapper">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Prefix</th>
+                    <th>Namespace</th>
+                    <th>Reusable</th>
+                    <th>Ephemeral</th>
+                    <th>ACL Tags</th>
+                    <th>Created</th>
+                    <th>Expires</th>
+                    <th>Used</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {preauthKeys.map((k) => (
+                    <tr key={k.id}>
+                      <td style={{ fontFamily: "monospace", fontSize: "12px" }}>{k.key.substring(0, 8)}...</td>
+                      <td>{k.user?.name || "-"}</td>
+                      <td>{k.reusable ? "Yes" : "No"}</td>
+                      <td>{k.ephemeral ? "Yes" : "No"}</td>
+                      <td>{k.aclTags?.join(", ") || "-"}</td>
+                      <td>{new Date(k.createdAt).toLocaleString()}</td>
+                      <td>{k.expiration ? new Date(k.expiration).toLocaleString() : "-"}</td>
+                      <td>{k.used ? "Yes" : "No"}</td>
+                      <td>
+                        <button
+                          className="button delete-button"
+                          onClick={() => deletePreAuthKey(k.id)}
+                          title="Revoke"
+                        >
+                          <TrashIcon /> Revoke
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
