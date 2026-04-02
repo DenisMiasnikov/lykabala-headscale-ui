@@ -13,7 +13,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { expiration } = req.body || {};
     const body: any = {};
     if (expiration) {
-      body.expiration = expiration;
+      // Convert datetime-local (YYYY-MM-DDTHH:MM) to full ISO with seconds and Z timezone
+      const date = new Date(expiration);
+      if (isNaN(date.getTime())) {
+        return res.status(400).json({ error: "Invalid expiration date format" });
+      }
+      body.expiration = date.toISOString();
     }
 
     const response = await headscaleFetch("/api/v1/apikey", {

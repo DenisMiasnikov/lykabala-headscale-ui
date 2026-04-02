@@ -21,12 +21,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === "POST") {
-    const { name } = req.body || {};
+    const { name, displayName, email, pictureUrl } = req.body || {};
     if (!name) return res.status(400).json({ error: "Missing namespace name" });
     try {
+      const body: any = { name };
+      if (displayName) body.displayName = displayName;
+      if (email) body.email = email;
+      if (pictureUrl) body.pictureUrl = pictureUrl;
+      
       const response = await headscaleFetch("/api/v1/user", {
         method: "POST",
-        body: JSON.stringify({ name })
+        body: JSON.stringify(body)
       });
       const data = await response.json();
       if (!response.ok) {
