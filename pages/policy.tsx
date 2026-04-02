@@ -24,7 +24,13 @@ export default function PolicyPage({}: PolicyPageProps) {
       const res = await fetch("/api/policy");
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Failed to load policy");
+        const errMsg = data.error || "Failed to load policy";
+        // Check for Headscale policy file configuration error
+        if (errMsg.includes("reading policy from path") && errMsg.includes("no such file or directory")) {
+          setError("Headscale is not configured with a policy file. Start Headscale with the `--policy` flag pointing to a policy file (e.g., /etc/headscale/policy.hcl).");
+        } else {
+          setError(errMsg);
+        }
         setPolicy("");
         setUpdatedAt("");
       } else {
