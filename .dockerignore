@@ -11,7 +11,8 @@
 !components/
 !features/
 !lib/
-!pages/
+!src/
+!src/**
 !utils/
 !shared/
 !shared/**
