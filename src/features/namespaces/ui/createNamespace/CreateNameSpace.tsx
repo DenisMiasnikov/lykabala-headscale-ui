@@ -42,6 +42,7 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
     setNewEmail("");
     setNewPictureUrl("");
     onSuccess("Namespace created");
+    setIsOpen(false);
   }
 
   return (
