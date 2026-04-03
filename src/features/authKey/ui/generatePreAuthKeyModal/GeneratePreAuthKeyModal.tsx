@@ -50,12 +50,11 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          namespace: selectedNamespace,
+          user: selectedNamespace,
           reusable: keyReusable,
           ephemeral: keyEphemeral,
           expiration,
-          aclTags,
-          exitNode: isExitNode,
+          // aclTags: ["string"],
         }),
       });
 
@@ -175,7 +174,7 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
               >
                 <option value="">Select a namespace...</option>
                 {namespaces.map((ns) => (
-                  <option key={ns.id} value={ns.name}>
+                  <option key={ns.id} value={ns.id}>
                     {ns.name}
                   </option>
                 ))}
