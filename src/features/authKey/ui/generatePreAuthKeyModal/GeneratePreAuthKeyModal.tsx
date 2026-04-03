@@ -75,7 +75,11 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
   }
 
   const commandString = generatedKey
-    ? `headscale node register -k ${generatedKey.key} -u ${generatedKey.user.name}`
+    ? `tailscale up --reset \\
+  --login-server https://test.muxtadir-homelab.fun \\
+  --authkey "${generatedKey.key}"${
+    isExitNode ? " \\\n  --advertise-exit-node" : ""
+  }`
     : "";
 
   const resetForm = () => {

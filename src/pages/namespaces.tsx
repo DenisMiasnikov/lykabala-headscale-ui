@@ -99,15 +99,16 @@ export default function NamespacesPage() {
               autoFocus
             />
           ) : (
-            <>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <img
                 src={row.profilePicUrl}
                 alt="Avatar"
                 width={70}
                 height={70}
+                style={{ borderRadius: "50%" }}
               />
               <a href={`/namespaces/${row.id}`}>{value}</a>
-            </>
+            </div>
           )}
         </>
       ),
