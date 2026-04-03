@@ -99,7 +99,10 @@ export default function NamespacesPage() {
               autoFocus
             />
           ) : (
-            <a href={`/namespaces/${row.id}`}>{value}</a>
+            <>
+              <img src={row.pictureUrl} alt="Avatar" width={70} height={70} />
+              <a href={`/namespaces/${row.id}`}>{value}</a>
+            </>
           )}
         </>
       ),
