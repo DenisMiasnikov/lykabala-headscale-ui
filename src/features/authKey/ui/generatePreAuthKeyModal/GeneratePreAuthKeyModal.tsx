@@ -46,7 +46,7 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
             .filter(Boolean)
         : undefined;
 
-      const res = await fetch("/api/preauthkey/create", {
+      const res = await fetch("/api/preauthkey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
