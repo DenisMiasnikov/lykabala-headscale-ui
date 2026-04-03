@@ -1,9 +1,9 @@
 import { GetServerSideProps } from "next";
 import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
-import { useUsers } from "../../features/users/hooks/useUsers";
-import CurrentUserCard from "../../features/users/components/CurrentUserCard";
-import CreateUserForm from "../../features/users/components/CreateUserForm";
-import UsersTable from "../../features/users/components/UsersTable";
+import { useUsers } from "../../features/user/hooks/useUsers";
+import CurrentUserCard from "../../features/user/components/CurrentUserCard";
+import CreateUserForm from "../../features/user/components/CreateUserForm";
+import UsersTable from "../../features/user/components/UsersTable";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -34,7 +34,6 @@ export default function UsersPage() {
     deleteUser,
   } = useUsers();
 
-
   if (!currentUser) {
     return <div className="page">Loading...</div>;
   }
@@ -44,7 +43,7 @@ export default function UsersPage() {
       {(error || message) && (
         <div
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 16,
             right: 16,
             zIndex: 1000,
@@ -52,7 +51,10 @@ export default function UsersPage() {
             maxWidth: 450,
           }}
         >
-          <div className={`pill ${error ? 'error' : 'online'}`} style={{ padding: '12px 16px' }}>
+          <div
+            className={`pill ${error ? "error" : "online"}`}
+            style={{ padding: "12px 16px" }}
+          >
             {error || message}
           </div>
         </div>
@@ -74,7 +76,9 @@ export default function UsersPage() {
 
         {currentUser.isAdmin && (
           <div className="card">
-            <h2 className="title" style={{ fontSize: 22 }}>User Management</h2>
+            <h2 className="title" style={{ fontSize: 22 }}>
+              User Management
+            </h2>
             <CreateUserForm
               newUsername={newUsername}
               setNewUsername={setNewUsername}

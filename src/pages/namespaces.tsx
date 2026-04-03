@@ -9,8 +9,9 @@ import {
   XIcon,
 } from "../shared/ui/icons/Icons";
 import Table from "../shared/ui/table/Table";
-import { CreateNameSpace } from "../features/namespaces/ui/createNamespace/CreateNameSpace";
+import { CreateNamespace } from "../features/namespaces/ui/createNamespace/CreateNamespace";
 import type { Namespace } from "../entities/namespace/types";
+import GeneratePreAuthKey from "../features/authKey/ui/generatePreAuthKeyModal/GeneratePreAuthKeyModal";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -24,9 +25,6 @@ export default function NamespacesPage() {
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
-  const [editDisplayName, setEditDisplayName] = useState("");
-  const [editEmail, setEditEmail] = useState("");
-  const [editPictureUrl, setEditPictureUrl] = useState("");
 
   async function loadData() {
     setError("");
@@ -53,9 +51,6 @@ export default function NamespacesPage() {
     e.stopPropagation();
     setEditingId(ns.id);
     setEditName(ns.name);
-    setEditDisplayName(ns.displayName || "");
-    setEditEmail(ns.email || "");
-    setEditPictureUrl(ns.pictureUrl || "");
     setError("");
     setMessage("");
   }
@@ -72,9 +67,6 @@ export default function NamespacesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: trimmed,
-        displayName: editDisplayName.trim() || undefined,
-        email: editEmail.trim() || undefined,
-        pictureUrl: editPictureUrl.trim() || undefined,
       }),
     });
 
@@ -107,7 +99,7 @@ export default function NamespacesPage() {
               autoFocus
             />
           ) : (
-            <a href={`/namespaces/${row}`}>{value}</a>
+            <a href={`/namespaces/${row.id}`}>{value}</a>
           )}
         </>
       ),
@@ -161,18 +153,15 @@ export default function NamespacesPage() {
                 <EditIcon />
                 <span className="button-label">Edit</span>
               </button>
-              <button
-                className="button secondary action-button"
-                onClick={() => {
-                  // setSelectedNamespace(row.name);
-                  // setKeyError("");
-                  // setGeneratedKey("");
+
+              <GeneratePreAuthKey
+                onSuccess={(key) => {
+                  setMessage(
+                    `Key generated for ${key.user?.name || "namespace"}`,
+                  );
                 }}
-                title="Generate Key"
-              >
-                <KeyIcon />
-                <span className="button-label">Key</span>
-              </button>
+                namespaces={namespaces}
+              />
               <button
                 className="button action-button delete-button"
                 // onClick={() => deleteNamespace(row.id, row.name)}
@@ -201,7 +190,13 @@ export default function NamespacesPage() {
           </div>
         )}
 
-        <CreateNameSpace onError={setError} onSuccess={loadData} />
+        <CreateNamespace
+          onSuccess={(msg) => {
+            setMessage(msg);
+            loadData();
+          }}
+          onError={setError}
+        />
 
         <div className="card">
           <h2 className="title" style={{ fontSize: 22 }}>
