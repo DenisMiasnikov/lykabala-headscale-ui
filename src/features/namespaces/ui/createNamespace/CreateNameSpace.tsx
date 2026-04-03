@@ -122,3 +122,5 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
     </>
   );
 };
+
+export default CreateNamespace;

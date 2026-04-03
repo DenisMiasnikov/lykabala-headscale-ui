@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
+import CreateNamespace from "../features/namespaces/ui/createNamespace/CreateNamespace";
+import GeneratePreAuthKey from "../features/authKey/ui/generatePreAuthKeyModal/GeneratePreAuthKeyModal";
+import type { Namespace } from "../entities/namespace/types";
 import { getAuthRedirect } from "../shared/lib/auth/requireAuth";
 import {
   EditIcon,
@@ -9,9 +12,6 @@ import {
   XIcon,
 } from "../shared/ui/icons/Icons";
 import Table from "../shared/ui/table/Table";
-import { CreateNamespace } from "../features/namespaces/ui/createNamespace/CreateNamespace";
-import type { Namespace } from "../entities/namespace/types";
-import GeneratePreAuthKey from "../features/authKey/ui/generatePreAuthKeyModal/GeneratePreAuthKeyModal";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);

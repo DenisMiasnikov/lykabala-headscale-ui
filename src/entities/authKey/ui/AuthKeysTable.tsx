@@ -99,18 +99,6 @@ export const AuthKeysTable = () => {
     loadPreAuthKeys();
   }, []);
 
-  if (preauthKeys.length === 0)
-    return (
-      <>
-        {keyError && (
-          <div className="error" style={{ marginTop: 8 }}>
-            {keyError}
-          </div>
-        )}
-        <div className="subtitle">No pre-auth keys generated yet.</div>;
-      </>
-    );
-
   return (
     <>
       {keyError && (
@@ -118,7 +106,11 @@ export const AuthKeysTable = () => {
           {keyError}
         </div>
       )}
-      <Table columns={columns} data={preauthKeys} />
+      {preauthKeys.length === 0 ? (
+        <div className="subtitle">No pre-auth keys generated yet.</div>
+      ) : (
+        <Table columns={columns} data={preauthKeys} />
+      )}
     </>
   );
 };
