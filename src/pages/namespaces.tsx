@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
-import CreateNamespace from "../features/namespaces/ui/createNamespace/CreateNamespace";
+import CreateNamespace from "../features/namespaces/ui/createNamespace/CreateNameSpace";
 import GeneratePreAuthKey from "../features/authKey/ui/generatePreAuthKeyModal/GeneratePreAuthKeyModal";
 import type { Namespace } from "../entities/namespace/types";
 import { getAuthRedirect } from "../shared/lib/auth/requireAuth";
