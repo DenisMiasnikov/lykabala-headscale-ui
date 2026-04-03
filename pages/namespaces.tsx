@@ -8,7 +8,7 @@ import {
   CheckIcon,
   XIcon,
 } from "../components/Icons";
-import { Table } from "./shared/table/Table";
+import Table from "../shared/ui/table/Table";
 
 type Namespace = {
   id: string;

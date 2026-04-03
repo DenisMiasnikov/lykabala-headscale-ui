@@ -1,7 +1,7 @@
 import React from "react";
-import { useTable } from "./useTable";
+import useTable from "./useTable";
 
-export const Table = ({ columns, data, rowKey = "id", pageSize = 5 }) => {
+const Table = ({ columns, data, rowKey = "id", pageSize = 5 }) => {
   const {
     data: processedData,
     total,
@@ -22,7 +22,7 @@ export const Table = ({ columns, data, rowKey = "id", pageSize = 5 }) => {
       <table className="table">
         <thead>
           <tr>
-            {columns.map((col) => {
+            {columns?.map((col) => {
               const isSorted = sortConfig?.key === col.key;
 
               return (
@@ -50,14 +50,14 @@ export const Table = ({ columns, data, rowKey = "id", pageSize = 5 }) => {
         </thead>
 
         <tbody>
-          {processedData.length === 0 ? (
+          {processedData?.length === 0 ? (
             <tr>
-              <td colSpan={columns.length}>No data</td>
+              <td colSpan={columns?.length}>No data</td>
             </tr>
           ) : (
-            processedData.map((row) => (
+            processedData?.map((row) => (
               <tr key={row[rowKey]} className={row.className}>
-                {columns.map((col) => {
+                {columns?.map((col) => {
                   const value = row[col.key];
 
                   return (
@@ -94,3 +94,5 @@ export const Table = ({ columns, data, rowKey = "id", pageSize = 5 }) => {
     </div>
   );
 };
+
+export default Table;

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-export const useTable = ({ data, columns, initialPageSize = 5 }) => {
+const useTable = ({ data, columns, initialPageSize = 5 }) => {
   const [sortConfig, setSortConfig] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
@@ -18,12 +18,12 @@ export const useTable = ({ data, columns, initialPageSize = 5 }) => {
 
   const paginatedData = useMemo(() => {
     const start = (page - 1) * pageSize;
-    return sortedData.slice(start, start + pageSize);
+    return sortedData?.slice(start, start + pageSize);
   }, [sortedData, page, pageSize]);
 
   return {
     data: paginatedData,
-    total: sortedData.length,
+    total: sortedData?.length,
 
     sortConfig,
     setSortConfig,
@@ -35,3 +35,5 @@ export const useTable = ({ data, columns, initialPageSize = 5 }) => {
     setPageSize,
   };
 };
+
+export default useTable;
