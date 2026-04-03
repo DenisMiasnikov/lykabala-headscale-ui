@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
 import { getAuthRedirect } from "../utils/requireAuth";
-import { EditIcon, KeyIcon, TrashIcon, CheckIcon, XIcon } from "../components/Icons";
+import {
+  EditIcon,
+  KeyIcon,
+  TrashIcon,
+  CheckIcon,
+  XIcon,
+} from "../components/Icons";
+import { Table } from "./shared/table/Table";
 
 type Namespace = {
   id: string;
@@ -47,7 +54,7 @@ export default function NamespacesPage() {
   const [editEmail, setEditEmail] = useState("");
   const [editPictureUrl, setEditPictureUrl] = useState("");
   const [isExitNode, setIsExitNode] = useState(false);
-  
+
   // Key generation options
   const [keyReusable, setKeyReusable] = useState(true);
   const [keyEphemeral, setKeyEphemeral] = useState(false);
@@ -55,11 +62,13 @@ export default function NamespacesPage() {
   const [keyAclTags, setKeyAclTags] = useState("");
   const [selectedNamespace, setSelectedNamespace] = useState("");
 
-  const command = generatedKey ? `tailscale up --reset \\
+  const command = generatedKey
+    ? `tailscale up --reset \\
   --login-server https://muxtadir-homelab.fun \\
   --authkey "${generatedKey}"${
     isExitNode ? " \\\n  --advertise-exit-node" : ""
-  }` : "";
+  }`
+    : "";
 
   async function loadData() {
     setError("");
@@ -103,8 +112,8 @@ export default function NamespacesPage() {
         name: newNamespace.trim(),
         displayName: newDisplayName.trim() || undefined,
         email: newEmail.trim() || undefined,
-        pictureUrl: newPictureUrl.trim() || undefined
-      })
+        pictureUrl: newPictureUrl.trim() || undefined,
+      }),
     });
 
     if (!res.ok) {
@@ -129,7 +138,7 @@ export default function NamespacesPage() {
       return;
     }
 
-    const ns = namespaces.find(n => n.name === selectedNamespace);
+    const ns = namespaces.find((n) => n.name === selectedNamespace);
     if (!ns?.id) {
       setKeyError("Invalid namespace");
       return;
@@ -137,7 +146,7 @@ export default function NamespacesPage() {
 
     const body: any = {
       user: parseInt(ns.id),
-      reusable: keyReusable
+      reusable: keyReusable,
     };
     if (keyExpiration) {
       body.expiration = keyExpiration;
@@ -146,13 +155,16 @@ export default function NamespacesPage() {
       body.ephemeral = true;
     }
     if (keyAclTags.trim()) {
-      body.aclTags = keyAclTags.split(',').map(t => t.trim()).filter(t => t);
+      body.aclTags = keyAclTags
+        .split(",")
+        .map((t) => t.trim())
+        .filter((t) => t);
     }
 
     const res = await fetch("/api/preauthkey", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -169,7 +181,9 @@ export default function NamespacesPage() {
   async function deletePreAuthKey(id: string) {
     if (!confirm(`Delete pre-auth key?`)) return;
     try {
-      const res = await fetch(`/api/preauthkey/delete?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/preauthkey/delete?id=${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         setKeyError(data.error || "Failed to delete key");
@@ -181,9 +195,9 @@ export default function NamespacesPage() {
     }
   }
 
-   function startEdit(ns: Namespace, e: React.MouseEvent) {
-     e.preventDefault();
-     e.stopPropagation();
+  function startEdit(ns: Namespace, e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
     setEditingId(ns.id);
     setEditName(ns.name);
     setEditDisplayName(ns.displayName || "");
@@ -207,8 +221,8 @@ export default function NamespacesPage() {
         name: trimmed,
         displayName: editDisplayName.trim() || undefined,
         email: editEmail.trim() || undefined,
-        pictureUrl: editPictureUrl.trim() || undefined
-      })
+        pictureUrl: editPictureUrl.trim() || undefined,
+      }),
     });
 
     const data = await res.json().catch(() => ({}));
@@ -223,11 +237,13 @@ export default function NamespacesPage() {
   }
 
   async function deleteNamespace(id: string, name: string) {
-    const ok = window.confirm(`Delete namespace "${name}"? This cannot be undone.`);
+    const ok = window.confirm(
+      `Delete namespace "${name}"? This cannot be undone.`,
+    );
     if (!ok) return;
 
     const res = await fetch(`/api/namespaces/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
 
     const data = await res.json().catch(() => ({}));
@@ -240,11 +256,44 @@ export default function NamespacesPage() {
     await loadData();
   }
 
-  const commandString = generatedKey ? `tailscale up --reset \\
+  const commandString = generatedKey
+    ? `tailscale up --reset \\
   --login-server https://muxtadir-homelab.fun \\
   --authkey "${generatedKey}"${
     isExitNode ? " \\\n  --advertise-exit-node" : ""
-  }` : "";
+  }`
+    : "";
+
+  const columns = [
+    {
+      key: "name",
+      label: "Name",
+    },
+    {
+      key: "displayName",
+      label: "Display Name",
+      // sorter: (a, b) => a.age - b.age,
+    },
+    {
+      key: "email",
+      label: "Email",
+    },
+    {
+      key: "createdAt",
+      label: "Created",
+    },
+    {
+      key: "actions",
+      label: "Actions",
+    },
+  ];
+
+  const data = [
+    { id: 1, name: "Denis", age: 25, status: "active" },
+    { id: 2, name: "Alex", age: 30, status: "inactive" },
+    { id: 3, name: "Kate", age: 22, status: "active" },
+    { id: 4, name: "John", age: 28, status: "inactive" },
+  ];
 
   return (
     <div className="page">
@@ -296,7 +345,10 @@ export default function NamespacesPage() {
               />
             </div>
           </div>
-          <div className="row" style={{ marginTop: 16, alignItems: "flex-start" }}>
+          <div
+            className="row"
+            style={{ marginTop: 16, alignItems: "flex-start" }}
+          >
             <div style={{ flex: 1, minWidth: 200 }}>
               <label>Picture URL</label>
               <input
@@ -321,117 +373,126 @@ export default function NamespacesPage() {
           {namespaces.length === 0 ? (
             <div className="subtitle">No namespaces yet.</div>
           ) : (
-            <div className="table-wrapper">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Display Name</th>
-                    <th>Email</th>
-                    <th>Created</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {namespaces.map((ns) => (
-                    <tr key={ns.id}>
-                      <td>
-                        {editingId === ns.id ? (
-                          <input
-                            className="input"
-                            value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") saveEdit(ns.id);
-                              if (e.key === "Escape") setEditingId(null);
-                            }}
-                            autoFocus
-                          />
-                        ) : (
-                          <a href={`/namespaces/${ns.id}`}>{ns.name}</a>
-                        )}
-                      </td>
-                      <td>
-                        {editingId === ns.id ? (
-                          <input
-                            className="input"
-                            value={editDisplayName}
-                            onChange={(e) => setEditDisplayName(e.target.value)}
-                          />
-                        ) : (
-                          ns.displayName || "-"
-                        )}
-                      </td>
-                      <td>
-                        {editingId === ns.id ? (
-                          <input
-                            className="input"
-                            value={editEmail}
-                            onChange={(e) => setEditEmail(e.target.value)}
-                          />
-                        ) : (
-                          ns.email || "-"
-                        )}
-                      </td>
-                      <td>{ns.createdAt ? new Date(ns.createdAt).toLocaleDateString() : "-"}</td>
-                      <td className="actions-cell">
-                        {editingId === ns.id ? (
-                          <div className="action-buttons-group">
-                            <button
-                              className="button action-button"
-                              onClick={() => saveEdit(ns.id)}
-                              title="Save"
-                            >
-                              <CheckIcon />
-                              <span className="button-label">Save</span>
-                            </button>
-                            <button
-                              className="button secondary action-button"
-                              onClick={() => setEditingId(null)}
-                              title="Cancel"
-                            >
-                              <XIcon />
-                              <span className="button-label">Cancel</span>
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="action-buttons-group">
-                            <button
-                              className="button action-button"
-                              onClick={(e) => startEdit(ns, e)}
-                              title="Edit"
-                            >
-                              <EditIcon />
-                              <span className="button-label">Edit</span>
-                            </button>
-                            <button
-                              className="button secondary action-button"
-                              onClick={() => {
-                                setSelectedNamespace(ns.name);
-                                setKeyError("");
-                                setGeneratedKey("");
-                              }}
-                              title="Generate Key"
-                            >
-                              <KeyIcon />
-                              <span className="button-label">Key</span>
-                            </button>
-                            <button
-                              className="button action-button delete-button"
-                              onClick={() => deleteNamespace(ns.id, ns.name)}
-                              title="Delete"
-                            >
-                              <TrashIcon />
-                              <span className="button-label">Delete</span>
-                            </button>
-                          </div>
-                        )}
-                      </td>
+            <>
+              <div className="table-wrapper">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Display Name</th>
+                      <th>Email</th>
+                      <th>Created</th>
+                      <th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {namespaces.map((ns) => (
+                      <tr key={ns.id}>
+                        <td>
+                          {editingId === ns.id ? (
+                            <input
+                              className="input"
+                              value={editName}
+                              onChange={(e) => setEditName(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") saveEdit(ns.id);
+                                if (e.key === "Escape") setEditingId(null);
+                              }}
+                              autoFocus
+                            />
+                          ) : (
+                            <a href={`/namespaces/${ns.id}`}>{ns.name}</a>
+                          )}
+                        </td>
+                        <td>
+                          {editingId === ns.id ? (
+                            <input
+                              className="input"
+                              value={editDisplayName}
+                              onChange={(e) =>
+                                setEditDisplayName(e.target.value)
+                              }
+                            />
+                          ) : (
+                            ns.displayName || "-"
+                          )}
+                        </td>
+                        <td>
+                          {editingId === ns.id ? (
+                            <input
+                              className="input"
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                            />
+                          ) : (
+                            ns.email || "-"
+                          )}
+                        </td>
+                        <td>
+                          {ns.createdAt
+                            ? new Date(ns.createdAt).toLocaleDateString()
+                            : "-"}
+                        </td>
+                        <td className="actions-cell">
+                          {editingId === ns.id ? (
+                            <div className="action-buttons-group">
+                              <button
+                                className="button action-button"
+                                onClick={() => saveEdit(ns.id)}
+                                title="Save"
+                              >
+                                <CheckIcon />
+                                <span className="button-label">Save</span>
+                              </button>
+                              <button
+                                className="button secondary action-button"
+                                onClick={() => setEditingId(null)}
+                                title="Cancel"
+                              >
+                                <XIcon />
+                                <span className="button-label">Cancel</span>
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="action-buttons-group">
+                              <button
+                                className="button action-button"
+                                onClick={(e) => startEdit(ns, e)}
+                                title="Edit"
+                              >
+                                <EditIcon />
+                                <span className="button-label">Edit</span>
+                              </button>
+                              <button
+                                className="button secondary action-button"
+                                onClick={() => {
+                                  setSelectedNamespace(ns.name);
+                                  setKeyError("");
+                                  setGeneratedKey("");
+                                }}
+                                title="Generate Key"
+                              >
+                                <KeyIcon />
+                                <span className="button-label">Key</span>
+                              </button>
+                              <button
+                                className="button action-button delete-button"
+                                onClick={() => deleteNamespace(ns.id, ns.name)}
+                                title="Delete"
+                              >
+                                <TrashIcon />
+                                <span className="button-label">Delete</span>
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Table columns={columns} data={namespaces} rowKey="id" />
+            </>
           )}
         </div>
 
@@ -449,7 +510,9 @@ export default function NamespacesPage() {
               >
                 <option value="">Select a namespace...</option>
                 {namespaces.map((ns) => (
-                  <option key={ns.id} value={ns.name}>{ns.name}</option>
+                  <option key={ns.id} value={ns.name}>
+                    {ns.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -473,7 +536,14 @@ export default function NamespacesPage() {
             </div>
           </div>
           <div className="row" style={{ marginTop: 16, alignItems: "center" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: 8, marginRight: 24 }}>
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginRight: 24,
+              }}
+            >
               <input
                 type="checkbox"
                 checked={keyReusable}
@@ -490,8 +560,16 @@ export default function NamespacesPage() {
               Ephemeral (expires after first use)
             </label>
           </div>
-          {keyError && <div className="error" style={{ marginTop: 8 }}>{keyError}</div>}
-          <button className="button" onClick={generateKey} style={{ marginTop: 16 }}>
+          {keyError && (
+            <div className="error" style={{ marginTop: 8 }}>
+              {keyError}
+            </div>
+          )}
+          <button
+            className="button"
+            onClick={generateKey}
+            style={{ marginTop: 16 }}
+          >
             Generate Key
           </button>
         </div>
@@ -505,7 +583,15 @@ export default function NamespacesPage() {
             <p className="subtitle" style={{ marginTop: 8 }}>
               Use this key to register a node:
               <pre style={{ marginTop: 8 }}>
-                <code style={{ background: "#eee", padding: "8px", borderRadius: 4, display: "block", whiteSpace: "pre" }}>
+                <code
+                  style={{
+                    background: "#eee",
+                    padding: "8px",
+                    borderRadius: 4,
+                    display: "block",
+                    whiteSpace: "pre",
+                  }}
+                >
                   {commandString}
                 </code>
               </pre>
@@ -546,13 +632,19 @@ export default function NamespacesPage() {
                 <tbody>
                   {preauthKeys.map((k) => (
                     <tr key={k.id}>
-                      <td style={{ fontFamily: "monospace", fontSize: "12px" }}>{k.key.substring(0, 8)}...</td>
+                      <td style={{ fontFamily: "monospace", fontSize: "12px" }}>
+                        {k.key.substring(0, 8)}...
+                      </td>
                       <td>{k.user?.name || "-"}</td>
                       <td>{k.reusable ? "Yes" : "No"}</td>
                       <td>{k.ephemeral ? "Yes" : "No"}</td>
                       <td>{k.aclTags?.join(", ") || "-"}</td>
                       <td>{new Date(k.createdAt).toLocaleString()}</td>
-                      <td>{k.expiration ? new Date(k.expiration).toLocaleString() : "-"}</td>
+                      <td>
+                        {k.expiration
+                          ? new Date(k.expiration).toLocaleString()
+                          : "-"}
+                      </td>
                       <td>{k.used ? "Yes" : "No"}</td>
                       <td>
                         <button
