@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
 import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
+import styles from "./NodeCard.module.css";
 
 type MachineDetailsProps = {
   id: string;
@@ -301,13 +302,10 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
           </div>
         </div>
       </div>
-      <NodeCard data={details} />
+      {details && <NodeCard data={details} />}
     </div>
   );
 }
-
-import React from "react";
-import styles from "./NodeCard.module.css";
 
 export const NodeCard = ({ data }) => {
   return (
