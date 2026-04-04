@@ -1,2 +1,2 @@
 export { RegisterMachine } from "./ui/RegisterMachine";
-export { DeleteMachineButton } from "./ui/DeleteMachine";
+export { DeleteMachine } from "./ui/DeleteMachine";
