@@ -8,6 +8,7 @@ import {
   TrashIcon,
   XIcon,
 } from "../shared/ui/icons/Icons";
+import Table, { ITableColumn } from "../shared/ui/table/Table";
 
 type Machine = {
   id: string;
@@ -87,18 +88,6 @@ export default function MachinesPage() {
     loadNamespaces();
   }, []);
 
-  function toggleUserGroup(userName: string) {
-    setExpandedUsers((prev) => {
-      const next = new Set(prev);
-      if (next.has(userName)) {
-        next.delete(userName);
-      } else {
-        next.add(userName);
-      }
-      return next;
-    });
-  }
-
   function showDeleteConfirmation(machineId: string) {
     setDeleteConfirmations((prev) => ({ ...prev, [machineId]: true }));
   }
@@ -167,6 +156,95 @@ export default function MachinesPage() {
     return a.localeCompare(b);
   });
 
+  // Define columns
+  const columns: ITableColumn<Machine>[] = [
+    {
+      key: "givenName",
+      label: "Hostname",
+      render: (value, row) => (
+        <a href={`/machines/${row.id}`}>{value as string}</a>
+      ),
+    },
+    {
+      key: "ipAddresses",
+      label: "IP",
+      render: (value) => (value as string[] | undefined)?.[0] || "",
+    },
+    {
+      key: "online",
+      label: "Status",
+      render: (value) => (
+        <span className={`pill ${value ? "online" : "offline"}`}>
+          {value ? "Online" : "Offline"}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      label: "",
+      render: (_value, row) => {
+        const machineId = row.id;
+        const isDeleting = deleteConfirmations[machineId];
+        return (
+          <div className="action-buttons-group">
+            {isDeleting ? (
+              <>
+                <button
+                  className="button action-button delete-button"
+                  onClick={() => confirmDeleteMachine(machineId)}
+                  title="Confirm delete"
+                >
+                  <TrashIcon />
+                </button>
+                <button
+                  className="button secondary action-button"
+                  onClick={() => cancelDeleteConfirmation(machineId)}
+                  title="Cancel"
+                >
+                  <XIcon />
+                </button>
+              </>
+            ) : (
+              <button
+                className="button secondary action-button"
+                onClick={() => showDeleteConfirmation(machineId)}
+                title="Delete"
+              >
+                <TrashIcon />
+              </button>
+            )}
+          </div>
+        );
+      },
+    },
+  ];
+
+  // Custom group header renderer
+  const renderGroupHeader = (
+    userName: string,
+    userMachines: Machine[],
+    isExpanded: boolean,
+    toggle: () => void
+  ) => {
+    const onlineCount = userMachines.filter((m) => m.online).length;
+    const totalCount = userMachines.length;
+
+    return (
+      <div className="user-group-header" onClick={toggle}>
+        <div className="user-group-info">
+          <span className={`expand-icon ${isExpanded ? "expanded" : ""}`}>
+            {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          </span>
+          <span className="user-name">{userName}</span>
+          <span className="machine-count">
+            <span className="online-dot">{onlineCount}</span>
+            <span className="total-count">/{totalCount}</span>
+          </span>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="page">
       <div className="container">
@@ -216,118 +294,25 @@ export default function MachinesPage() {
           ) : null}
         </div>
 
-        <div className="card">
-          <h2 className="title" style={{ fontSize: 22 }}>
-            Machines
-          </h2>
-          {machines.length === 0 ? (
-            <div className="subtitle">No machines yet.</div>
-          ) : (
-            <div className="user-groups">
-              {sortedUserNames.map((userName) => {
-                const userMachines = groupedMachines[userName];
-                const isExpanded = expandedUsers.has(userName);
-                const onlineCount = userMachines.filter((m) => m.online).length;
-                const totalCount = userMachines.length;
-
-                return (
-                  <div key={userName} className="user-group">
-                    <div
-                      className="user-group-header"
-                      onClick={() => toggleUserGroup(userName)}
-                    >
-                      <div className="user-group-info">
-                        <span
-                          className={`expand-icon ${isExpanded ? "expanded" : ""}`}
-                        >
-                          {isExpanded ? (
-                            <ChevronDownIcon />
-                          ) : (
-                            <ChevronRightIcon />
-                          )}
-                        </span>
-                        <span className="user-name">{userName}</span>
-                        <span className="machine-count">
-                          <span className="online-dot">{onlineCount}</span>
-                          <span className="total-count">/{totalCount}</span>
-                        </span>
-                      </div>
-                    </div>
-                    {isExpanded && (
-                      <div className="table-wrapper">
-                        <table className="table">
-                          <thead>
-                            <tr>
-                              <th>Hostname</th>
-                              <th>IP</th>
-                              <th>Status</th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {userMachines.map((machine) => (
-                              <tr key={machine.id} className="machine-row">
-                                <td>
-                                  <a href={`/machines/${machine.id}`}>
-                                    {machine.givenName}
-                                  </a>
-                                </td>
-                                <td>{machine.ipAddresses?.[0] || ""}</td>
-                                <td>
-                                  <span
-                                    className={`pill ${
-                                      machine.online ? "online" : "offline"
-                                    }`}
-                                  >
-                                    {machine.online ? "Online" : "Offline"}
-                                  </span>
-                                </td>
-                                <td className="actions-cell">
-                                  {deleteConfirmations[machine.id] ? (
-                                    <div className="action-buttons-group">
-                                      <button
-                                        className="button action-button delete-button"
-                                        onClick={() =>
-                                          confirmDeleteMachine(machine.id)
-                                        }
-                                        title="Confirm delete"
-                                      >
-                                        <TrashIcon />
-                                      </button>
-                                      <button
-                                        className="button secondary action-button"
-                                        onClick={() =>
-                                          cancelDeleteConfirmation(machine.id)
-                                        }
-                                        title="Cancel"
-                                      >
-                                        <XIcon />
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <button
-                                      className="button secondary action-button"
-                                      onClick={() =>
-                                        showDeleteConfirmation(machine.id)
-                                      }
-                                      title="Delete"
-                                    >
-                                      <TrashIcon />
-                                    </button>
-                                  )}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+         <div className="card">
+           <h2 className="title" style={{ fontSize: 22 }}>
+             Machines
+           </h2>
+           {machines.length === 0 ? (
+             <div className="subtitle">No machines yet.</div>
+           ) : (
+             <Table
+               columns={columns}
+               data={machines}
+               rowKey="id"
+               groupBy={(machine) => machine.user?.name || "Unassigned"}
+               expandedGroups={expandedUsers}
+               onExpandedGroupsChange={(groups) => setExpandedUsers(groups)}
+               renderGroupHeader={renderGroupHeader}
+               rowClassName="machine-row"
+             />
+           )}
+         </div>
       </div>
     </div>
   );

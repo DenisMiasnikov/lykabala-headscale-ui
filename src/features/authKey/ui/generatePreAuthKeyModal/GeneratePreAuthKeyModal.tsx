@@ -132,7 +132,6 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
             <pre
               style={{
                 marginTop: 8,
-                // background: "#eee",
                 padding: "8px",
                 borderRadius: 4,
                 overflowX: "auto",
