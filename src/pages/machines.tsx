@@ -5,19 +5,8 @@ import Table, { ITableColumn } from "../shared/ui/table/Table";
 import { ChevronRightIcon, ChevronDownIcon } from "../shared/ui/icons/Icons";
 import { RegisterNodeKeyForm } from "../features/machines/ui/RegisterNodeKeyForm/RegisterNodeKeyForm";
 import { DeleteMachineButton } from "../features/machines/ui/DeleteMachineButton/DeleteMachineButton";
-
-type Machine = {
-  id: string;
-  givenName: string;
-  ipAddresses?: string[];
-  online?: boolean;
-  user?: { name?: string };
-};
-
-type Namespace = {
-  id?: string;
-  name: string;
-};
+import type { Machine } from "../entities/machine/types";
+import type { Namespace } from "../entities/namespace/types";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -91,7 +80,7 @@ export default function MachinesPage() {
     userName: string,
     userMachines: Machine[],
     isExpanded: boolean,
-    toggle: () => void
+    toggle: () => void,
   ) => {
     const onlineCount = userMachines.filter((m) => m.online).length;
     const totalCount = userMachines.length;
@@ -123,25 +112,25 @@ export default function MachinesPage() {
           onSuccess={() => loadData()}
         />
 
-         <div className="card">
-           <h2 className="title" style={{ fontSize: 22 }}>
-             Machines
-           </h2>
-           {machines.length === 0 ? (
-             <div className="subtitle">No machines yet.</div>
-           ) : (
-             <Table
-               columns={columns}
-               data={machines}
-               rowKey="id"
-               groupBy={(machine) => machine.user?.name || "Unassigned"}
-               expandedGroups={expandedUsers}
-               onExpandedGroupsChange={(groups) => setExpandedUsers(groups)}
-               renderGroupHeader={renderGroupHeader}
-               rowClassName="machine-row"
-             />
-           )}
-         </div>
+        <div className="card">
+          <h2 className="title" style={{ fontSize: 22 }}>
+            Machines
+          </h2>
+          {machines.length === 0 ? (
+            <div className="subtitle">No machines yet.</div>
+          ) : (
+            <Table
+              columns={columns}
+              data={machines}
+              rowKey="id"
+              groupBy={(machine) => machine.user?.name || "Unassigned"}
+              expandedGroups={expandedUsers}
+              onExpandedGroupsChange={(groups) => setExpandedUsers(groups)}
+              renderGroupHeader={renderGroupHeader}
+              rowClassName="machine-row"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
