@@ -6,7 +6,7 @@ import type {
   NamespaceDetailsProps,
   NamespaceDetails,
 } from "../../entities/namespace/types";
-import GeneratePreAuthKey from "../../features/authKey/ui/generatePreAuthKeyModal/GeneratePreAuthKeyModal";
+import GeneratePreAuthKey from "../../features/authKey/ui/createAuthKey/CreateAuthKey";
 import { AuthKeysTable } from "../../entities/authKey/ui/AuthKeysTable";
 
 export default function NamespaceDetails({ id }: NamespaceDetailsProps) {

@@ -1,4 +1,4 @@
-export type PreAuthKey = {
+export type AuthKey = {
   id: string;
   key: string;
   reusable: boolean;
