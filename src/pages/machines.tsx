@@ -6,7 +6,6 @@ import { ChevronRightIcon, ChevronDownIcon } from "../shared/ui/icons/Icons";
 import { RegisterNodeKeyForm } from "../features/machines/ui/RegisterNodeKeyForm/RegisterNodeKeyForm";
 import { DeleteMachineButton } from "../features/machines/ui/DeleteMachineButton/DeleteMachineButton";
 import type { Machine } from "../entities/machine/types";
-import type { Namespace } from "../entities/namespace/types";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import type { PreAuthKey } from "../types";
+import type { AuthKey } from "../types";
 
 import { TrashIcon } from "../../../shared/ui/icons/Icons";
 import Table from "../../../shared/ui/table/Table";
 
 export const AuthKeysTable = () => {
-  const [preauthKeys, setPreauthKeys] = useState<PreAuthKey[]>([]);
+  const [preauthKeys, setPreauthKeys] = useState<AuthKey[]>([]);
   const [keyError, setKeyError] = useState("");
 
   async function loadPreAuthKeys() {
