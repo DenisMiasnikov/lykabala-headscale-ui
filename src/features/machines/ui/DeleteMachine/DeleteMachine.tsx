@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TrashIcon, XIcon } from "../../../../shared/ui/icons/Icons";
 
-interface IDeleteMachineButtonProps {
+interface IDeleteMachineProps {
   machineId: string;
   onSuccess?: () => void;
   onError?: (message?: string) => void;
@@ -9,7 +9,7 @@ interface IDeleteMachineButtonProps {
   cancelTitle?: string;
 }
 
-export const DeleteMachineButton: React.FC<IDeleteMachineButtonProps> = ({
+export const DeleteMachine: React.FC<IDeleteMachineProps> = ({
   machineId,
   onSuccess,
   onError,
@@ -73,4 +73,4 @@ export const DeleteMachineButton: React.FC<IDeleteMachineButtonProps> = ({
   );
 };
 
-export default DeleteMachineButton;
+export default DeleteMachine;

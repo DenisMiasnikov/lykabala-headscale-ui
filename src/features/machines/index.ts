@@ -1,2 +1,2 @@
-export { RegisterNodeKeyForm } from "./ui/RegisterNodeKeyForm";
-export { DeleteMachineButton } from "./ui/DeleteMachineButton";
+export { RegisterMachine } from "./ui/RegisterMachine";
+export { DeleteMachineButton } from "./ui/DeleteMachine";

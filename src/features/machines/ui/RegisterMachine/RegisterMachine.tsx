@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import type { Namespace } from "../../../../entities/namespace/types";
 
-interface IRegisterNodeKeyFormProps {
+interface IRegisterMachineProps {
   onSuccess?: (message?: string) => void;
   onError?: (message?: string) => void;
 }
 
-export const RegisterNodeKeyForm: React.FC<IRegisterNodeKeyFormProps> = ({
+export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   onSuccess,
   onError,
 }) => {
@@ -57,7 +57,7 @@ export const RegisterNodeKeyForm: React.FC<IRegisterNodeKeyFormProps> = ({
       const label = data.givenName || data.name || data.id || "node";
       setResult(`Registered ${label}`);
       setNodeKey("");
-      onSuccess?.(`Registered ${label}`);
+      onSuccess?.();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to register node";
@@ -139,4 +139,4 @@ export const RegisterNodeKeyForm: React.FC<IRegisterNodeKeyFormProps> = ({
   );
 };
 
-export default RegisterNodeKeyForm;
+export default RegisterMachine;

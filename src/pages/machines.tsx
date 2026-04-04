@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
+import { RegisterMachine } from "../features/machines/ui/RegisterMachine/RegisterMachine";
+import { DeleteMachine } from "../features/machines/ui/DeleteMachine/DeleteMachine";
+import type { Machine } from "../entities/machine/types";
 import { getAuthRedirect } from "../shared/lib/auth/requireAuth";
 import Table, { ITableColumn } from "../shared/ui/table/Table";
 import { ChevronRightIcon, ChevronDownIcon } from "../shared/ui/icons/Icons";
-import { RegisterNodeKeyForm } from "../features/machines/ui/RegisterNodeKeyForm/RegisterNodeKeyForm";
-import { DeleteMachineButton } from "../features/machines/ui/DeleteMachineButton/DeleteMachineButton";
-import type { Machine } from "../entities/machine/types";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -63,7 +63,7 @@ export default function MachinesPage() {
       key: "actions",
       label: "",
       render: (_value, row) => (
-        <DeleteMachineButton machineId={row.id} onSuccess={loadData} />
+        <DeleteMachine machineId={row.id} onSuccess={loadData} />
       ),
     },
   ];
@@ -100,7 +100,7 @@ export default function MachinesPage() {
         <h1 className="title">Headscale Control</h1>
         <p className="subtitle">Manage machines.</p>
 
-        <RegisterNodeKeyForm onSuccess={() => loadData()} />
+        <RegisterMachine onSuccess={loadData} />
 
         <div className="card">
           <h2 className="title" style={{ fontSize: 22 }}>
