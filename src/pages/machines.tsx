@@ -16,7 +16,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function MachinesPage() {
   const [machines, setMachines] = useState<Machine[]>([]);
-  const [namespaces, setNamespaces] = useState<Namespace[]>([]);
   const [expandedUsers, setExpandedUsers] = useState<Set<string>>(new Set());
 
   async function loadData() {
@@ -65,12 +64,7 @@ export default function MachinesPage() {
       key: "actions",
       label: "",
       render: (_value, row) => (
-        <DeleteMachineButton
-          machineId={row.id}
-          onSuccess={() => {
-            // The parent component will refresh data via useEffect
-          }}
-        />
+        <DeleteMachineButton machineId={row.id} onSuccess={loadData} />
       ),
     },
   ];
@@ -107,10 +101,7 @@ export default function MachinesPage() {
         <h1 className="title">Headscale Control</h1>
         <p className="subtitle">Manage machines.</p>
 
-        <RegisterNodeKeyForm
-          namespaces={namespaces}
-          onSuccess={() => loadData()}
-        />
+        <RegisterNodeKeyForm onSuccess={() => loadData()} />
 
         <div className="card">
           <h2 className="title" style={{ fontSize: 22 }}>

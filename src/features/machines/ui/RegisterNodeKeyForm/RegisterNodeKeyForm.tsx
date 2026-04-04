@@ -1,26 +1,36 @@
 import { useEffect, useState } from "react";
-
-interface INamespace {
-  id?: string;
-  name: string;
-}
+import { useRouter } from "next/router";
+import type { Namespace } from "../../../../entities/namespace/types";
 
 interface IRegisterNodeKeyFormProps {
-  namespaces: INamespace[];
   onSuccess?: (message?: string) => void;
   onError?: (message?: string) => void;
 }
 
 export const RegisterNodeKeyForm: React.FC<IRegisterNodeKeyFormProps> = ({
-  namespaces,
   onSuccess,
   onError,
 }) => {
+  const router = useRouter();
   const [registerUser, setRegisterUser] = useState("");
   const [nodeKey, setNodeKey] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
+  const [namespaces, setNamespaces] = useState<Namespace[]>([]);
+
+  // Auto-fill node key from URL query parameter
+  useEffect(() => {
+    if (router.query.key && typeof router.query.key === "string") {
+      setNodeKey(router.query.key);
+    }
+  }, [router.query]);
+
+  useEffect(() => {
+    if (!registerUser && namespaces.length > 0) {
+      setRegisterUser(namespaces[0].name);
+    }
+  }, [namespaces, registerUser]);
 
   async function registerNode() {
     setError("");
@@ -58,15 +68,31 @@ export const RegisterNodeKeyForm: React.FC<IRegisterNodeKeyFormProps> = ({
     }
   }
 
-  useEffect(() => {
-    if (!registerUser && namespaces.length > 0) {
-      setRegisterUser(namespaces[0].name);
+  async function loadNamespaces() {
+    try {
+      const res = await fetch("/api/namespaces");
+      const data = await res.json();
+      if (!res.ok) {
+        new Error(data.error || "Failed to load namespaces");
+      }
+      const list = Array.isArray(data.namespaces) ? data.namespaces : [];
+      setNamespaces(list);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to load data";
+      console.error(message);
     }
-  }, [namespaces, registerUser]);
+  }
+
+  useEffect(() => {
+    loadNamespaces();
+  }, []);
 
   return (
     <div className="card" style={{ marginBottom: 24 }}>
-      <h2 className="title" style={{ fontSize: 22 }}>Register Node Key</h2>
+      <h2 className="title" style={{ fontSize: 22 }}>
+        Register Node Key
+      </h2>
       <div className="row" style={{ alignItems: "center" }}>
         <div style={{ flex: 1, minWidth: 220 }}>
           <label>User</label>
@@ -98,11 +124,7 @@ export const RegisterNodeKeyForm: React.FC<IRegisterNodeKeyFormProps> = ({
           />
         </div>
         <div style={{ alignSelf: "flex-end" }}>
-          <button
-            className="button"
-            onClick={registerNode}
-            disabled={loading}
-          >
+          <button className="button" onClick={registerNode} disabled={loading}>
             {loading ? "Registering..." : "Register"}
           </button>
         </div>

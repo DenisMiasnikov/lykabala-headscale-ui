@@ -116,7 +116,9 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
                 )}
               </div>
 
-              <div style={{ marginTop: 24 }}>
+              <div
+                style={{ display: "flex", alignItems: "center", marginTop: 24 }}
+              >
                 <button
                   className="button"
                   onClick={deleteNamespace}
@@ -124,16 +126,15 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
                 >
                   Delete Namespace
                 </button>
+                <GeneratePreAuthKey
+                  onSuccess={(key) => {
+                    setMessage(
+                      `Key generated for ${key.user?.name || "namespace"}`,
+                    );
+                  }}
+                  namespaces={namespaces}
+                />
               </div>
-
-              <GeneratePreAuthKey
-                onSuccess={(key) => {
-                  setMessage(
-                    `Key generated for ${key.user?.name || "namespace"}`,
-                  );
-                }}
-                namespaces={namespaces}
-              />
 
               <div className="card" style={{ marginTop: 24 }}>
                 <h2 className="title" style={{ fontSize: 22 }}>
