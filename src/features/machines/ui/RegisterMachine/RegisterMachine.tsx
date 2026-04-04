@@ -60,6 +60,18 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
       const label = data.givenName || data.name || data.id || "node";
       setResult(`Registered ${label}`);
       setNodeKey("");
+      // Clear ?key from URL
+      if (router.query.key) {
+        const { key, ...rest } = router.query;
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: rest,
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
       onSuccess?.();
     } catch (err) {
       const message =
