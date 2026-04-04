@@ -18,14 +18,17 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [namespaces, setNamespaces] = useState<Namespace[]>([]);
+  const [namespacesLoading, setNamespacesLoading] = useState(true);
+  const [namespacesError, setNamespacesError] = useState<string | null>(null);
 
   // Auto-fill node key from URL query parameter
   useEffect(() => {
-    if (router.query.key && typeof router.query.key === "string") {
+    if (router.query.key && typeof router.query.key === "string" && !nodeKey) {
       setNodeKey(router.query.key);
     }
-  }, [router.query]);
+  }, [router.query, nodeKey]);
 
+  // Auto-select first namespace after namespaces load
   useEffect(() => {
     if (!registerUser && namespaces.length > 0) {
       setRegisterUser(namespaces[0].name);
@@ -69,18 +72,22 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   }
 
   async function loadNamespaces() {
+    setNamespacesError(null);
+    setNamespacesLoading(true);
     try {
       const res = await fetch("/api/namespaces");
       const data = await res.json();
       if (!res.ok) {
-        new Error(data.error || "Failed to load namespaces");
+        throw new Error(data.error || "Failed to load namespaces");
       }
       const list = Array.isArray(data.namespaces) ? data.namespaces : [];
       setNamespaces(list);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Failed to load data";
-      console.error(message);
+        err instanceof Error ? err.message : "Failed to load namespaces";
+      setNamespacesError(message);
+    } finally {
+      setNamespacesLoading(false);
     }
   }
 
@@ -95,12 +102,12 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
       </h2>
       <div className="row" style={{ alignItems: "center" }}>
         <div style={{ flex: 1, minWidth: 220 }}>
-          <label>User</label>
+          <label>User {namespacesLoading && "(Loading...)"}</label>
           <select
             className="input"
             value={registerUser}
             onChange={(event) => setRegisterUser(event.target.value)}
-            disabled={loading}
+            disabled={loading || namespacesLoading}
           >
             <option value="">Select a user</option>
             {namespaces.map((ns) => (
@@ -109,6 +116,11 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
               </option>
             ))}
           </select>
+          {namespacesError && (
+            <div className="error" style={{ marginTop: 4 }}>
+              {namespacesError}
+            </div>
+          )}
         </div>
         <div style={{ flex: 2, minWidth: 260 }}>
           <label>Node Key</label>
@@ -124,7 +136,11 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
           />
         </div>
         <div style={{ alignSelf: "flex-end" }}>
-          <button className="button" onClick={registerNode} disabled={loading}>
+          <button
+            className="button"
+            onClick={registerNode}
+            disabled={loading}
+          >
             {loading ? "Registering..." : "Register"}
           </button>
         </div>

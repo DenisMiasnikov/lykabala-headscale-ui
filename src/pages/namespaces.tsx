@@ -12,6 +12,7 @@ import {
   XIcon,
 } from "../shared/ui/icons/Icons";
 import Table from "../shared/ui/table/Table";
+import { formatDate } from "../shared/lib/date";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -126,7 +127,7 @@ export default function NamespacesPage() {
     {
       key: "createdAt",
       label: "Created",
-      render: (value) => (value ? new Date(value).toLocaleDateString() : "-"),
+      render: (value) => (value ? formatDate(value) : "-"),
     },
     {
       key: "actions",

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
-import { RegisterMachine } from "../features/machines/ui/RegisterMachine/RegisterMachine";
-import { DeleteMachine } from "../features/machines/ui/DeleteMachine/DeleteMachine";
-import type { Machine } from "../entities/machine/types";
 import { getAuthRedirect } from "../shared/lib/auth/requireAuth";
 import Table, { ITableColumn } from "../shared/ui/table/Table";
 import { ChevronRightIcon, ChevronDownIcon } from "../shared/ui/icons/Icons";
+import { RegisterMachine } from "../features/machines/ui/RegisterMachine/RegisterMachine";
+import { DeleteMachine } from "../features/machines/ui/DeleteMachine/DeleteMachine";
+import type { Machine } from "../entities/machine/types";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -71,7 +71,7 @@ export default function MachinesPage() {
     userName: string,
     userMachines: Machine[],
     isExpanded: boolean,
-    toggle: () => void,
+    toggle: () => void
   ) => {
     const onlineCount = userMachines.filter((m) => m.online).length;
     const totalCount = userMachines.length;
