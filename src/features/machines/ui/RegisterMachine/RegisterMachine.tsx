@@ -21,12 +21,12 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   const [namespacesLoading, setNamespacesLoading] = useState(true);
   const [namespacesError, setNamespacesError] = useState<string | null>(null);
 
-  // Auto-fill node key from URL query parameter
+  // Auto-fill node key from URL query parameter (only if no success message shown)
   useEffect(() => {
-    if (router.query.key && typeof router.query.key === "string" && !nodeKey) {
+    if (router.query.key && typeof router.query.key === "string" && !nodeKey && !result) {
       setNodeKey(router.query.key);
     }
-  }, [router.query, nodeKey]);
+  }, [router.query, nodeKey, result]);
 
   // Auto-select first namespace after namespaces load
   useEffect(() => {
