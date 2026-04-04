@@ -96,7 +96,7 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
             style={{
               marginBottom: 24,
               padding: 16,
-              background: "#f5f5f5",
+              background: "#222121",
               borderRadius: 8,
             }}
           >

@@ -117,7 +117,6 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
             <div
               className="keybox"
               style={{
-                background: "#f5f5f5",
                 padding: 12,
                 borderRadius: 4,
                 fontFamily: "monospace",
@@ -133,7 +132,7 @@ const GeneratePreAuthKey: React.FC<IGeneratePreAuthKeyProps> = ({
             <pre
               style={{
                 marginTop: 8,
-                background: "#eee",
+                // background: "#eee",
                 padding: "8px",
                 borderRadius: 4,
                 overflowX: "auto",
