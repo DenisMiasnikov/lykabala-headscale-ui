@@ -36,7 +36,6 @@ export default function MachinesPage() {
     loadData();
   }, []);
 
-  // Define columns
   const columns: ITableColumn<Machine>[] = [
     {
       key: "givenName",
@@ -68,7 +67,6 @@ export default function MachinesPage() {
     },
   ];
 
-  // Custom group header renderer
   const renderGroupHeader = (
     userName: string,
     userMachines: Machine[],
