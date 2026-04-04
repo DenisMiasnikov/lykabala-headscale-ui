@@ -20,10 +20,11 @@ export default function MachinesPage() {
   async function loadData() {
     try {
       const res = await fetch("/api/machines");
-      const data = await res.json();
       if (!res.ok) {
-        new Error(data.error || "Failed to load machines");
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to load machines");
       }
+      const data = await res.json();
       setMachines(Array.isArray(data.machines) ? data.machines : []);
     } catch (err) {
       const message =

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import useTable from "./useTable";
 import { ChevronRightIcon, ChevronDownIcon } from "../icons/Icons";
 
@@ -45,10 +45,11 @@ const Table = <T extends Record<string, unknown>>({
   rowClassName,
 }: ITableProps<T>) => {
   const isGrouped = !!groupBy;
+  const enablePagination = !!paginationParams;
 
-  // Determine initial page size: if grouped, show all data (no pagination)
-  const initialPageSize = isGrouped
-    ? data?.length || 5
+  // Determine initial page size: if grouped or no pagination, show all data
+  const initialPageSize = isGrouped || !enablePagination
+    ? data?.length || 0
     : paginationParams?.pageSize || 5;
 
   const {
@@ -58,11 +59,29 @@ const Table = <T extends Record<string, unknown>>({
     setSortConfig,
     page,
     setPage,
+    pageSize,
+    setPageSize,
   } = useTable({
     data,
     columns,
     initialPageSize,
   });
+
+  // Sync pageSize with data length when pagination is disabled
+  useEffect(() => {
+    if (!enablePagination) {
+      setPageSize(data?.length || 0);
+    }
+  }, [data?.length, enablePagination, setPageSize]);
+
+  // Reset to page 1 when data changes significantly (e.g., after delete)
+  useEffect(() => {
+    if (page > 1 && total <= (page - 1) * pageSize) {
+      setPage(1);
+    }
+  }, [total, page, pageSize, setPage]);
+
+  const totalPages = Math.ceil(total / pageSize);
 
   // State for expanded groups (uncontrolled mode)
   const [internalExpanded, setInternalExpanded] =
@@ -109,8 +128,6 @@ const Table = <T extends Record<string, unknown>>({
     return { groups, keys };
   }, [processedData, groupBy, isGrouped]);
 
-  const totalPages = Math.ceil(total / initialPageSize);
-
   // Render helper for table body
   const renderTableBody = (rows: T[]) => (
     <tbody>
@@ -135,9 +152,9 @@ const Table = <T extends Record<string, unknown>>({
               {columns?.map((col) => {
                 const value = row[col.key];
                 return (
-                <td key={col.key} className={col.className}>
-                  {col.render ? col.render(value as any, row) : (value as any)}
-                </td>
+                  <td key={col.key} className={col.className}>
+                    {col.render ? col.render(value as any, row) : (value as any)}
+                  </td>
                 );
               })}
             </tr>
