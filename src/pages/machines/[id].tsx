@@ -8,6 +8,7 @@ import { UpdateMachineTags } from "../../features/machines/ui/updateMachineTags/
 import { UpdateMachineRoutes } from "../../features/machines/ui/updateMachineRoutes/UpdateMachineRoutes";
 import { ExpireMachine } from "../../features/machines/ui/expireMachine/ExpireMachine";
 import { BackFlipIps } from "../../features/machines/ui/backfilips/BackFlipIps";
+import type { NamespaceDetails } from "../../entities/namespace/types";
 
 type MachineDetailsProps = {
   id: string;
@@ -18,7 +19,7 @@ type MachineDetails = {
   givenName?: string;
   availableRoutes?: string[];
   approvedRoutes?: string[];
-  user?: { name?: string };
+  user?: NamespaceDetails;
   tags?: string[];
 };
 
