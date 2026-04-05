@@ -1,0 +1,126 @@
+/* Modal2 */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  animation: fadeIn 0.15s ease;
+  border-radius: 18px;
+  width: 360px;
+  max-width: 90%;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  background: #fafafa; /* 👈 subtle contrast */
+  position: relative;
+  justify-content: center; /* 👈 center title like macOS */
+  padding: 8px 16px; /* 👈 tighter */
+  backdrop-filter: blur(10px);
+}
+
+.modalTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111; /* 👈 strong contrast */
+  letter-spacing: -0.01em;
+}
+
+/* closeBtn */
+
+.closeBtn {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: #999;
+}
+
+.closeBtn:hover {
+  color: #111;
+}
+
+.closeBtn {
+  position: absolute;
+  right: 10px; /* 👈 closer to edge */
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  color: #999;
+
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111;
+}
+
+.closeBtn:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.closeBtn:hover .closeIcon {
+  color: #111;
+}
+
+.modalContent {
+  padding: 16px;
+}

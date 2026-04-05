@@ -1,0 +1,13 @@
+.dangerBtn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dangerBtn:hover {
+  background: #fecaca;
+}

@@ -191,3 +191,385 @@
 .secondaryBtn:hover {
   background: #e5e7eb;
 }
+
+/* Editing */
+.editRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.input {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+
+.saveBtn {
+  background: #000;
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.actionBtn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  background: #e5e7eb;
+}
+
+.dangerBtn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dangerBtn:hover {
+  background: #fecaca;
+}
+
+.menuWrapper {
+  position: relative;
+  margin-left: auto;
+}
+
+.menuButton {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 28px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  min-width: 160px;
+  z-index: 10;
+}
+
+.menuItem {
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.menuItem:hover {
+  background: #f3f4f6;
+}
+
+.danger {
+  color: #b91c1c;
+}
+
+/* Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  width: 320px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Shared button base */
+.modalBtn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+/* Primary (Save) */
+.primaryBtn {
+  composes: modalBtn;
+  background: #000;
+  color: #fff;
+}
+
+.primaryBtn:hover {
+  opacity: 0.9;
+}
+
+.primaryBtn:active {
+  transform: scale(0.97);
+}
+
+/* Secondary (Cancel) */
+.secondaryBtn {
+  composes: modalBtn;
+  background: #f3f4f6;
+  color: #111;
+}
+
+.secondaryBtn:hover {
+  background: #e5e7eb;
+}
+
+.secondaryBtn:active {
+  transform: scale(0.97);
+}
+
+.modal {
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal container */
+.modal {
+  background: white;
+  border-radius: 18px;
+  width: 360px;
+  max-width: 90%;
+  overflow: hidden;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+
+  background: #fafafa; /* 👈 subtle contrast */
+}
+
+.modalTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111; /* 👈 strong contrast */
+}
+
+/* Close button */
+.closeBtn {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  color: #999;
+}
+
+.closeBtn:hover {
+  color: #111;
+}
+
+/* Content */
+.modalContent {
+  padding: 16px;
+}
+
+/* Input FIX */
+.input {
+  width: 100%; /* 👈 IMPORTANT */
+  box-sizing: border-box; /* 👈 prevents overflow */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+/* Focus state (Apple-like) */
+.input:focus {
+  outline: none;
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fieldLabel {
+  font-size: 12px;
+  color: #777;
+}
+
+.modalHeader {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 👈 center title like macOS */
+
+  padding: 10px 14px; /* 👈 reduced height */
+  border-bottom: 1px solid #eee;
+
+  background: #fafafa;
+}
+
+/* Title centered */
+.modalTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* Close button positioned to corner */
+.closeBtn {
+  position: absolute;
+  right: 10px; /* 👈 closer to edge */
+  top: 50%;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  color: #999;
+
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #111;
+}
+
+.closeBtn:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.modalHeader {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 16px; /* 👈 tighter */
+  border-bottom: 1px solid #eee;
+
+  background: #fafafa;
+}
+
+/* Title */
+.modalTitle {
+  font-size: 13.5px; /* 👈 slightly smaller = cleaner */
+  font-weight: 600;
+  color: #111;
+  letter-spacing: -0.01em;
+}
+
+/* Close button */
+.closeBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+
+  width: 28px;
+  height: 28px;
+
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.15s ease;
+}
+
+/* Icon */
+.closeIcon {
+  font-size: 14px;
+  color: #888;
+  line-height: 1;
+}
+
+/* Hover */
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.closeBtn:hover .closeIcon {
+  color: #111;
+}
+
+/* Active (click feel) */
+.closeBtn:active {
+  transform: scale(0.92);
+}
+
+.modalHeader {
+  backdrop-filter: blur(10px);
+}
+
+.closeIcon {
+  transition: color 0.15s ease;
+}
