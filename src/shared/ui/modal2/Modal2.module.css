@@ -1,11 +1,15 @@
-/* Modal2 */
 .modalOverlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.2);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
+  padding: 20px;
 }
 
 .modal {
@@ -13,8 +17,8 @@
   padding: 20px;
   animation: fadeIn 0.15s ease;
   border-radius: 18px;
-  width: 360px;
-  max-width: 90%;
+  max-width: 600px;
+  width: 100%;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
@@ -34,10 +38,9 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid #eee;
-  background: #fafafa; /* 👈 subtle contrast */
   position: relative;
-  justify-content: center; /* 👈 center title like macOS */
-  padding: 8px 16px; /* 👈 tighter */
+  justify-content: space-between; /* 👈 center title like macOS */
+  padding: 8px 8px; /* 👈 tighter */
   backdrop-filter: blur(10px);
 }
 
@@ -63,11 +66,6 @@
 }
 
 .closeBtn {
-  position: absolute;
-  right: 10px; /* 👈 closer to edge */
-  top: 50%;
-  transform: translateY(-50%);
-
   border: none;
   background: transparent;
   font-size: 14px;
@@ -93,9 +91,9 @@
 }
 
 .closeBtn {
-  position: absolute;
+  /* position: absolute;
   top: 6px;
-  right: 6px;
+  right: 6px; */
 
   width: 28px;
   height: 28px;
