@@ -30,7 +30,7 @@ export const UpdateMachineTags = ({
     onError("");
     onSuccess("");
     try {
-      const res = await fetch(`/api/machines/${id}/tags`, {
+      const res = await fetch(`/api/machines/${data?.id}/tags`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ tags: newTags }),
