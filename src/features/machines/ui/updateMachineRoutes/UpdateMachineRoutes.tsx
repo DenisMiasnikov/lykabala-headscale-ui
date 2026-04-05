@@ -2,16 +2,23 @@ import { useState } from "react";
 
 import styles from "./updateMachineRoutes.module.css";
 import { Modal2 } from "../../../../shared/ui/modal2/Modal2";
+import { MachineDetails } from "../../../../entities/machine/types";
+
+interface IUpdateMachineRoutesProps {
+  data: MachineDetails;
+  onClose?: () => void;
+  onSave?: (message?: string) => void;
+  onSuccess?: (message?: string) => void;
+  onError?: (message?: string) => void;
+}
 
 export const UpdateMachineRoutes = ({
   data,
-  onClose,
-  onSave,
   onSuccess,
   onError,
-}) => {
+}: IUpdateMachineRoutesProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState(data.routes || "");
+  const [value, setValue] = useState(data.approvedRoutes || "");
 
   async function saveApprovedRoutes() {
     onError("");

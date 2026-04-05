@@ -8,20 +8,10 @@ import { UpdateMachineTags } from "../../features/machines/ui/updateMachineTags/
 import { UpdateMachineRoutes } from "../../features/machines/ui/updateMachineRoutes/UpdateMachineRoutes";
 import { ExpireMachine } from "../../features/machines/ui/expireMachine/ExpireMachine";
 import { BackFlipIps } from "../../features/machines/ui/backfilips/BackFlipIps";
-import type { NamespaceDetails } from "../../entities/namespace/types";
-
-type MachineDetailsProps = {
-  id: string;
-};
-
-type MachineDetails = {
-  id?: string;
-  givenName?: string;
-  availableRoutes?: string[];
-  approvedRoutes?: string[];
-  user?: NamespaceDetails;
-  tags?: string[];
-};
+import type {
+  MachineDetailsProps,
+  MachineDetails,
+} from "../../entities/machine/types";
 
 export default function MachineDetails({ id }: MachineDetailsProps) {
   const [details, setDetails] = useState<MachineDetails | null>(null);
@@ -63,9 +53,7 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
               />
 
               <div className={styles.userInfo}>
-                <h2 className={styles.title}>
-                  {details.givenName || details.name}
-                </h2>
+                <h2 className={styles.title}>{details.givenName}</h2>
                 <p className={styles.subtitle}>{details.user.displayName}</p>
               </div>
 

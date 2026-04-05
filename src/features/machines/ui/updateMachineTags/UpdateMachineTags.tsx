@@ -2,16 +2,23 @@ import { useState } from "react";
 
 import styles from "./updateMachineTags.module.css";
 import { Modal2 } from "../../../../shared/ui/modal2/Modal2";
+import { MachineDetails } from "../../../../entities/machine/types";
+
+interface IUpdateMachineTagsProps {
+  data: MachineDetails;
+  onClose?: () => void;
+  onSave?: (message?: string) => void;
+  onSuccess?: (message?: string) => void;
+  onError?: (message?: string) => void;
+}
 
 export const UpdateMachineTags = ({
   data,
-  onClose,
-  onSave,
   onError,
   onSuccess,
-}) => {
+}: IUpdateMachineTagsProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState(data.tags || "");
+  const [value, setValue] = useState(data.tags.join(",") || "");
 
   async function addTag() {
     const trimmed = value.trim();
@@ -40,7 +47,7 @@ export const UpdateMachineTags = ({
         onError(data.error || "Failed to save tags");
         return;
       }
-      setValue(newTags);
+      setValue(newTags.join(","));
       onSuccess("Tags updated");
     } catch (err) {
       onError("Network error");

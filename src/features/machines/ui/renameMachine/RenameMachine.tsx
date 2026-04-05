@@ -2,16 +2,23 @@ import { useState } from "react";
 
 import styles from "./renameMachine.module.css";
 import { Modal2 } from "../../../../shared/ui/modal2/Modal2";
+import { MachineDetails } from "../../../../entities/machine/types";
+
+interface IRenameMachineProps {
+  data: MachineDetails;
+  onClose?: () => void;
+  onSave?: (message?: string) => void;
+  onSuccess?: (message?: string) => void;
+  onError?: (message?: string) => void;
+}
 
 export const RenameMachine = ({
   data,
-  onClose,
-  onSave,
   onSuccess,
   onError,
-}) => {
+}: IRenameMachineProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [value, setValue] = useState(data.givenName || data.name);
+  const [value, setValue] = useState(data.givenName);
 
   async function renameMachine() {
     onError("");
