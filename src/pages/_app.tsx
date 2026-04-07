@@ -1,10 +1,13 @@
-import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Toolbar from "../shared/ui/toolbar/Toolbar";
+import styles from "../shared/ui/toolbar/toolbar.module.css";
+import {Layout} from "../shared/ui/layout/Layout";
 
-const navLinks = [
+import "../styles/globals.css";
+
+const navItems = [
   { href: "/machines", label: "Machines" },
   { href: "/namespaces", label: "Namespaces" },
   { href: "/users", label: "Users" },
@@ -15,7 +18,6 @@ const navLinks = [
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/check-auth", { method: "POST" })
@@ -23,10 +25,10 @@ export default function App({ Component, pageProps }: AppProps) {
       .catch(() => setLoggedIn(false));
   }, []);
 
-  async function handleLogout() {
-    await fetch("/api/logout", { method: "POST" });
-    window.location.href = "/login";
-  }
+  // async function handleLogout() {
+  //   await fetch("/api/logout", { method: "POST" });
+  //   window.location.href = "/login";
+  // }
 
   if (!loggedIn && router.pathname !== "/login") {
     return <Component {...pageProps} />;
@@ -36,65 +38,16 @@ export default function App({ Component, pageProps }: AppProps) {
   const showNavbar = loggedIn && !isLoginPage;
 
   return (
-    <div>
+    <Layout>
       {showNavbar && (
-        <>
-          <nav className="navbar">
-            <div className="nav-brand">Lykabala UI</div>
-            <div className="nav-links">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`nav-link ${router.pathname.startsWith(link.href) ? "active" : ""}`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-            <div className="nav-right">
-              <button className="button secondary" onClick={handleLogout}>
-                Logout
-              </button>
-            </div>
-            <button
-              className={`hamburger ${mobileMenuOpen ? "active" : ""}`}
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              <span></span>
-              <span></span>
-              <span></span>
-            </button>
-          </nav>
-          <div className={`mobile-menu ${mobileMenuOpen ? "active" : ""}`}>
-            <div className="mobile-menu-content">
-              <div className="mobile-nav-links">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`nav-link ${router.pathname.startsWith(link.href) ? "active" : ""}`}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-              <div className="mobile-nav-right">
-                <button className="button secondary" onClick={handleLogout}>
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-          <div
-            className={`mobile-backdrop ${mobileMenuOpen ? "active" : ""}`}
-            onClick={() => setMobileMenuOpen(false)}
-          ></div>
-        </>
+        <Toolbar navItems={navItems}/>
       )}
+
       <Component {...pageProps} />
-    </div>
+
+      {/*<footer className={styles.footer}>*/}
+      {/*  © 2026 Apple Clone. All rights reserved.*/}
+      {/*</footer>*/}
+    </Layout>
   );
 }

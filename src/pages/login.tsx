@@ -1,4 +1,9 @@
 import { useState } from "react";
+import {Input} from "../shared/ui/input/Input";
+import {Form} from "../shared/ui/form/Form";
+import {Button} from "../shared/ui/button/Button";
+
+import styles from "../shared/ui/toolbar/toolbar.module.css";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -25,36 +30,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="page">
-      <div className="container">
-        <div className="card" style={{ maxWidth: 480, margin: "80px auto" }}>
-          <h1 className="title">Headscale Login</h1>
-          <p className="subtitle">Sign in to manage your private tailnet.</p>
-          <form onSubmit={handleSubmit}>
-            <div className="row" style={{ flexDirection: "column" }}>
-              <input
-                className="input"
-                placeholder="Username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                required
-              />
-              <input
-                className="input"
-                placeholder="Password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-              />
-              <button className="button" type="submit">
-                Sign In
-              </button>
-              {error ? <div className="error">{error}</div> : null}
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+    <Form title="Welcome Back" subtitle="Sign in to continue manage your private tailnet">
+      <Input
+        value={username}
+        onChange={setUsername}
+        type="text"
+        placeholder="Username"
+      />
+
+      <Input
+        value={password}
+        onChange={setPassword}
+        type="password"
+        placeholder="Password"
+      />
+
+      <Button
+        type="submit"
+        label={'Sign In'}
+        onClick={handleSubmit}
+      />
+
+      {error ? <div className="error">{error}</div> : null}
+
+      {/*<div className={styles.links}>*/}
+      {/*  <a href="#">Forgot password?</a>*/}
+      {/*  <a href="#">Create account</a>*/}
+      {/*</div>*/}
+    </Form>
   );
 }

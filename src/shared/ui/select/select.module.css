@@ -1,0 +1,24 @@
+.selectWrapper {
+    position: relative;
+}
+
+.select {
+    width: 100%;
+    padding: 12px 36px 12px 12px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    appearance: none;
+    font-size: 16px;
+}
+
+.selectWrapper::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    transform: translateY(-50%) rotate(45deg);
+}
