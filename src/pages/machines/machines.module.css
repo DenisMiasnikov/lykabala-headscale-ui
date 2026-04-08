@@ -31,11 +31,3 @@
     border-radius: 10px;
     text-align: center;
 }
-
-.emptyState {
-    background: #fff;
-    border-radius: 16px;
-    padding: 30px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-}

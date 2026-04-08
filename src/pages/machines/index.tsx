@@ -62,10 +62,7 @@ export default function MachinesPage() {
 
       <div className={styles.namespaces}>
         {!machines.length ? (
-          <div className={styles.emptyState}>
-            <h3>No machines yet.</h3>
-            <p>Register a node to see machines appear here.</p>
-          </div>
+          <Card title={'No machines yet.'} subTitle={'Register a node to see machines appear here.'} empty={true} />
         ) : (
           <>
             {machines.map((machine) => {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Modal from "../../../../shared/ui/modal/Modal";
+import {Button} from "../../../../shared/ui/button/Button";
 
 interface ICreateNamespaceProps {
   onClose?: () => void;
@@ -47,13 +48,12 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
 
   return (
     <>
-      <button
-        className="button"
+      <Button
+        label={'Create Namespace'}
+        type={'button'}
         onClick={() => setIsOpen(true)}
-        style={{ marginBottom: 24 }}
-      >
-        Create Namespace
-      </button>
+        mode={'action'}
+      />
       <Modal
         isOpen={isOpen}
         onClose={() => {

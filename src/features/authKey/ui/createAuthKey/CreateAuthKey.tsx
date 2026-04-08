@@ -1,8 +1,10 @@
-import { useState } from "react";
+import {Fragment, useState} from "react";
 import Modal from "../../../../shared/ui/modal/Modal";
 import type { AuthKey } from "../../../../entities/authKey/types";
 import { KeyIcon } from "../../../../shared/ui/icons/Icons";
 import { useCreateAuthKey } from "../../model/hooks/useCreateAuthKey";
+import {Button} from "../../../../shared/ui/button/Button";
+import Modal2 from "../../../../shared/ui/modal2/Modal2";
 
 interface ICreateAuthKeyProps {
   onClose?: () => void;
@@ -41,17 +43,15 @@ const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
   } = useCreateAuthKey({ onSuccess });
 
   return (
-    <>
-      <button
-        className="button secondary action-button"
+    <Fragment>
+      <Button
+        label={'Key'}
+        mode={'action'}
+        type={'button'}
         onClick={() => setIsOpen(true)}
-        title="Generate Pre-Auth Key"
-      >
-        <KeyIcon />
-        <span className="button-label">Key</span>
-      </button>
+      />
 
-      <Modal
+      <Modal2
         isOpen={isOpen}
         onClose={() => {
           onClose?.();
@@ -207,8 +207,8 @@ const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
             </button>
           </>
         )}
-      </Modal>
-    </>
+      </Modal2>
+    </Fragment>
   );
 };
 

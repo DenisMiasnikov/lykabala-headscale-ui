@@ -43,7 +43,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Toolbar navItems={navItems} right={<div onClick={handleLogout}><LogOutIcon /></div>}/>
       )}
 
-      <div className={showNavbar ? 'withToolBar' : ''}>
+      <div className={`body ${showNavbar ? 'withToolBar' : ''}`}>
         <Component {...pageProps} />
       </div>
 

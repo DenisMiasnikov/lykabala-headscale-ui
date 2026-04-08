@@ -1,0 +1,8 @@
+.namespacesGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px,1fr));
+    gap: 16px;
+    justify-items: center;
+    align-items: center;
+}
