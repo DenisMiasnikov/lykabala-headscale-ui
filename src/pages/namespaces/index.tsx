@@ -147,9 +147,11 @@ export default function NamespacesPage() {
         {namespaces.length === 0 ? (
           <Card title={'No namespaces yet.'} subTitle={'Create a namespace to see namespaces appear here.'} empty={true} />
         ) : (
-          <div className={styles.namespacesGrid} style={{maxWidth: '360px'}}>
+          <div className={styles.namespacesGrid}>
             {namespaces.map((ns) => (
-              <NameSpaceCard key={ns.id} details={ns} actions={() => renderActions(ns)}/>
+              <div key={ns.id} style={{maxWidth: '360px'}}>
+                <NameSpaceCard details={ns} actions={() => renderActions(ns)}/>
+              </div>
             ))}
           </div>
         )}
