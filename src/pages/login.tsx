@@ -1,9 +1,9 @@
+import Image from "next/image";
 import { useState } from "react";
 import {Input} from "../shared/ui/input/Input";
 import {Form} from "../shared/ui/form/Form";
 import {Button} from "../shared/ui/button/Button";
 
-import styles from "../shared/ui/toolbar/toolbar.module.css";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -30,7 +30,17 @@ export default function LoginPage() {
   }
 
   return (
-    <Form title="Welcome Back" subtitle="Sign in to continue manage your private tailnet">
+    <Form title={
+      <div style={{ display: "flex", flexDirection: 'column', alignItems: "center", gap: 8 }}>
+        <Image
+          src="/logo.png"
+          alt="My photo"
+          width={56}
+          height={56}
+        />
+        {'Welcome Back'}
+      </div>
+    } subtitle="Sign in to continue manage your private tailnet">
       <Input
         value={username}
         onChange={setUsername}
