@@ -1,0 +1,165 @@
+/* ================= CSS MODULE ================= */
+
+.page {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.7);
+    border-bottom: 1px solid #eee;
+    z-index: 50;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 16px;
+}
+
+.inner {
+    height: 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo { font-weight: 600; }
+
+.nav { display: none; gap: 20px; }
+
+.navItem { color: #666; text-decoration: none; }
+
+.icon { width: 18px; height: 18px; }
+
+.menuButton { background: none; border: none; }
+
+.mobileMenu { padding: 12px; background: white; }
+
+.mobileItem { display: block; padding: 10px 0; border-bottom: 1px solid #eee; }
+
+.main {
+    /*margin-top: 80px;*/
+    padding: 20px;
+    /*display: grid;*/
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.form {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 0.5fr;
+    gap: 16px;
+}
+
+.cardTitle { margin-bottom: 12px; }
+
+.selectWrapper { position: relative; margin-bottom: 10px; }
+
+.select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.button {
+    width: 100%;
+    padding: 10px;
+    background: #0071e3;
+    color: white;
+    border: none;
+    border-radius: 20px;
+}
+
+.namespaces {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.namespaceCard {
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px;
+}
+
+.namespaceHeader {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.machineGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+    gap: 10px;
+}
+
+.machineCard {
+    background: #f5f5f7;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.pageHeader {
+    grid-column: 1 / -1;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #6e6e73;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+@media (min-width: 768px) {
+    .nav { display: flex; }
+
+    .main {
+        grid-template-columns: 1fr 2fr;
+    }
+}
+
+
+.emptyState {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}

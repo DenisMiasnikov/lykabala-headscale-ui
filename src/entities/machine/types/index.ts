@@ -1,11 +1,11 @@
-import type { NamespaceDetails } from "../../namespace/types";
+import type {NamespaceDetails} from "../../namespace/types";
 
 export type Machine = {
   id: string;
   givenName: string;
   ipAddresses?: string[];
   online?: boolean;
-  user?: { name?: string };
+  user?: NamespaceDetails;
 };
 
 export type MachineDetailsProps = {

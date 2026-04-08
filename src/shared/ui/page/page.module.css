@@ -1,0 +1,23 @@
+.main {
+    /*margin-top: 80px;*/
+    padding: 20px;
+    /*display: grid;*/
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pageHeader {
+    grid-column: 1 / -1;
+}
+
+.title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #6e6e73;
+    font-size: 14px;
+    margin-top: 4px;
+}

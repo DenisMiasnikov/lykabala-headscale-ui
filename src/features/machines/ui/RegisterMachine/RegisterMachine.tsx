@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import type { Namespace } from "../../../../entities/namespace/types";
+import {Input} from "../../../../shared/ui/input/Input";
+import {Button} from "../../../../shared/ui/button/Button";
+import {Select} from "../../../../shared/ui/select/Select";
+import {Card} from "../../../../shared/ui/card/Card";
+
+import styles from './index.module.css'
 
 interface IRegisterMachineProps {
   onSuccess?: (message?: string) => void;
@@ -108,63 +114,30 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   }, []);
 
   return (
-    <div className="card" style={{ marginBottom: 24 }}>
-      <h2 className="title" style={{ fontSize: 22 }}>
-        Register Node Key
-      </h2>
-      <div className="row" style={{ alignItems: "center" }}>
-        <div style={{ flex: 1, minWidth: 220 }}>
-          <label>User {namespacesLoading && "(Loading...)"}</label>
-          <select
-            className="input"
-            value={registerUser}
-            onChange={(event) => setRegisterUser(event.target.value)}
-            disabled={loading || namespacesLoading}
-          >
-            <option value="">Select a user</option>
-            {namespaces.map((ns) => (
-              <option key={ns.id || ns.name} value={ns.name}>
-                {ns.name}
-              </option>
-            ))}
-          </select>
-          {namespacesError && (
-            <div className="error" style={{ marginTop: 4 }}>
-              {namespacesError}
-            </div>
-          )}
-        </div>
-        <div style={{ flex: 2, minWidth: 260 }}>
-          <label>Node Key</label>
-          <input
-            className="input"
-            value={nodeKey}
-            onChange={(event) => setNodeKey(event.target.value)}
-            placeholder="Paste node key from Tailscale app"
-            disabled={loading}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") registerNode();
-            }}
-          />
-        </div>
-        <div style={{ alignSelf: "flex-end" }}>
-          <button
-            className="button"
-            onClick={registerNode}
-            disabled={loading}
-          >
-            {loading ? "Registering..." : "Register"}
-          </button>
-        </div>
+    <Card title="Register Node Key">
+      <div className={styles.form}>
+        <Select
+          value={registerUser}
+          onChange={setRegisterUser}
+          items={namespaces.map(({id, name}) => ({label: name, value: id}))}
+          placeholder="Select user"
+        />
+
+        <Input
+          value={nodeKey}
+          onChange={setNodeKey}
+          type="text"
+          placeholder="Paste node key from Tailscale app"
+        />
+
+        <Button
+          type="button"
+          label={loading ? "Registering..." : "Register"}
+          onClick={registerNode}
+        />
       </div>
-      {error && <div className="error">{error}</div>}
-      {result && (
-        <div className="pill online" style={{ marginTop: 12 }}>
-          {result}
-        </div>
-      )}
-    </div>
-  );
+    </Card>
+  )
 };
 
 export default RegisterMachine;

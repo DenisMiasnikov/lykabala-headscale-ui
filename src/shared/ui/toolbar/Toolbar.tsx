@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useState } from "react";
 import styles from './toolbar.module.css'
 
@@ -14,9 +15,19 @@ export default function Toolbar({navItems}) {
               className={styles.menuButton}
               onClick={() => setOpen(!open)}
             >
-              {/*<Menu className={styles.icon} />*/}
-              <span className={styles.logo}></span>
+              <Image
+                src="/logo.png"
+                alt="My photo"
+                width={56}
+                height={56}
+              />
             </button>
+            <Image
+              src="/logo.png"
+              alt="My photo"
+              width={56}
+              height={56}
+            />
           </div>
 
           {/* Center */}

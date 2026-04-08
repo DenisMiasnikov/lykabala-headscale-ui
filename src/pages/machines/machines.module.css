@@ -1,0 +1,33 @@
+.namespaces {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.namespaceCard {
+    background: #fff;
+    border-radius: 16px;
+    padding: 12px;
+}
+
+.namespaceHeader {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.machineGrid {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px,1fr));
+    gap: 16px;
+    justify-items: center;
+    align-items: center;
+}
+
+.machineCard {
+    background: #f5f5f7;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
