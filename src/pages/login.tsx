@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import {Input} from "../shared/ui/input/Input";
 import {Form} from "../shared/ui/form/Form";
 import {Button} from "../shared/ui/button/Button";
@@ -10,7 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     setError("");
 
