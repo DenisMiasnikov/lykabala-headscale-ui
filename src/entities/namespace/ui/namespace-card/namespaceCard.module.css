@@ -42,11 +42,13 @@
     font-size: 16px;
     font-weight: 600;
     color: #111;
+    margin: unset;
 }
 
 .subtitle {
     font-size: 13px;
     color: #777;
+    margin: unset;
 }
 
 /* Status */
