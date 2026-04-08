@@ -57,6 +57,10 @@
     border: none;
 }
 
+.menuButton img {
+    padding: 8px;
+}
+
 .mobileMenu {
     padding: 12px;
     background: white;
@@ -85,6 +89,10 @@
     color: #6e6e73;
 }
 
+.deckTopImage {
+    display: none;
+}
+
 @media (min-width: 768px) {
     .nav {
         display: flex;
@@ -92,5 +100,9 @@
 
     .menuButton {
         display: none;
+    }
+
+    .deckTopImage {
+        display: inline;
     }
 }

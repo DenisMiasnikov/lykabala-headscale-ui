@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useState } from "react";
 import styles from './toolbar.module.css'
 
-export default function Toolbar({navItems}) {
+export default function Toolbar({navItems, right}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,6 +27,7 @@ export default function Toolbar({navItems}) {
               alt="My photo"
               width={56}
               height={56}
+              className={styles.deckTopImage}
             />
           </div>
 
@@ -41,7 +42,7 @@ export default function Toolbar({navItems}) {
 
           {/* Right */}
           <div className={styles.right}>
-            {/*<Search className={styles.icon} />*/}
+            {right}
           </div>
         </div>
       </div>

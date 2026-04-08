@@ -1,8 +1,8 @@
 /* ================= CSS MODULE ================= */
 
-.page {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
-}
+/*.page {*/
+/*    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;*/
+/*}*/
 
 .header {
     position: fixed;
@@ -68,7 +68,6 @@
 
 .form {
     display: grid;
-    grid-template-columns: 1.5fr 1.5fr 0.5fr;
     gap: 16px;
 }
 
@@ -152,6 +151,10 @@
 
     .main {
         grid-template-columns: 1fr 2fr;
+    }
+
+    .form {
+        grid-template-columns: 1.5fr 1.5fr 0.5fr;
     }
 }
 
