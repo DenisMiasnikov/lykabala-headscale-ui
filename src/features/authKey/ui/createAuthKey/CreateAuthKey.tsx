@@ -2,7 +2,7 @@ import {Fragment} from "react";
 import type { AuthKey } from "../../../../entities/authKey/types";
 import { useCreateAuthKey } from "../../model/hooks/useCreateAuthKey";
 import {Button} from "../../../../shared/ui/button/Button";
-import Modal2 from "../../../../shared/ui/modal2/Modal2";
+import Modal from "../../../../shared/ui/modal/Modal";
 
 interface ICreateAuthKeyProps {
   onClose?: () => void;
@@ -48,7 +48,7 @@ const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
         onClick={() => setIsOpen(true)}
       />
 
-      <Modal2
+      <Modal
         isOpen={isOpen}
         onClose={() => {
           onClose?.();
@@ -204,7 +204,7 @@ const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
             </button>
           </>
         )}
-      </Modal2>
+      </Modal>
     </Fragment>
   );
 };

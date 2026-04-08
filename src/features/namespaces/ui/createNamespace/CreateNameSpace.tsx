@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Modal from "../../../../shared/ui/modal/Modal";
 import {Button} from "../../../../shared/ui/button/Button";
+import {Card} from "../../../../shared/ui/card/Card";
+import {Input} from "../../../../shared/ui/input/Input";
 
 interface ICreateNamespaceProps {
   onClose?: () => void;
@@ -62,63 +64,51 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
         }}
         title="Create Namespace"
       >
-        <div className="card" style={{ marginBottom: 24 }}>
-          <h2 className="title" style={{ fontSize: 22 }}>
-            Create Namespace
-          </h2>
-          <div className="row" style={{ alignItems: "flex-start", gap: 16 }}>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <label>Name *</label>
-              <input
-                className="input"
-                value={newNamespace}
-                onChange={(e) => setNewNamespace(e.target.value)}
-                placeholder="e.g. personal"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") createNamespace();
-                }}
-              />
-            </div>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <label>Display Name</label>
-              <input
-                className="input"
-                value={newDisplayName}
-                onChange={(e) => setNewDisplayName(e.target.value)}
-                placeholder="e.g. Personal Space"
-              />
-            </div>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <label>Email</label>
-              <input
-                className="input"
-                type="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="user@example.com"
-              />
-            </div>
-          </div>
-          <div
-            className="row"
-            style={{ marginTop: 16, alignItems: "flex-start" }}
-          >
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <label>Picture URL</label>
-              <input
-                className="input"
-                value={newPictureUrl}
-                onChange={(e) => setNewPictureUrl(e.target.value)}
-                placeholder="https://..."
-              />
-            </div>
-          </div>
-          <div style={{ marginTop: 16 }}>
-            <button className="button secondary" onClick={createNamespace}>
-              Add Namespace
-            </button>
-          </div>
-        </div>
+        <Card>
+          <Input
+            value={newNamespace}
+            onChange={setNewNamespace}
+            type="text"
+            placeholder="e.g. personal"
+
+            // onKeyDown={(e) => {
+            //   if (e.key === "Enter") createNamespace();
+            // }}
+          />
+          <Input
+            value={newDisplayName}
+            onChange={setNewDisplayName}
+            type="text"
+            placeholder="e.g. Personal Space"
+
+            // onKeyDown={(e) => {
+            //   if (e.key === "Enter") createNamespace();
+            // }}
+          />
+          <Input
+            value={newEmail}
+            onChange={setNewEmail}
+            type="email"
+            placeholder="user@example.com"
+
+            // onKeyDown={(e) => {
+            //   if (e.key === "Enter") createNamespace();
+            // }}
+          />
+
+          <Input
+            value={newPictureUrl}
+            onChange={setNewPictureUrl}
+            type="text"
+            placeholder="https://..."
+
+            // onKeyDown={(e) => {
+            //   if (e.key === "Enter") createNamespace();
+            // }}
+          />
+
+          <Button label={'Add Namespace'} mode={'primary'} onClick={createNamespace}/>
+        </Card>
       </Modal>
     </>
   );

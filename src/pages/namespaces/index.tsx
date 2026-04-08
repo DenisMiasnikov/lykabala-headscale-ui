@@ -79,6 +79,24 @@ export default function NamespacesPage() {
     await loadData();
   }
 
+  async function deleteNamespace(id: string, name: string) {
+    const ok = window.confirm(`Delete namespace "${name}"? This cannot be undone.`);
+    if (!ok) return;
+
+    const res = await fetch(`/api/namespaces/${id}`, {
+      method: "DELETE"
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(data.error || "Failed to delete namespace");
+      return;
+    }
+
+    setMessage("Namespace deleted");
+    await loadData();
+  }
+
   const renderActions = useCallback((row) => {
     return (
       <>
@@ -118,7 +136,7 @@ export default function NamespacesPage() {
               label={'Delete'}
               mode={'danger'}
               type={'button'}
-              // onClick={() => deleteNamespace(row.id, row.name)}
+              onClick={() => deleteNamespace(row.id, row.name)}
             />
           </>
         )}
@@ -134,7 +152,6 @@ export default function NamespacesPage() {
           {message}
         </div>
       )}
-
       <Card title={'Namespaces'} rightAction={
         <CreateNamespace
           onSuccess={(msg) => {
@@ -156,8 +173,6 @@ export default function NamespacesPage() {
           </div>
         )}
       </Card>
-
-
     </Page>
   )
 }
