@@ -71,7 +71,7 @@ export default function MachinesPage() {
                   <div className={styles.machineGrid}>
                     {machine.machines.map((m) => (
                       <div key={m.id} onClick={() => goToMachine(m.id)} style={{maxWidth: '360px'}}>
-                        <MachineCard details={m}/>
+                        <MachineCard machine={m} />
                       </div>
                     ))}
                   </div>

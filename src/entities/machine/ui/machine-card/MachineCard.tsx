@@ -6,35 +6,36 @@ import {formatDate} from "../../../../shared/lib/date";
 import styles from "./machineCard.module.css";
 
 interface MachineCardProps {
-  details: MachineDetails;
+  machine: MachineDetails;
   actions?: () => React.ReactNode;
+  details?: boolean;
 }
 
-export default function MachineCard({ details, actions }: MachineCardProps) {
+export default function MachineCard({ machine, actions, details }: MachineCardProps) {
   return (
     <>
-        {details && (
+        {machine && (
           <div className={styles.card}>
             <div className={styles.header}>
               <img
-                src={details.user.profilePicUrl}
+                src={machine.user.profilePicUrl}
                 alt="avatar"
                 className={styles.avatar}
               />
 
               <div className={styles.userInfo}>
-                <h2 className={styles.title}>{details.givenName}</h2>
-                <p className={styles.subtitle}>{details.user.displayName}</p>
+                <h2 className={styles.title}>{machine.givenName}</h2>
+                <p className={styles.subtitle}>{machine.user.displayName}</p>
               </div>
 
               <div className={styles.statusWrapper}>
                 <span
                   className={`${styles.statusDot} ${
-                    details.online ? styles.online : styles.offline
+                    machine.online ? styles.online : styles.offline
                   }`}
                 />
                 <span className={styles.statusText}>
-                  {details.online ? "Online" : "Offline"}
+                  {machine.online ? "Online" : "Offline"}
                 </span>
               </div>
             </div>
@@ -43,7 +44,7 @@ export default function MachineCard({ details, actions }: MachineCardProps) {
             <div className={styles.section}>
               <p className={styles.label}>IP Addresses</p>
               <div className={styles.ipList}>
-                {details.ipAddresses.map((ip) => (
+                {machine.ipAddresses.map((ip) => (
                   <span key={ip} className={styles.ip}>
                     {ip}
                   </span>
@@ -53,10 +54,10 @@ export default function MachineCard({ details, actions }: MachineCardProps) {
 
             {/* Info */}
             <div className={styles.grid}>
-              <Info label="User" value={details.user.name} />
-              <Info label="Node ID" value={details.id} />
-              <Info label="Last Seen" value={formatDate(details.lastSeen)} />
-              <Info label="Created" value={formatDate(details.createdAt)} />
+              <Info label="User" value={machine.user.name} />
+              <Info label="Node ID" value={machine.id} />
+              <Info label="Last Seen" value={formatDate(machine.lastSeen)} />
+              <Info label="Created" value={formatDate(machine.createdAt)} />
             </div>
 
             {/* Actions */}
@@ -67,15 +68,19 @@ export default function MachineCard({ details, actions }: MachineCardProps) {
             )}
 
             {/* Technical */}
-            <details className={styles.details}>
-              <summary className={styles.summary}>Technical details</summary>
+            {
+              details && (
+                <details className={styles.details}>
+                  <summary className={styles.summary}>Technical details</summary>
 
-              <div className={styles.keys}>
-                <KeyItem label="Machine Key" value={details.machineKey} />
-                <KeyItem label="Node Key" value={details.nodeKey} />
-                <KeyItem label="Disco Key" value={details.discoKey} />
-              </div>
-            </details>
+                  <div className={styles.keys}>
+                    <KeyItem label="Machine Key" value={machine.machineKey} />
+                    <KeyItem label="Node Key" value={machine.nodeKey} />
+                    <KeyItem label="Disco Key" value={machine.discoKey} />
+                  </div>
+                </details>
+              )
+            }
           </div>
         )}
       </>

@@ -86,7 +86,7 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
               </div>
             ) : null}
 
-            <MachineCard details={details} actions={() => actions(details, handleSuccess, setError)}/>
+            <MachineCard machine={details} actions={() => actions(details, handleSuccess, setError)} details/>
           </Card>
         )}
       </Page>
