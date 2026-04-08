@@ -30,7 +30,7 @@ export default function NamespacesPage() {
       const res = await fetch("/api/namespaces");
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to load namespaces");
+       new Error(data.error || "Failed to load namespaces");
       }
       const nsList = Array.isArray(data.namespaces) ? data.namespaces : [];
       setNamespaces(nsList);

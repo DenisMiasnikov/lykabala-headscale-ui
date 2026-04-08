@@ -1,7 +1,5 @@
-import {Fragment, useState} from "react";
-import Modal from "../../../../shared/ui/modal/Modal";
+import {Fragment} from "react";
 import type { AuthKey } from "../../../../entities/authKey/types";
-import { KeyIcon } from "../../../../shared/ui/icons/Icons";
 import { useCreateAuthKey } from "../../model/hooks/useCreateAuthKey";
 import {Button} from "../../../../shared/ui/button/Button";
 import Modal2 from "../../../../shared/ui/modal2/Modal2";
@@ -16,7 +14,6 @@ interface ICreateAuthKeyProps {
 const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
   onClose,
   onSuccess,
-  onError,
   namespaces,
 }) => {
   const {

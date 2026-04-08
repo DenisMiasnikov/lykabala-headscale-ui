@@ -53,10 +53,3 @@ const Info = ({ label, value }) => (
     <p className={styles.infoValue}>{value}</p>
   </div>
 );
-
-const KeyItem = ({ label, value }) => (
-  <div className={styles.keyItem}>
-    <span className={styles.keyLabel}>{label}: </span>
-    <span>{value}</span>
-  </div>
-);

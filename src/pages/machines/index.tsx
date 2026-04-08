@@ -35,7 +35,7 @@ export default function MachinesPage() {
       const res = await fetch("/api/machines");
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Failed to load machines");
+        new Error(data.error || "Failed to load machines");
       }
       const data = await res.json();
       setMachines(mapMachinesByUserName(Array.isArray(data.machines) ? data.machines : []));
