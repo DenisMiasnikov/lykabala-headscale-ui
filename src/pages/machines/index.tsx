@@ -70,7 +70,7 @@ export default function MachinesPage() {
                 <Card key={machine.name} title={machine.name} collapsable={true}>
                   <div className={styles.machineGrid}>
                     {machine.machines.map((m) => (
-                      <div key={m.id} onClick={() => goToMachine(m.id)}>
+                      <div key={m.id} onClick={() => goToMachine(m.id)} style={{maxWidth: '360px'}}>
                         <MachineCard details={m}/>
                       </div>
                     ))}
