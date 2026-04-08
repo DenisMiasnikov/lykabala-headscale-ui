@@ -4,7 +4,7 @@ export type Namespace = {
   createdAt?: string;
   displayName?: string;
   email?: string;
-  pictureUrl?: string;
+  profilePicUrl?: string;
 };
 
 export type NamespaceDetailsProps = {
