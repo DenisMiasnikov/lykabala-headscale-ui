@@ -6,7 +6,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 // endpoint: process.env.MINIO_ENDPOINT || "http://minio:9000",
 
 const s3Client = new S3Client({
-  endpoint: "http://minio:9001",
+  endpoint: "http://minio:9000",
   region: "us-east-1",
   credentials: {
     accessKeyId: process.env.MINIO_ACCESS_KEY || "minioadmin",
