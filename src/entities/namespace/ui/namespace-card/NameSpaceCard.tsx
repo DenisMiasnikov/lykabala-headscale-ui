@@ -17,7 +17,7 @@ export default function NameSpaceCard({ details, actions }: MachineCardProps) {
           <div className={styles.card}>
             <div className={styles.header}>
               <img
-                src={details.profilePicUrl}
+                src={`/api/image?key=${encodeURIComponent(details.profilePicUrl)}`}
                 alt="avatar"
                 className={styles.avatar}
               />

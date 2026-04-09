@@ -30,11 +30,14 @@ export default async function handler(
     const base64Buffer = base64Data.replace(/^data:.*?;base64,/, "");
     const buffer = Buffer.from(base64Buffer, "base64");
 
-    const url = await uploadToMinIO(fileName, buffer, contentType);
+    const key = await uploadToMinIO(fileName, buffer, contentType);
 
-    return res.json({ url });
+    return res.json({ key }); // ✅ return key only
   } catch (err) {
-    console.error("Upload error:", (err as Error).message);
-    return res.status(500).json({ error: "Upload failed" });
+    console.error("Upload error FULL:", err);
+    return res.status(500).json({
+      error: "Upload failed",
+      details: (err as any)?.message,
+    });
   }
 }

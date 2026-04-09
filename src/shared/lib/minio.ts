@@ -1,5 +1,4 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const s3Client = new S3Client({
   endpoint: process.env.MINIO_ENDPOINT || "http://minio:9000",
@@ -18,7 +17,7 @@ export async function uploadToMinIO(
   fileBuffer: Buffer,
   contentType: string
 ): Promise<string> {
-  const key = `${Date.now()}-${fileName}`;
+  const key = `avatars/${Date.now()}-${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: BUCKET,
@@ -29,6 +28,5 @@ export async function uploadToMinIO(
 
   await s3Client.send(command);
 
-  const baseUrl = process.env.MINIO_URL || `https://${process.env.DOMAIN}/avatars`;
-  return `${baseUrl}/${key}`;
+  return key; // ✅ IMPORTANT
 }

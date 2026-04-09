@@ -42,8 +42,8 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
           }),
         });
         const data = await res.json();
-        if (data.url) {
-          setNewPictureUrl(data.url);
+        if (data.key) {
+          setNewPictureUrl(data.key);
         }
         setUploading(false);
       };
@@ -146,9 +146,13 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
             {newPictureUrl && (
               <div style={{ marginTop: "0.5rem" }}>
                 <img
-                  src={newPictureUrl}
+                  src={`/api/image?key=${encodeURIComponent(newPictureUrl)}`}
                   alt="Preview"
-                  style={{ maxWidth: "100px", maxHeight: "100px", borderRadius: "8px" }}
+                  style={{
+                    maxWidth: "100px",
+                    maxHeight: "100px",
+                    borderRadius: "8px",
+                  }}
                 />
               </div>
             )}
