@@ -10,6 +10,7 @@ import {Card} from "../../shared/ui/card/Card";
 import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
 
 import styles from "./namespaces.module.css";
+import UpdateNamespaceImage from "../../features/namespaces/ui/updateNamespaceImage/UpdateNamespaceImage";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -131,6 +132,14 @@ export default function NamespacesPage() {
                 );
               }}
               namespaces={namespaces}
+            />
+            <UpdateNamespaceImage
+              onSuccess={() => {
+                setMessage(
+                  `Image for ${row.user?.name || "namespace"} updated`,
+                );
+              }}
+              id={row.id}
             />
             <Button
               label={'Delete'}
