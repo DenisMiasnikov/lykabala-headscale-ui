@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Modal from "../../../../shared/ui/modal/Modal";
 import {Button} from "../../../../shared/ui/button/Button";
 import {Card} from "../../../../shared/ui/card/Card";
@@ -20,6 +20,39 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
   const [newDisplayName, setNewDisplayName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPictureUrl, setNewPictureUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64 = reader.result as string;
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fileName: file.name,
+            contentType: file.type,
+            base64Data: base64,
+          }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          setNewPictureUrl(data.url);
+        }
+        setUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch {
+      onError?.("Upload failed");
+      setUploading(false);
+    }
+  }
 
   async function createNamespace() {
     if (!newNamespace.trim()) return;
@@ -96,11 +129,36 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
             // }}
           />
 
+          <div style={{ marginBottom: "1rem" }}>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+            />
+            <Button
+              label={uploading ? "Uploading..." : "Upload Image"}
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            />
+            {newPictureUrl && (
+              <div style={{ marginTop: "0.5rem" }}>
+                <img
+                  src={newPictureUrl}
+                  alt="Preview"
+                  style={{ maxWidth: "100px", maxHeight: "100px", borderRadius: "8px" }}
+                />
+              </div>
+            )}
+          </div>
+
           <Input
             value={newPictureUrl}
             onChange={setNewPictureUrl}
             type="text"
-            placeholder="https://..."
+            placeholder="Or paste image URL"
 
             // onKeyDown={(e) => {
             //   if (e.key === "Enter") createNamespace();
