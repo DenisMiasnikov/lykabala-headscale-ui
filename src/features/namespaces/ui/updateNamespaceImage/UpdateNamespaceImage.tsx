@@ -57,7 +57,7 @@ export const UpdateNamespaceImage: React.FC<IUpdateNamespaceImageProps> = ({
   }
 
   async function updateUserImage() {
-    const res = await fetch("/api/users/update-image", {
+    const res = await fetch("/api/update-image", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({userId: id, imageUrl: newPictureUrl.trim() || undefined}),
