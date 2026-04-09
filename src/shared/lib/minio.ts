@@ -18,7 +18,7 @@ export async function uploadToMinIO(
   fileBuffer: Buffer,
   contentType: string
 ): Promise<string> {
-  const key = `avatars/${Date.now()}-${fileName}`;
+  const key = `${Date.now()}-${fileName}`;
 
   const command = new PutObjectCommand({
     Bucket: BUCKET,

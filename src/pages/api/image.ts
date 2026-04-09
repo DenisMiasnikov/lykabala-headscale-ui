@@ -15,7 +15,8 @@ const s3Client = new S3Client({
   forcePathStyle: true,
 });
 
-const BUCKET = process.env.MINIO_BUCKET || "avatars";
+const BUCKET = "avatars";
+// const BUCKET = process.env.MINIO_BUCKET || "avatars";
 
 export default async function handler(
   req: NextApiRequest,
