@@ -4,6 +4,7 @@ import {
   sessionCookieName,
 } from "../../../shared/lib/auth/session";
 import { parseCookies } from "./_utils";
+import fs from "fs";
 
 type SessionData = {
   username: string;
@@ -15,8 +16,8 @@ type SessionData = {
 function getEnvConfig(): { url: string; apiKey: string } | null {
   if (process.env.HEADSCALE_URL && process.env.HEADSCALE_API_KEY) {
     return {
-      url: process.env.HEADSCALE_URL,
-      apiKey: process.env.HEADSCALE_API_KEY
+      url: process.env.HEADSCALE_URL || "http://headscale:8080",
+      apiKey: process.env.HEADSCALE_API_KEY || fs.readFileSync(process.env.HEADSCALE_API_KEY_FILE || "", "utf8").trim()
     };
   }
   return null;
@@ -47,10 +48,10 @@ export function getHeadscaleConfig(req: NextApiRequest): { url: string; apiKey: 
   const cookies = req.cookies || parseCookies(req.headers.cookie);
   const cookie = cookies?.[sessionCookieName()];
   const session = verifySessionCookie(cookie, secret);
-  
+
   if (session?.headscaleUrl && session?.headscaleApiKey) {
     return { url: session.headscaleUrl, apiKey: session.headscaleApiKey };
   }
-  
+
   return getEnvConfig();
 }

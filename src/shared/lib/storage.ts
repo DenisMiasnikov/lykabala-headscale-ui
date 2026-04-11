@@ -1,5 +1,4 @@
 import { decrypt } from "./crypto";
-import fs from "fs";
 
 export interface ServerConfig {
   id: string;
@@ -113,13 +112,12 @@ export function hasServers(): boolean {
   return getServers().length > 0;
 }
 
-export async function checkEnvConfig(): Promise<{ url: string; apiKey: string } | null> {
+export async function checkEnvConfig(): Promise<{ url: string; available: boolean } | null> {
   try {
     const res = await fetch("/api/internal/env-config");
     const data = await res.json();
     if (data.available) {
-      const key = fs.readFileSync(process.env.HEADSCALE_API_KEY_FILE || "", "utf8").trim()
-      return { url: data.url, apiKey: process.env.HEADSCALE_API_KEY || key || "" };
+      return { url: data.url, available: data.available };
     }
   } catch {}
   return null;
