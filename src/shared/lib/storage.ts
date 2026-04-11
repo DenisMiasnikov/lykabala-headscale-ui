@@ -1,4 +1,5 @@
 import { decrypt } from "./crypto";
+import fs from "fs";
 
 export interface ServerConfig {
   id: string;
@@ -117,7 +118,8 @@ export async function checkEnvConfig(): Promise<{ url: string; apiKey: string } 
     const res = await fetch("/api/internal/env-config");
     const data = await res.json();
     if (data.available) {
-      return { url: data.url, apiKey: process.env.HEADSCALE_API_KEY || "" };
+      const key = fs.readFileSync(process.env.HEADSCALE_API_KEY_FILE || "", "utf8").trim()
+      return { url: data.url, apiKey: process.env.HEADSCALE_API_KEY || key || "" };
     }
   } catch {}
   return null;
