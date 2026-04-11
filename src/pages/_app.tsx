@@ -7,6 +7,7 @@ import LogOutIcon from "../shared/ui/icons/Icons";
 
 import "../styles/globals.css";
 import { hasServers } from "../shared/lib/storage";
+import {getApiKey} from "../shared/lib/auth/headscale";
 
 const navItems = [
   { href: "/machines", label: "Machines" },
@@ -29,7 +30,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (checked && !hasServers() && router.pathname !== "/setup") {
+    if (checked && !getApiKey() && router.pathname !== "/setup") {
       router.push("/setup");
     }
   }, [checked, router.pathname]);
