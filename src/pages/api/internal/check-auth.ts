@@ -1,10 +1,38 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { requireAuth } from "./_auth";
+import { verifySessionCookie, sessionCookieName } from "../../../shared/lib/auth/session";
+import { parseCookies } from "./_utils";
+import fs from "fs";
+
+function getEnvConfig(): { url: string; apiKey: string } | null {
+  let apiKey = "";
+  if (process.env.HEADSCALE_API_KEY) {
+    apiKey = process.env.HEADSCALE_API_KEY.trim();
+  } else if (process.env.HEADSCALE_API_KEY_FILE) {
+    try {
+      apiKey = fs.readFileSync(process.env.HEADSCALE_API_KEY_FILE, "utf8").trim();
+    } catch {}
+  }
+  if (process.env.HEADSCALE_URL && apiKey) {
+    return { url: process.env.HEADSCALE_URL, apiKey };
+  }
+  return null;
+}
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = requireAuth(req, res);
-  if (!session) {
-    return res.status(401).json({ error: "Unauthorized" });
+  const secret = process.env.SESSION_SECRET || "secret";
+  const cookies = req.cookies || parseCookies(req.headers.cookie);
+  const cookie = cookies?.[sessionCookieName()];
+  const session = verifySessionCookie(cookie, secret);
+
+  if (session) {
+    return res.status(200).json({ ok: true });
   }
-  return res.status(200).json({ ok: true });
+
+  const envConfig = getEnvConfig();
+  if (envConfig) {
+    res.setHeader("X-Env-Auth", "true");
+    return res.status(200).json({ ok: true });
+  }
+
+  return res.status(401).json({ error: "Unauthorized" });
 }

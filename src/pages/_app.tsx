@@ -6,7 +6,7 @@ import {Layout} from "../shared/ui/layout/Layout";
 import LogOutIcon from "../shared/ui/icons/Icons";
 
 import "../styles/globals.css";
-import { hasServers, checkEnvConfig } from "../shared/lib/storage";
+import { hasServers } from "../shared/lib/storage";
 
 const navItems = [
   { href: "/machines", label: "Machines" },
@@ -24,15 +24,17 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     fetch("/api/internal/check-auth", { method: "POST" })
-      .then((res) => setLoggedIn(res.ok))
+      .then((res) => {
+        setLoggedIn(res.ok);
+        if (res.ok) {
+          const isEnvAuth = res.headers.get("X-Env-Auth") === "true";
+          if (isEnvAuth) {
+            setHasEnvConfig(true);
+          }
+        }
+      })
       .catch(() => setLoggedIn(false))
       .finally(() => setChecked(true));
-  }, []);
-
-  useEffect(() => {
-    checkEnvConfig().then((available) => {
-      setHasEnvConfig(available);
-    });
   }, []);
 
   useEffect(() => {
