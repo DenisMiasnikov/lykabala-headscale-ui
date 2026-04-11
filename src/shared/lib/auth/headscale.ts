@@ -29,7 +29,7 @@ export async function headscaleFetch(
   let finalUrl = HEADSCALE_URL;
   let apiKey = getApiKey();
 
-  if (config) {
+  if (!finalUrl && !apiKey) {
     finalUrl = config.url;
     apiKey = config.apiKey;
   }
