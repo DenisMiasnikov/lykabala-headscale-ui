@@ -6,8 +6,7 @@ import {Layout} from "../shared/ui/layout/Layout";
 import LogOutIcon from "../shared/ui/icons/Icons";
 
 import "../styles/globals.css";
-import { hasServers } from "../shared/lib/storage";
-import {getApiKey} from "../shared/lib/auth/headscale";
+import { hasServers, checkEnvConfig } from "../shared/lib/storage";
 
 const navItems = [
   { href: "/machines", label: "Machines" },
@@ -21,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [hasEnvConfig, setHasEnvConfig] = useState(false);
 
   useEffect(() => {
     fetch("/api/internal/check-auth", { method: "POST" })
@@ -30,10 +30,18 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    if (checked && !getApiKey() && router.pathname !== "/setup") {
+    checkEnvConfig().then((config) => {
+      setHasEnvConfig(!!config);
+    });
+  }, []);
+
+  useEffect(() => {
+    const hasLocalServers = hasServers();
+    const shouldRedirectToSetup = !hasLocalServers && !hasEnvConfig && router.pathname !== "/setup";
+    if (checked && shouldRedirectToSetup) {
       router.push("/setup");
     }
-  }, [checked, router.pathname]);
+  }, [checked, hasEnvConfig, router.pathname]);
 
   async function handleLogout() {
     await fetch("/api/internal/logout", { method: "POST" });
@@ -44,7 +52,8 @@ export default function App({ Component, pageProps }: AppProps) {
     return null;
   }
 
-  if (!hasServers() && router.pathname !== "/setup") {
+  const hasLocalServers = hasServers();
+  if (!hasLocalServers && !hasEnvConfig && router.pathname !== "/setup") {
     return <Component {...pageProps} />;
   }
 

@@ -112,6 +112,17 @@ export function hasServers(): boolean {
   return getServers().length > 0;
 }
 
+export async function checkEnvConfig(): Promise<{ url: string; apiKey: string } | null> {
+  try {
+    const res = await fetch("/api/internal/env-config");
+    const data = await res.json();
+    if (data.available) {
+      return { url: data.url, apiKey: process.env.HEADSCALE_API_KEY || "" };
+    }
+  } catch {}
+  return null;
+}
+
 export function getServerNames(): { id: string; name: string; url: string }[] {
   return getServers().map((s) => ({ id: s.id, name: s.name, url: s.url }));
 }
