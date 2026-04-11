@@ -14,7 +14,7 @@ type SessionData = {
 };
 
 function getEnvConfig(): { url: string; apiKey: string } | null {
-  if (process.env.HEADSCALE_URL && process.env.HEADSCALE_API_KEY) {
+  if ((process.env.HEADSCALE_URL && process.env.HEADSCALE_API_KEY) || process.env.HEADSCALE_API_KEY_FILE) {
     return {
       url: process.env.HEADSCALE_URL || "http://headscale:8080",
       apiKey: process.env.HEADSCALE_API_KEY || fs.readFileSync(process.env.HEADSCALE_API_KEY_FILE || "", "utf8").trim()

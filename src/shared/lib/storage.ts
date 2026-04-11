@@ -112,15 +112,13 @@ export function hasServers(): boolean {
   return getServers().length > 0;
 }
 
-export async function checkEnvConfig(): Promise<{ url: string; available: boolean } | null> {
+export async function checkEnvConfig(): Promise<boolean> {
   try {
     const res = await fetch("/api/internal/env-config");
     const data = await res.json();
-    if (data.available) {
-      return { url: data.url, available: data.available };
-    }
+    return data.available;
   } catch {}
-  return null;
+  return false;
 }
 
 export function getServerNames(): { id: string; name: string; url: string }[] {

@@ -30,8 +30,8 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   useEffect(() => {
-    checkEnvConfig().then((config) => {
-      setHasEnvConfig(!!config);
+    checkEnvConfig().then((available) => {
+      setHasEnvConfig(available);
     });
   }, []);
 

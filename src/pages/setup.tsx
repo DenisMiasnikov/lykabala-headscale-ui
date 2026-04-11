@@ -146,5 +146,8 @@ export async function getServerSideProps() {
   if (hasServers()) {
     return { redirect: { destination: "/login", permanent: false } };
   }
+  if ((process.env.HEADSCALE_URL && process.env.HEADSCALE_API_KEY) || process.env.HEADSCALE_API_KEY_FILE) {
+    return { redirect: { destination: "/login", permanent: false } };
+  }
   return { props: {} };
 }
