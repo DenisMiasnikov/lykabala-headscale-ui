@@ -29,7 +29,7 @@ export const RenameMachine = ({
       return;
     }
     const res = await fetch(
-      `/api/machines/${data.id}/rename?givenName=${encodeURIComponent(trimmed)}`,
+      `/api/internal/machines/${data.id}/rename?givenName=${encodeURIComponent(trimmed)}`,
       { method: "POST" },
     );
     if (!res.ok) {

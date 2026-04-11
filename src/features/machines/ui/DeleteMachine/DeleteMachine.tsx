@@ -20,7 +20,7 @@ export const DeleteMachine: React.FC<IDeleteMachineProps> = ({
   async function confirmDelete() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/machines/${machineId}`, {
+      const res = await fetch(`/api/internal/machines/${machineId}`, {
         method: "DELETE",
       });
       if (!res.ok) {

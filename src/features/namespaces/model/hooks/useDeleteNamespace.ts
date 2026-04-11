@@ -5,7 +5,7 @@ export const useDeleteNamespace = ({ onSuccess, onError }) => {
     );
     if (!ok) return;
 
-    const res = await fetch(`/api/namespaces/${id}`, {
+    const res = await fetch(`/api/internal/namespaces/${id}`, {
       method: "DELETE",
     });
 

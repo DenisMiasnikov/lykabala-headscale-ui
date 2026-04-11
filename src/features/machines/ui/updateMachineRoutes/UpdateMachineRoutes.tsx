@@ -23,7 +23,7 @@ export const UpdateMachineRoutes = ({
   async function saveApprovedRoutes() {
     onError("");
     onSuccess("");
-    const res = await fetch(`/api/machines/${data.id}/approve-routes`, {
+    const res = await fetch(`/api/internal/machines/${data.id}/approve-routes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ routes: value }),

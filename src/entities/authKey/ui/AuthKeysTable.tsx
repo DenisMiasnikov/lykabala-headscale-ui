@@ -23,7 +23,7 @@ export const AuthKeysTable = () => {
   async function deletePreAuthKey(id: string) {
     if (!confirm(`Delete pre-auth key?`)) return;
     try {
-      const res = await fetch(`/api/preauthkey/delete?id=${id}`, {
+      const res = await fetch(`/api/internal/preauthkey/delete?id=${id}`, {
         method: "DELETE",
       });
       if (!res.ok) {

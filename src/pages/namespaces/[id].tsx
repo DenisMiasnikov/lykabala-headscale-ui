@@ -70,7 +70,7 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
     );
     if (!ok) return;
 
-    const res = await fetch(`/api/namespaces/${id}`, {
+    const res = await fetch(`/api/internal/namespaces/${id}`, {
       method: "DELETE",
     });
 

@@ -32,7 +32,7 @@ export const useCreateAuthKey = ({ onSuccess }) => {
             .filter(Boolean)
         : undefined;
 
-      const res = await fetch("/api/preauthkey", {
+      const res = await fetch("/api/internal/preauthkey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

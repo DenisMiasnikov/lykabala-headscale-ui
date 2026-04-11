@@ -61,7 +61,7 @@ export default function NamespacesPage() {
       return;
     }
 
-    const res = await fetch(`/api/namespaces/${id}/rename`, {
+    const res = await fetch(`/api/internal/namespaces/${id}/rename`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -84,7 +84,7 @@ export default function NamespacesPage() {
     const ok = window.confirm(`Delete namespace "${name}"? This cannot be undone.`);
     if (!ok) return;
 
-    const res = await fetch(`/api/namespaces/${id}`, {
+    const res = await fetch(`/api/internal/namespaces/${id}`, {
       method: "DELETE"
     });
 
@@ -151,7 +151,7 @@ export default function NamespacesPage() {
         )}
       </>
     )
-  }, [])
+  }, [namespaces])
 
   return (
     <Page title={'Headscale Control'} subtitle={'Manage namespaces'}>

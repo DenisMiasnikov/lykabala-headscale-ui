@@ -21,7 +21,7 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
   const [actionMessage, setActionMessage] = useState("");
 
   async function loadDetails() {
-    const res = await fetch(`/api/machines/${id}`);
+    const res = await fetch(`/api/internal/machines/${id}`);
     const data = await res.json();
     if (!res.ok) {
       setError(data.error || "Failed to load machine");
