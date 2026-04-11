@@ -20,12 +20,12 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   const router = useRouter();
   const [registerUser, setRegisterUser] = useState("");
   const [nodeKey, setNodeKey] = useState("");
-  const [error, setError] = useState("");
+  const [_error, setError] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [namespaces, setNamespaces] = useState<Namespace[]>([]);
-  const [namespacesLoading, setNamespacesLoading] = useState(true);
-  const [namespacesError, setNamespacesError] = useState<string | null>(null);
+  const [_namespacesLoading, setNamespacesLoading] = useState(true);
+  const [_namespacesError, setNamespacesError] = useState<string | null>(null);
 
   // Auto-fill node key from URL query parameter (only if no success message shown)
   useEffect(() => {
@@ -52,7 +52,7 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
 
     setLoading(true);
     try {
-      const res = await fetch("/api/nodes/register", {
+      const res = await fetch("/api/internal/nodes/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user: registerUser, key: trimmedKey }),
@@ -93,10 +93,10 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
     setNamespacesError(null);
     setNamespacesLoading(true);
     try {
-      const res = await fetch("/api/namespaces");
+      const res = await fetch("/api/internal/namespaces");
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to load namespaces");
+        new Error(data.error || "Failed to load namespaces");
       }
       const list = Array.isArray(data.namespaces) ? data.namespaces : [];
       setNamespaces(list);

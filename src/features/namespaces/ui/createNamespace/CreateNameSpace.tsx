@@ -32,7 +32,7 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
       const reader = new FileReader();
       reader.onload = async () => {
         const base64 = reader.result as string;
-        const res = await fetch("/api/upload", {
+        const res = await fetch("/api/internal/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -56,7 +56,7 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
 
   async function createNamespace() {
     if (!newNamespace.trim()) return;
-    const res = await fetch("/api/namespaces", {
+    const res = await fetch("/api/internal/namespaces", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

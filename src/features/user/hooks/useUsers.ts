@@ -18,7 +18,7 @@ export function useUsers() {
 
   const loadCurrentUser = useCallback(async () => {
     try {
-      const res = await fetch("/api/users/me");
+      const res = await fetch("/api/internal/users/me");
       if (res.ok) {
         const data = await res.json();
         setCurrentUser(data);
@@ -34,7 +34,7 @@ export function useUsers() {
   const loadUsers = useCallback(async () => {
     if (!currentUser?.isAdmin) return;
     try {
-      const res = await fetch("/api/users");
+      const res = await fetch("/api/internal/users");
       if (res.ok) {
         const data = await res.json();
         setUsers(data.users || []);
@@ -51,7 +51,7 @@ export function useUsers() {
       return;
     }
     try {
-      const res = await fetch("/api/users/me", {
+      const res = await fetch("/api/internal/users/me", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: editPassword })
@@ -87,7 +87,7 @@ export function useUsers() {
       return;
     }
     try {
-      const res = await fetch("/api/users/me", {
+      const res = await fetch("/api/internal/users/me", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ newUsername: editUsername.trim() })
@@ -119,7 +119,7 @@ export function useUsers() {
       return;
     }
     try {
-      const res = await fetch("/api/users", {
+      const res = await fetch("/api/internal/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ export function useUsers() {
 
   const toggleAdmin = useCallback(async (username: string, isAdmin: boolean) => {
     try {
-      const res = await fetch(`/api/users/${username}`, {
+      const res = await fetch(`/api/internal/users/${username}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isAdmin })
@@ -162,7 +162,7 @@ export function useUsers() {
     const ok = window.confirm(`Delete user "${username}"?`);
     if (!ok) return;
     try {
-      const res = await fetch(`/api/users/${username}`, { method: "DELETE" });
+      const res = await fetch(`/api/internal/users/${username}`, { method: "DELETE" });
       if (res.ok) {
         setMessage("User deleted");
         loadUsers();

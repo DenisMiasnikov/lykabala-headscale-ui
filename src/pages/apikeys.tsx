@@ -15,7 +15,7 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/apikey");
+      const res = await fetch("/api/internal/apikey");
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Failed to load API keys");
@@ -40,7 +40,7 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
       if (newExpiration) {
         body.expiration = newExpiration;
       }
-      const res = await fetch("/api/apikey/create", {
+      const res = await fetch("/api/internal/apikey/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

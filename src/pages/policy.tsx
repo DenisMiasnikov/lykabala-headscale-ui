@@ -4,11 +4,6 @@ import { getAuthRedirect } from "../shared/lib/auth/requireAuth";
 
 type PolicyPageProps = {};
 
-type PolicyData = {
-  policy: string;
-  updatedAt?: string;
-};
-
 export default function PolicyPage({}: PolicyPageProps) {
   const [policy, setPolicy] = useState<string>("");
   const [updatedAt, setUpdatedAt] = useState<string>("");
@@ -21,7 +16,7 @@ export default function PolicyPage({}: PolicyPageProps) {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/policy");
+      const res = await fetch("/api/internal/policy");
       const data = await res.json();
       if (!res.ok) {
         const errMsg = data.error || "Failed to load policy";
@@ -51,7 +46,7 @@ export default function PolicyPage({}: PolicyPageProps) {
     setError("");
     setMessage("");
     try {
-      const res = await fetch("/api/policy", {
+      const res = await fetch("/api/internal/policy", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ policy })

@@ -20,7 +20,7 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
     setError("");
     try {
       // Fetch all namespaces and find the one with matching ID
-      const res = await fetch("/api/namespaces");
+      const res = await fetch("/api/internal/namespaces");
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Failed to load namespaces");
@@ -46,10 +46,10 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
   async function loadData() {
     setError("");
     try {
-      const res = await fetch("/api/namespaces");
+      const res = await fetch("/api/internal/namespaces");
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Failed to load namespaces");
+        new Error(data.error || "Failed to load namespaces");
       }
       const nsList = Array.isArray(data.namespaces) ? data.namespaces : [];
       setNamespaces(nsList);

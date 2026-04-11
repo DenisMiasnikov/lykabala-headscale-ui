@@ -32,7 +32,7 @@ export default function MachinesPage() {
 
   async function loadData() {
     try {
-      const res = await fetch("/api/machines");
+      const res = await fetch("/api/internal/machines");
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         new Error(data.error || "Failed to load machines");

@@ -16,15 +16,28 @@ export function getApiKey() {
   return "";
 }
 
+interface FetchConfig {
+  url: string;
+  apiKey: string;
+}
+
 export async function headscaleFetch(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  config?: FetchConfig | null
 ) {
-  const apiKey = getApiKey();
+  let finalUrl = HEADSCALE_URL;
+  let apiKey = getApiKey();
+
+  if (config) {
+    finalUrl = config.url;
+    apiKey = config.apiKey;
+  }
+
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5000);
 
-  const response = await fetch(`${HEADSCALE_URL}${path}`, {
+  const response = await fetch(`${finalUrl}${path}`, {
     ...options,
     headers: {
       Authorization: `Bearer ${apiKey}`,

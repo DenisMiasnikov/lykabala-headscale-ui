@@ -14,7 +14,6 @@ interface IUpdateNamespaceImageProps {
 export const UpdateNamespaceImage: React.FC<IUpdateNamespaceImageProps> = ({
                                                                              id,
                                                                              onClose,
-                                                                             onSuccess,
                                                                              onError,
                                                                            }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +33,7 @@ export const UpdateNamespaceImage: React.FC<IUpdateNamespaceImageProps> = ({
       const reader = new FileReader();
       reader.onload = async () => {
         const base64 = reader.result as string;
-        const res = await fetch("/api/upload", {
+        const res = await fetch("/api/internal/upload", {
           method: "POST",
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify({
@@ -57,7 +56,7 @@ export const UpdateNamespaceImage: React.FC<IUpdateNamespaceImageProps> = ({
   }
 
   async function updateUserImage() {
-    const res = await fetch("/api/update-image", {
+    const res = await fetch("/api/internal/update-image", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({userId: id, imageUrl: newPictureUrl.trim() || undefined}),

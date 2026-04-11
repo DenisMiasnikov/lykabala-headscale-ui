@@ -10,7 +10,7 @@ export const AuthKeysTable = () => {
 
   async function loadPreAuthKeys() {
     try {
-      const res = await fetch("/api/preauthkey/list");
+      const res = await fetch("/api/internal/preauthkey/list");
       const data = await res.json();
       if (res.ok) {
         setPreauthKeys(data.preAuthKeys || []);

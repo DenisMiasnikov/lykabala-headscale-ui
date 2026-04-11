@@ -9,6 +9,8 @@ function sign(value: string, secret: string) {
 type SessionPayload = {
   username: string;
   isAdmin: boolean;
+  headscaleUrl?: string;
+  headscaleApiKey?: string;
   exp: number;
 };
 

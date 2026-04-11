@@ -28,7 +28,7 @@ export default function NamespacesPage() {
   async function loadData() {
     setError("");
     try {
-      const res = await fetch("/api/namespaces");
+      const res = await fetch("/api/internal/namespaces");
       const data = await res.json();
       if (!res.ok) {
        new Error(data.error || "Failed to load namespaces");
