@@ -22,37 +22,37 @@ export default function App({ Component, pageProps }: AppProps) {
   const [checked, setChecked] = useState(false);
   const [hasEnvConfig, setHasEnvConfig] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/internal/check-auth", { method: "POST" })
-      .then((res) => {
-        setLoggedIn(res.ok);
-        if (res.ok) {
-          const isEnvAuth = res.headers.get("X-Env-Auth") === "true";
-          if (isEnvAuth) {
-            setHasEnvConfig(true);
-          }
-        }
-      })
-      .catch(() => setLoggedIn(false))
-      .finally(() => setChecked(true));
-  }, []);
-
-  useEffect(() => {
-    const hasLocalServers = hasServers();
-    const shouldRedirectToSetup = !hasLocalServers && !hasEnvConfig && router.pathname !== "/setup";
-    if (checked && shouldRedirectToSetup) {
-      router.push("/setup");
-    }
-  }, [checked, hasEnvConfig, router.pathname]);
+  // useEffect(() => {
+  //   fetch("/api/internal/check-auth", { method: "POST" })
+  //     .then((res) => {
+  //       setLoggedIn(res.ok);
+  //       if (res.ok) {
+  //         const isEnvAuth = res.headers.get("X-Env-Auth") === "true";
+  //         if (isEnvAuth) {
+  //           setHasEnvConfig(true);
+  //         }
+  //       }
+  //     })
+  //     .catch(() => setLoggedIn(false))
+  //     .finally(() => setChecked(true));
+  // }, []);
+  //
+  // useEffect(() => {
+  //   const hasLocalServers = hasServers();
+  //   const shouldRedirectToSetup = !hasLocalServers && !hasEnvConfig && router.pathname !== "/setup";
+  //   if (checked && shouldRedirectToSetup) {
+  //     router.push("/setup");
+  //   }
+  // }, [checked, hasEnvConfig, router.pathname]);
 
   async function handleLogout() {
     await fetch("/api/internal/logout", { method: "POST" });
     window.location.href = "/login";
   }
 
-  if (!checked) {
-    return null;
-  }
+  // if (!checked) {
+  //   return null;
+  // }
 
   const hasLocalServers = hasServers();
   if (!hasLocalServers && !hasEnvConfig && router.pathname !== "/setup") {
