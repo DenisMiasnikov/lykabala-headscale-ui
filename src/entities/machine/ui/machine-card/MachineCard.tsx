@@ -4,6 +4,7 @@ import type {MachineDetails} from "../../types";
 import {formatDate} from "../../../../shared/lib/date";
 
 import styles from "./machineCard.module.css";
+import {Avatar} from "../../../../shared/ui/avatar/Avatar";
 
 interface MachineCardProps {
   machine: MachineDetails;
@@ -17,11 +18,7 @@ export default function MachineCard({ machine, actions, details }: MachineCardPr
         {machine && (
           <div className={styles.card}>
             <div className={styles.header}>
-              <img
-                src={`/api/internal/image?key=${encodeURIComponent(machine.user.profilePicUrl)}`}
-                alt="avatar"
-                className={styles.avatar}
-              />
+              <Avatar src={machine.user.profilePicUrl}/>
 
               <div className={styles.userInfo}>
                 <h2 className={styles.title}>{machine.givenName}</h2>

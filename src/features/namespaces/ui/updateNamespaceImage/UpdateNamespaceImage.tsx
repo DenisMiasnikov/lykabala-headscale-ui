@@ -3,6 +3,7 @@ import Modal from "../../../../shared/ui/modal/Modal";
 import {Button} from "../../../../shared/ui/button/Button";
 import {Card} from "../../../../shared/ui/card/Card";
 import {Input} from "../../../../shared/ui/input/Input";
+import {Avatar} from "../../../../shared/ui/avatar/Avatar";
 
 interface IUpdateNamespaceImageProps {
   id: string;
@@ -131,15 +132,7 @@ export const UpdateNamespaceImage: React.FC<IUpdateNamespaceImageProps> = ({
             />
             {newPictureUrl && (
               <div style={{marginTop: "0.5rem"}}>
-                <img
-                  src={`/api/internal/image?key=${encodeURIComponent(newPictureUrl)}`}
-                  alt="Preview"
-                  style={{
-                    maxWidth: "100px",
-                    maxHeight: "100px",
-                    borderRadius: "8px",
-                  }}
-                />
+                <Avatar src={newPictureUrl}/>
               </div>
             )}
           </div>

@@ -1,0 +1,13 @@
+
+.usersPage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 768px) {
+    .usersPage {
+        display: flex;
+        flex-direction: column;
+    }
+}

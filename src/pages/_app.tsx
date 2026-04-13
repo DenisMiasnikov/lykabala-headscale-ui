@@ -12,8 +12,8 @@ const navItems = [
   { href: "/machines", label: "Machines" },
   { href: "/namespaces", label: "Namespaces" },
   { href: "/users", label: "Users" },
-  { href: "/apikeys", label: "Api Keys" },
-  { href: "/policy", label: "Policy" },
+  // { href: "/apikeys", label: "Api Keys" },
+  // { href: "/policy", label: "Policy" },
 ];
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -39,12 +39,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (!checked) return;
-    
+
     const hasLocalServers = hasServers();
     if (hasLocalServers || hasEnvConfig || loggedIn) {
       return;
     }
-    
+
     if (router.pathname !== "/setup") {
       router.push("/setup");
     }

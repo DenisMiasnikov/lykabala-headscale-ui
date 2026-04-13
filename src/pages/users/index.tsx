@@ -4,6 +4,9 @@ import { useUsers } from "../../features/user/hooks/useUsers";
 import CurrentUserCard from "../../features/user/components/CurrentUserCard";
 import CreateUserForm from "../../features/user/components/CreateUserForm";
 import UsersTable from "../../features/user/components/UsersTable";
+import {Page} from "../../shared/ui/page/Page";
+
+import styles from './index.module.css'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -39,7 +42,7 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="page">
+    <Page title={'User Settings'} subtitle={'Manage your account.'}>
       {(error || message) && (
         <div
           style={{
@@ -60,10 +63,7 @@ export default function UsersPage() {
         </div>
       )}
 
-      <div className="container">
-        <h1 className="title">User Settings</h1>
-        <p className="subtitle">Manage your account.</p>
-
+      <div className={styles.usersPage}>
         <CurrentUserCard
           currentUser={currentUser}
           editPassword={editPassword}
@@ -75,10 +75,7 @@ export default function UsersPage() {
         />
 
         {currentUser.isAdmin && (
-          <div className="card">
-            <h2 className="title" style={{ fontSize: 22 }}>
-              User Management
-            </h2>
+          <>
             <CreateUserForm
               newUsername={newUsername}
               setNewUsername={setNewUsername}
@@ -94,9 +91,9 @@ export default function UsersPage() {
               onToggleAdmin={toggleAdmin}
               onDeleteUser={deleteUser}
             />
-          </div>
+          </>
         )}
       </div>
-    </div>
-  );
+    </Page>
+  )
 }

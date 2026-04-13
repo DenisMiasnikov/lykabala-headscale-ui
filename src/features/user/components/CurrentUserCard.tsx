@@ -1,4 +1,7 @@
 import type { CurrentUser } from "../hooks/types";
+import {Card} from "../../../shared/ui/card/Card";
+import {Input} from "../../../shared/ui/input/Input";
+import {Button} from "../../../shared/ui/button/Button";
 
 interface CurrentUserCardProps {
   currentUser: CurrentUser;
@@ -20,40 +23,41 @@ export default function CurrentUserCard({
   onUpdateUsername
 }: CurrentUserCardProps) {
   return (
-    <div className="card" style={{ marginBottom: 24 }}>
-      <div className="row" style={{ alignItems: "center", justifyContent: "space-between" }}>
-        <h2 className="title" style={{ fontSize: 22 }}>{currentUser.username}</h2>
-        <span className="pill online">{currentUser.isAdmin ? "Admin" : "User"}</span>
-      </div>
-      <div style={{ marginTop: 16 }}>
-        <div style={{ marginBottom: 16 }}>
+    <Card title={currentUser.username} subTitle={currentUser.isAdmin ? "Admin" : "User"}>
+        <div style={{ flex: 1 }}>
           <label style={{ display: "block", marginBottom: 8 }}>Change Username</label>
           <div style={{ display: "flex", gap: 8 }}>
-            <input
-              className="input"
+            <Input
+              type={'text'}
               value={editUsername}
               onChange={(e) => setEditUsername(e.target.value)}
               placeholder="Enter new username"
-              style={{ flex: 1 }}
             />
-            <button className="button secondary" onClick={onUpdateUsername}>Update Username</button>
           </div>
         </div>
-        <div>
+        <div style={{ flex: 1 }}>
           <label style={{ display: "block", marginBottom: 8 }}>Change Password</label>
           <div style={{ display: "flex", gap: 8 }}>
-            <input
-              className="input"
+            <Input
               type="password"
               value={editPassword}
               onChange={(e) => setEditPassword(e.target.value)}
               placeholder="Enter new password"
-              style={{ flex: 1 }}
             />
-            <button className="button" onClick={onUpdatePassword}>Update Password</button>
           </div>
         </div>
-      </div>
-    </div>
+
+      <Button
+        label={'Update Username'}
+        type={'button'}
+        onClick={onUpdateUsername}
+        mode={'secondary'}/>
+
+      <Button
+        label={'Update Password'}
+        type={'button'}
+        onClick={onUpdatePassword}
+        mode={'secondary'}/>
+    </Card>
   );
 }

@@ -2,6 +2,7 @@ import React from "react";
 
 import type {Namespace} from "../../types";
 import {formatDate} from "../../../../shared/lib/date";
+import {Avatar} from "../../../../shared/ui/avatar/Avatar";
 
 import styles from "./namespaceCard.module.css";
 
@@ -16,11 +17,7 @@ export default function NameSpaceCard({ details, actions }: MachineCardProps) {
         {details && (
           <div className={styles.card}>
             <div className={styles.header}>
-              <img
-                src={`/api/internal/image?key=${encodeURIComponent(details.profilePicUrl)}`}
-                alt="avatar"
-                className={styles.avatar}
-              />
+              <Avatar src={details.profilePicUrl}/>
 
               <div className={styles.userInfo}>
                 <h2 className={styles.title}>{details.name}</h2>

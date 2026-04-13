@@ -1,3 +1,8 @@
+import {Card} from "../../../shared/ui/card/Card";
+import {Input} from "../../../shared/ui/input/Input";
+import {Toggle} from "../../../shared/ui/toggle/Toggle";
+import {Button} from "../../../shared/ui/button/Button";
+
 interface CreateUserFormProps {
   newUsername: string;
   setNewUsername: (value: string) => void;
@@ -18,45 +23,33 @@ export default function CreateUserForm({
   onCreateUser
 }: CreateUserFormProps) {
   return (
-    <div style={{ marginBottom: 24, padding: 16, background: "rgba(0,0,0,0.2)", borderRadius: 12 }}>
-      <h3 style={{ marginTop: 0 }}>Create New User</h3>
-      <div className="row" style={{ alignItems: "flex-end" }}>
-        <div style={{ flex: 1 }}>
-          <label>Username</label>
-          <input
-            className="input"
-            value={newUsername}
-            onChange={(e) => setNewUsername(e.target.value)}
-            placeholder="username"
-          />
-        </div>
-        <div style={{ flex: 1 }}>
-          <label>Password</label>
-          <input
-            className="input"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="password"
-          />
-        </div>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column'
-        }}>
-          <label style={{ display: "flex", alignItems: "center" }}>
-            Admin
-          </label>
-          <input
-            type="checkbox"
-            checked={newIsAdmin}
-            onChange={(e) => setNewIsAdmin(e.target.checked)}
-          />
-        </div>
-        <div style={{ alignSelf: "flex-end" }}>
-          <button className="button secondary" onClick={onCreateUser}>Create</button>
-        </div>
+    <Card title="Create New User">
+      <div style={{flex: 1}}>
+        <label style={{display: "block", marginBottom: 8}}>Username</label>
+        <Input
+          type={'text'}
+          value={newUsername}
+          onChange={setNewUsername}
+          placeholder="username"
+        />
       </div>
-    </div>
+      <div style={{flex: 1}}>
+        <label style={{display: "block", marginBottom: 8}}>Password</label>
+        <Input
+          type={'password'}
+          value={newPassword}
+          onChange={setNewPassword}
+          placeholder="password"
+        />
+      </div>
+
+      <Toggle
+        value={newIsAdmin}
+        onChange={setNewIsAdmin}
+        label={'Admin'}
+      />
+
+      <Button mode={'secondary'} onClick={onCreateUser} label={'Create'}/>
+    </Card>
   );
 }
