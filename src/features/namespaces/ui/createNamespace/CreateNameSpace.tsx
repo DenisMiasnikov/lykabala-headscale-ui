@@ -146,7 +146,7 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
             {newPictureUrl && (
               <div style={{ marginTop: "0.5rem" }}>
                 <img
-                  src={`/api/image?key=${encodeURIComponent(newPictureUrl)}`}
+                  src={`/api/internal/image?key=${encodeURIComponent(newPictureUrl)}`}
                   alt="Preview"
                   style={{
                     maxWidth: "100px",

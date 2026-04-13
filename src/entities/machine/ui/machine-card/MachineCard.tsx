@@ -18,7 +18,7 @@ export default function MachineCard({ machine, actions, details }: MachineCardPr
           <div className={styles.card}>
             <div className={styles.header}>
               <img
-                src={`/api/image?key=${encodeURIComponent(machine.user.profilePicUrl)}`}
+                src={`/api/internal/image?key=${encodeURIComponent(machine.user.profilePicUrl)}`}
                 alt="avatar"
                 className={styles.avatar}
               />
