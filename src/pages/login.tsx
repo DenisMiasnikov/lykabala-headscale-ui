@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
 import { Input } from "../shared/ui/input/Input";
 import { Form } from "../shared/ui/form/Form";
 import { Button } from "../shared/ui/button/Button";
@@ -11,9 +11,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showServerSelect, setShowServerSelect] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const servers = getServers();
-  const activeId = getActiveServerId();
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const servers = mounted ? getServers() : [];
+  const activeId = mounted ? getActiveServerId() : null;
   const activeServer = servers.find(s => s.id === activeId) || servers[0];
 
   async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {

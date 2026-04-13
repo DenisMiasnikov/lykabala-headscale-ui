@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         maxAge: ONE_DAY,
         httpOnly: true,
         sameSite: "Lax",
-        secure,
+        secure: secure || false,
       }),
     );
 
