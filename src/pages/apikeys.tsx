@@ -49,7 +49,8 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
       if (!res.ok) {
         setError(data.error || "Failed to create API key");
       } else {
-        setMessage(`API key created ${data?.apikey}`);
+        const value = Object.values(data).find(Boolean);
+        setMessage(`API key created ${value}`);
         setNewExpiration("");
         await loadKeys();
       }
