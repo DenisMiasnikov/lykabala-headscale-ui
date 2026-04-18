@@ -61,7 +61,6 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
   }
 
   async function deleteKey(prefix: string) {
-    if (!confirm(`Delete API key ${prefix}?`)) return;
     try {
       const res = await fetch(`/api/apikey/${prefix}`, { method: "DELETE" });
       const data = await res.json();
