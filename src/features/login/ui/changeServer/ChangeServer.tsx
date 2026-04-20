@@ -1,29 +1,31 @@
-import { useState, useEffect } from "react";
-import { getServers, removeServer, setActiveServerId } from "../../lib/storage";
-import { Button } from "../button/Button";
+import React, {useEffect, useState} from "react";
 
-interface ServerSelectProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSelect: (serverId: string) => void;
-}
+import styles from "./changeServer.module.css";
+import {Modal2} from "../../../../shared/ui/modal2/Modal2";
+import {Button} from "../../../../shared/ui/button/Button";
+import {getActiveServerId, getServers, removeServer, setActiveServerId} from "../../../../shared/lib/storage";
 
-export function ServerSelect({ isOpen, onClose, onSelect }: ServerSelectProps) {
+
+export const ChangeServer = () => {
+
+  const [isOpen, setIsOpen] = useState(false);
   const [servers, setServers] = useState<{ id: string; name: string; url: string; lastUsed: number }[]>([]);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState(null);
+  const [activeServer, setActServer] = useState(null);
 
   useEffect(() => {
-    if (isOpen) {
       setServers(getServers());
-    }
-  }, [isOpen]);
+      setActiveId(getActiveServerId())
+      setActServer(getServers().find(s => s.id === getActiveServerId()) || servers[0])
+  }, []);
 
-  if (!isOpen) return null;
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+
 
   function handleSelect(id: string) {
     setActiveServerId(id);
-    onSelect(id);
-    onClose();
+    setActiveId(id);
+    setIsOpen(false);
   }
 
   function handleDelete(id: string) {
@@ -33,26 +35,20 @@ export function ServerSelect({ isOpen, onClose, onSelect }: ServerSelectProps) {
   }
 
   return (
-    <div style={{
-      position: "fixed",
-      inset: 0,
-      backgroundColor: "rgba(0,0,0,0.5)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 9999,
-    }} onClick={onClose}>
-      <div style={{
-        background: "white",
-        borderRadius: 12,
-        padding: 24,
-        width: "90%",
-        maxWidth: 400,
-        maxHeight: "80vh",
-        overflow: "auto",
-      }} onClick={e => e.stopPropagation()}>
-        <h2 style={{ marginBottom: 16, fontSize: 20, fontWeight: 600 }}>Select Server</h2>
-        
+    <div style={{fontSize: 12, color: "#666", marginBottom: 8}}>
+      Connected to: {activeServer?.name}
+      <button
+        type="button"
+        onClick={() => setIsOpen(true)}
+        style={{background: "none", border: "none", color: "#007aff", cursor: "pointer", marginLeft: 8}}
+      >
+        (Change)
+      </button>
+      <Modal2
+        title="Approved Routes"
+        onClose={() => setIsOpen(false)}
+        isOpen={isOpen}
+      >
         {servers.length === 0 ? (
           <p style={{ color: "#666" }}>No servers configured</p>
         ) : (
@@ -91,8 +87,8 @@ export function ServerSelect({ isOpen, onClose, onSelect }: ServerSelectProps) {
           </div>
         )}
 
-        <Button label="Close" onClick={onClose} style={{ marginTop: 16, width: "100%" }} />
-      </div>
+        <Button label="Close" onClick={() => setIsOpen(false)} style={{ marginTop: 16, width: "100%" }} />
+      </Modal2>
     </div>
   );
-}
+};

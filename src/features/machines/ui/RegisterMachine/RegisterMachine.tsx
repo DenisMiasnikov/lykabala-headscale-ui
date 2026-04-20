@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import type { Namespace } from "../../../../entities/namespace/types";
+import {NamespaceSelect} from "../../../../entities/namespace/ui/namespace-select/NamespaceSelect";
 import {Input} from "../../../../shared/ui/input/Input";
 import {Button} from "../../../../shared/ui/button/Button";
-import {Select} from "../../../../shared/ui/select/Select";
 import {Card} from "../../../../shared/ui/card/Card";
 
 import styles from './index.module.css'
@@ -23,23 +22,12 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
   const [_error, setError] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
-  const [namespaces, setNamespaces] = useState<Namespace[]>([]);
-  const [_namespacesLoading, setNamespacesLoading] = useState(true);
-  const [_namespacesError, setNamespacesError] = useState<string | null>(null);
 
-  // Auto-fill node key from URL query parameter (only if no success message shown)
   useEffect(() => {
     if (router.query.key && typeof router.query.key === "string" && !nodeKey && !result) {
       setNodeKey(router.query.key);
     }
   }, [router.query, nodeKey, result]);
-
-  // Auto-select first namespace after namespaces load
-  useEffect(() => {
-    if (!registerUser && namespaces.length > 0) {
-      setRegisterUser(namespaces[0].name);
-    }
-  }, [namespaces, registerUser]);
 
   async function registerNode() {
     setError("");
@@ -89,39 +77,10 @@ export const RegisterMachine: React.FC<IRegisterMachineProps> = ({
     }
   }
 
-  async function loadNamespaces() {
-    setNamespacesError(null);
-    setNamespacesLoading(true);
-    try {
-      const res = await fetch("/api/internal/namespaces");
-      const data = await res.json();
-      if (!res.ok) {
-        new Error(data.error || "Failed to load namespaces");
-      }
-      const list = Array.isArray(data.namespaces) ? data.namespaces : [];
-      setNamespaces(list);
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to load namespaces";
-      setNamespacesError(message);
-    } finally {
-      setNamespacesLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadNamespaces();
-  }, []);
-
   return (
     <Card title="Register Node Key">
       <div className={styles.form}>
-        <Select
-          value={registerUser}
-          onChange={setRegisterUser}
-          items={namespaces.map(({id, name}) => ({label: name, value: id}))}
-          placeholder="Select user"
-        />
+        <NamespaceSelect value={registerUser} onChange={setRegisterUser}/>
 
         <Input
           value={nodeKey}

@@ -1,25 +1,24 @@
 import Image from "next/image";
+import {useRouter} from "next/router";
 import { useState, MouseEvent, useEffect } from "react";
+import {ChangeServer} from "../features/login";
 import { Input } from "../shared/ui/input/Input";
 import { Form } from "../shared/ui/form/Form";
 import { Button } from "../shared/ui/button/Button";
-import { ServerSelect } from "../shared/ui/server-select/ServerSelect";
-import { getActiveServerId, getServers } from "../shared/lib/storage";
+import {getActiveServerId, getServers, ServerConfig} from "../shared/lib/storage";
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showServerSelect, setShowServerSelect] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [activeServer, setActiveServer] = useState<ServerConfig>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const servers = getServers().find(s => s.id === getActiveServerId()) || getServers()[0]
+    setActiveServer(servers);
   }, []);
-
-  const servers = mounted ? getServers() : [];
-  const activeId = mounted ? getActiveServerId() : null;
-  const activeServer = servers.find(s => s.id === activeId) || servers[0];
 
   async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
@@ -38,13 +37,17 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      window.location.href = "/machines";
+      router.push('/machines');
       return;
     }
 
     const data = await res.json().catch(() => ({}));
     setError(data.error || "Login failed");
   }
+
+  const goToSetup = () => {
+    router.push('/setup');
+  };
 
   return (
     <Form title={
@@ -58,17 +61,7 @@ export default function LoginPage() {
         {'Welcome Back'}
       </div>
     } subtitle="Sign in to continue manage your private tailnet">
-      {activeServer && (
-        <div style={{ fontSize: 12, color: "#666", marginBottom: 8 }}>
-          Connected to: {activeServer.name}
-          <button
-            onClick={() => setShowServerSelect(true)}
-            style={{ background: "none", border: "none", color: "#007aff", cursor: "pointer", marginLeft: 8 }}
-          >
-            (Change)
-          </button>
-        </div>
-      )}
+      <ChangeServer />
 
       <Input
         value={username}
@@ -94,18 +87,13 @@ export default function LoginPage() {
 
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
         <button
-          onClick={() => window.location.href = "/setup"}
+          type={'button'}
+          onClick={goToSetup}
           style={{ background: "none", border: "none", color: "#007aff", cursor: "pointer" }}
         >
           + Add Server
         </button>
       </div>
-
-      <ServerSelect
-        isOpen={showServerSelect}
-        onClose={() => setShowServerSelect(false)}
-        onSelect={() => {}}
-      />
     </Form>
   );
 }

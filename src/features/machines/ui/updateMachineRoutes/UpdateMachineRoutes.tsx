@@ -73,15 +73,9 @@ export const UpdateMachineRoutes = ({
       >
         <label className={styles.field}>
           <span className={styles.fieldLabel}>Tags</span>
-          {/*<input*/}
-          {/*  className={styles.input}*/}
-          {/*  value={value}*/}
-          {/*  onChange={(e) => setValue(e.target.value)}*/}
-          {/*  placeholder="192.168.1.0/24"*/}
-          {/*/>*/}
           {isRequested && <Toggle value={isApproved} onChange={(val) => {
             setIsApproved(val);
-            setValue(val ? EXIT_ROUTES : '');
+            setValue(val ? EXIT_ROUTES : []);
           }} label={'Use as exit node'}/>}
         </label>
 

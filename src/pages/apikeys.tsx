@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
 import { getAuthRedirect } from "../shared/lib/auth/requireAuth";
 import type { ApiKey, ApiKeysPageProps } from "../entities/apiKey/types";
+import {Button} from "../shared/ui/button/Button";
+import {Input} from "../shared/ui/input/Input";
+import {Card} from "../shared/ui/card/Card";
+import {Page} from "../shared/ui/page/Page";
+import {formatDate} from "../shared/lib/date";
 
 export default function ApiKeysPage({}: ApiKeysPageProps) {
   const [keys, setKeys] = useState<ApiKey[]>([]);
@@ -10,6 +15,7 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
   const [message, setMessage] = useState("");
   const [newExpiration, setNewExpiration] = useState("");
   const [creating, setCreating] = useState(false);
+  const [newKey, setNewKey] = useState();
 
   async function loadKeys() {
     setLoading(true);
@@ -49,8 +55,8 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
       if (!res.ok) {
         setError(data.error || "Failed to create API key");
       } else {
-        const value = Object.values(data).find(Boolean);
-        setMessage(`API key created ${value}`);
+        setMessage('API key created');
+        setNewKey(data?.apiKey);
         setNewExpiration("");
         await loadKeys();
       }
@@ -63,12 +69,13 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
 
   async function deleteKey(prefix: string) {
     try {
-      const res = await fetch(`/api/apikey/${prefix}`, { method: "DELETE" });
+      const res = await fetch(`/api/internal/apikey/${prefix}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Failed to delete API key");
       } else {
         setMessage("API key deleted");
+        setNewKey(undefined);
         await loadKeys();
       }
     } catch (err) {
@@ -81,102 +88,74 @@ export default function ApiKeysPage({}: ApiKeysPageProps) {
   }, []);
 
   return (
-    <div className="page">
-      <div className="container">
-        <div className="card">
-          <h1 className="title">API Keys</h1>
-          {error && <div className="error">{error}</div>}
-          {message && (
-            <div className="pill online" style={{ marginTop: 12 }}>
-              {message}
-            </div>
-          )}
-
-          <div
-            style={{
-              marginBottom: 24,
-              padding: 16,
-              background: "#222121",
-              borderRadius: 8,
-            }}
-          >
-            <h3>Create New API Key</h3>
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                alignItems: "center",
-                marginTop: 8,
-              }}
-            >
-              <input
-                type="datetime-local"
-                className="input"
-                value={newExpiration}
-                onChange={(e) => setNewExpiration(e.target.value)}
-                style={{ flex: 1 }}
-              />
-              <button
-                className="button"
-                onClick={createKey}
-                disabled={creating}
-              >
-                {creating ? "Creating..." : "Create Key"}
-              </button>
-            </div>
-            <p className="subtitle" style={{ marginTop: 8 }}>
-              Leave expiration empty for a key that never expires.
-            </p>
-          </div>
-
-          {loading ? (
-            <p>Loading...</p>
-          ) : keys.length === 0 ? (
-            <p>No API keys.</p>
-          ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ borderBottom: "2px solid #eee" }}>
-                  <th style={{ textAlign: "left", padding: 8 }}>Prefix</th>
-                  <th style={{ textAlign: "left", padding: 8 }}>Created</th>
-                  <th style={{ textAlign: "left", padding: 8 }}>Expires</th>
-                  <th style={{ textAlign: "left", padding: 8 }}>Last Seen</th>
-                  <th style={{ textAlign: "left", padding: 8 }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {keys.map((k) => (
-                  <tr key={k.prefix}>
-                    <td style={{ padding: 8, fontFamily: "monospace" }}>
-                      {k.prefix}
-                    </td>
-                    <td style={{ padding: 8 }}>
-                      {new Date(k.createdAt).toLocaleString()}
-                    </td>
-                    <td style={{ padding: 8 }}>
-                      {k.expiration
-                        ? new Date(k.expiration).toLocaleString()
-                        : "-"}
-                    </td>
-                    <td style={{ padding: 8 }}>
-                      {k.lastSeen ? new Date(k.lastSeen).toLocaleString() : "-"}
-                    </td>
-                    <td style={{ padding: 8 }}>
-                      <button
-                        className="button secondary"
-                        onClick={() => deleteKey(k.prefix)}
-                      >
-                        Revoke
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+    <Page title={'API Keys'} subtitle={undefined}>
+      {error && <div className="error">{error}</div>}
+      {message && (
+        <div className="pill online" style={{ marginTop: 12 }}>
+          {message}
+          {newKey && <Input
+            type={'text'}
+            value={newKey}
+            onChange={undefined}
+            placeholder={undefined}
+          />}
         </div>
-      </div>
-    </div>
+      )}
+
+      <Card title="Create New API Key">
+        <Input
+          type="datetime-local"
+          value={newExpiration}
+          onChange={setNewExpiration}
+          placeholder={undefined}
+        />
+        <Button
+          onClick={createKey}
+          disabled={creating}
+          label={creating ? "Creating..." : "Create Key"}
+          mode={'action'}
+        />
+      </Card>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : keys.length === 0 ? (
+        <p>No API keys.</p>
+      ) : (
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #eee" }}>
+              <th style={{ textAlign: "left", padding: 8 }}>Prefix</th>
+              <th style={{ textAlign: "left", padding: 8 }}>Created</th>
+              <th style={{ textAlign: "left", padding: 8 }}>Expires</th>
+              <th style={{ textAlign: "left", padding: 8 }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {keys.map((k) => (
+              <tr key={k.prefix}>
+                <td style={{ padding: 8, fontFamily: "monospace" }}>
+                  {k.prefix}
+                </td>
+                <td style={{ padding: 8 }}>
+                  {formatDate(k.createdAt)}
+                </td>
+                <td style={{ padding: 8 }}>
+                  {formatDate(k.expiration)}
+                </td>
+                <td style={{ padding: 8 }}>
+                  <Button
+                    onClick={() => deleteKey(k.prefix)}
+                    mode={'primary'}
+                    label={'Revoke'}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </Page>
   );
 }
 

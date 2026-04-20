@@ -1,8 +1,12 @@
 import {Fragment} from "react";
 import type { AuthKey } from "../../../../entities/authKey/types";
-import { useCreateAuthKey } from "../../model/hooks/useCreateAuthKey";
+import {NamespaceSelect} from "../../../../entities/namespace/ui/namespace-select/NamespaceSelect";
 import {Button} from "../../../../shared/ui/button/Button";
 import Modal from "../../../../shared/ui/modal/Modal";
+import {Input} from '../../../../shared/ui/input/Input'
+import {Toggle} from "../../../../shared/ui/toggle/Toggle";
+
+import { useCreateAuthKey } from "../../model/hooks/useCreateAuthKey";
 
 interface ICreateAuthKeyProps {
   onClose?: () => void;
@@ -110,98 +114,59 @@ const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
               <label style={{ display: "block", marginBottom: 4 }}>
                 Namespace
               </label>
-              <select
-                className="input"
-                value={selectedNamespace}
-                onChange={(e) => setSelectedNamespace(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: 8,
-                  borderRadius: 4,
-                  border: "1px solid #ddd",
-                }}
-              >
-                <option value="">Select a namespace...</option>
-                {namespaces.map((ns) => (
-                  <option key={ns.id} value={ns.id}>
-                    {ns.name}
-                  </option>
-                ))}
-              </select>
+              <NamespaceSelect value={selectedNamespace} onChange={setSelectedNamespace}/>
             </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: "block", marginBottom: 4 }}>
                 Expiration (optional)
               </label>
-              <input
+              <Input
                 type="datetime-local"
-                className="input"
                 value={keyExpiration}
-                onChange={(e) => setKeyExpiration(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: 8,
-                  borderRadius: 4,
-                  border: "1px solid #ddd",
-                }}
+                onChange={setKeyExpiration}
+                placeholder={'Pick a date'}
               />
             </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: "block", marginBottom: 4 }}>
                 ACL Tags (comma-separated)
               </label>
-              <input
-                className="input"
+              <Input
+                type="text"
                 value={keyAclTags}
-                onChange={(e) => setKeyAclTags(e.target.value)}
-                placeholder="tag:admin, tag:server"
-                style={{
-                  width: "100%",
-                  padding: 8,
-                  borderRadius: 4,
-                  border: "1px solid #ddd",
-                }}
+                onChange={setKeyAclTags}
+                placeholder={'tag:admin, tag:server'}
               />
             </div>
-            <div style={{ marginBottom: 16, display: "flex", gap: 24 }}>
-              <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={keyReusable}
-                  onChange={(e) => setKeyReusable(e.target.checked)}
-                />
-                Reusable (key can be used multiple times)
-              </label>
-              <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <input
-                  type="checkbox"
-                  checked={keyEphemeral}
-                  onChange={(e) => setKeyEphemeral(e.target.checked)}
-                />
-                Ephemeral (expires after first use)
-              </label>
+            <div style={{display: 'flex', flexDirection:'column', gap:'16px', marginBottom:'16px'}}>
+              <Toggle
+                value={keyReusable}
+                onChange={(val) => {
+                  setKeyReusable(val)
+                  setKeyEphemeral(!val)
+                }}
+                label={'Reusable (key can be used multiple times)'}
+              />
+              <Toggle
+                value={keyEphemeral}
+                onChange={(val) => {
+                  setKeyReusable(!val)
+                  setKeyEphemeral(val)
+                }}
+                label={'Ephemeral (expires after first use)'}
+              />
             </div>
             {localError && (
               <div className="error" style={{ color: "red", marginTop: 8 }}>
                 {localError}
               </div>
             )}
-            <button
-              className="button"
+            <Button
               onClick={generateKey}
               disabled={loading}
-              style={{
-                marginTop: 16,
-                padding: "8px 16px",
-                borderRadius: 4,
-                background: loading ? "#ccc" : "#0070f3",
-                color: "white",
-                border: "none",
-                cursor: loading ? "not-allowed" : "pointer",
-              }}
-            >
-              {loading ? "Generating..." : "Generate Key"}
-            </button>
+              label={loading ? "Generating..." : "Generate Key"}
+              mode={'default'}
+            />
           </>
         )}
       </Modal>

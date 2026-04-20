@@ -12,7 +12,7 @@ const navItems = [
   { href: "/machines", label: "Machines" },
   { href: "/namespaces", label: "Namespaces" },
   { href: "/users", label: "Users" },
-  // { href: "/apikeys", label: "Api Keys" },
+  { href: "/apikeys", label: "Api Keys" },
   // { href: "/policy", label: "Policy" },
 ];
 
@@ -35,7 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
       })
       .catch(() => setLoggedIn(false))
       .finally(() => setChecked(true));
-  }, []);
+  }, [router.pathname]);
 
   useEffect(() => {
     if (!checked) return;
@@ -52,7 +52,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   async function handleLogout() {
     await fetch("/api/internal/logout", { method: "POST" });
-    window.location.href = "/login";
+    router.push("/login");
   }
 
   const isLoginPage = router.pathname === "/login";
