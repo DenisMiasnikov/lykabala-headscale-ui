@@ -11,7 +11,7 @@ interface ICardProps {
 }
 
 export const Card = ({title,subTitle,empty, collapsable, children, rightAction}:ICardProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   if(empty) {
     return (

@@ -313,8 +313,8 @@ body {
 }
 
 .pill {
-  padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: 20px;
+  padding: 16px 16px;
   font-size: 12px;
   font-weight: 600;
 }

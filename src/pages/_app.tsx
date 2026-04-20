@@ -12,7 +12,7 @@ const navItems = [
   { href: "/machines", label: "Machines" },
   { href: "/namespaces", label: "Namespaces" },
   { href: "/users", label: "Users" },
-  // { href: "/apikeys", label: "Api Keys" },
+  { href: "/apikeys", label: "Api Keys" },
   // { href: "/policy", label: "Policy" },
 ];
 
