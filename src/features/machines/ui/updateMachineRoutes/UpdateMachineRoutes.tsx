@@ -1,8 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 import styles from "./updateMachineRoutes.module.css";
 import { Modal2 } from "../../../../shared/ui/modal2/Modal2";
 import { MachineDetails } from "../../../../entities/machine/types";
+import {Toggle} from "../../../../shared/ui/toggle/Toggle";
 
 interface IUpdateMachineRoutesProps {
   data: MachineDetails;
@@ -12,13 +13,26 @@ interface IUpdateMachineRoutesProps {
   onError?: (message?: string) => void;
 }
 
+const EXIT_ROUTES = ["0.0.0.0/0", "::/0"]
+
 export const UpdateMachineRoutes = ({
   data,
   onSuccess,
   onError,
 }: IUpdateMachineRoutesProps) => {
+  const isRequested = EXIT_ROUTES.every((ip) =>
+    (data.availableRoutes || []).includes(ip)
+  );
+
+  const isApprovedInitial = EXIT_ROUTES.every((ip) =>
+    (data.approvedRoutes || []).includes(ip)
+  )
+
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState(data.approvedRoutes || "");
+  const [isApproved, setIsApproved] = useState(EXIT_ROUTES.every((ip) =>
+    (data.approvedRoutes || []).includes(ip)
+  ));
 
   async function saveApprovedRoutes() {
     onError("");
@@ -38,7 +52,17 @@ export const UpdateMachineRoutes = ({
 
   return (
     <>
-      <button className={styles.actionBtn} onClick={() => setIsOpen(true)}>
+      <button
+        className={`${styles.actionBtn} ${
+          (isRequested || isApprovedInitial) 
+            ? isApprovedInitial 
+              ? styles.tagActive 
+              : styles.tagPending 
+            : undefined
+        }`}
+        onClick={() => setIsOpen(true)}
+      >
+        {(isRequested || isApprovedInitial) && <span className={styles.tagDot} />}
         Routes
       </button>
 
@@ -49,12 +73,16 @@ export const UpdateMachineRoutes = ({
       >
         <label className={styles.field}>
           <span className={styles.fieldLabel}>Tags</span>
-          <input
-            className={styles.input}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="192.168.1.0/24"
-          />
+          {/*<input*/}
+          {/*  className={styles.input}*/}
+          {/*  value={value}*/}
+          {/*  onChange={(e) => setValue(e.target.value)}*/}
+          {/*  placeholder="192.168.1.0/24"*/}
+          {/*/>*/}
+          {isRequested && <Toggle value={isApproved} onChange={(val) => {
+            setIsApproved(val);
+            setValue(val ? EXIT_ROUTES : '');
+          }} label={'Use as exit node'}/>}
         </label>
 
         <div className={styles.modalActions}>
