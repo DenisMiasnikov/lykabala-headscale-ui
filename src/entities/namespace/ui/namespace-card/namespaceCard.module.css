@@ -14,6 +14,10 @@
     transition: all 0.25s ease;
 }
 
+.fullCard {
+    max-width: unset;
+}
+
 .card:hover {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
@@ -36,6 +40,11 @@
     font-weight: 600;
     color: #111;
     margin: unset;
+    cursor: pointer;
+}
+
+.title:hover {
+    color: #7777779e;
 }
 
 .subtitle {

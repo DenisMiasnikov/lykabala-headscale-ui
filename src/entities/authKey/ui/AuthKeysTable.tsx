@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import type { AuthKey } from "../types";
 
-import { TrashIcon } from "../../../shared/ui/icons/Icons";
 import Table from "../../../shared/ui/table/Table";
+import {Button} from "@/shared";
+import {useParams} from "next/navigation";
 
 export const AuthKeysTable = () => {
   const [preauthKeys, setPreauthKeys] = useState<AuthKey[]>([]);
   const [keyError, setKeyError] = useState("");
+  const {id:userId} = useParams();
 
   async function loadPreAuthKeys() {
     try {
       const res = await fetch("/api/internal/preauthkey/list");
       const data = await res.json();
       if (res.ok) {
-        setPreauthKeys(data.preAuthKeys || []);
+        setPreauthKeys((data.preAuthKeys || []).filter(({user:{id}}) => id === userId));
       }
     } catch (err) {
       console.error("Failed to load preauth keys:", err);
@@ -82,15 +84,11 @@ export const AuthKeysTable = () => {
       key: "actions",
       className: "actions-cell",
       render: (_, row) => (
-        <>
-          <button
-            className="button delete-button"
-            onClick={() => deletePreAuthKey(row.id)}
-            title="Revoke"
-          >
-            <TrashIcon /> Revoke
-          </button>
-        </>
+        <Button
+          mode={'action'}
+          label={'Revoke'}
+          onClick={() => deletePreAuthKey(row.id)}
+        />
       ),
     },
   ];

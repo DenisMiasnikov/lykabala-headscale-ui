@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
 import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
-import type {
-  Namespace,
-  NamespaceDetailsProps,
-  NamespaceDetails,
+import {
+  type NamespaceDetailsProps,
+  type NamespaceDetails,
+  NameSpaceCard,
 } from "@/entities/namespace";
-import GeneratePreAuthKey from "@/features/authKey/ui/createAuthKey/CreateAuthKey";
+import {CreateAuthKey} from "@/features/authKey";
 import { AuthKeysTable } from "@/entities/authKey";
+import {DeleteNamespace} from "@/features/namespaces/ui/deleteNameSpace/DeleteNamespace";
+import {Button, Page} from "@/shared";
+import {useRouter} from "next/router";
 
 export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
-  const [namespaces, setNamespaces] = useState<Namespace[]>([]);
-
   const [details, setDetails] = useState<NamespaceDetails | null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  const route = useRouter();
+
+  const goBack = () => {
+    route.push('/namespaces')
+  }
 
   async function loadDetails() {
     setError("");
@@ -43,119 +50,68 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
     loadDetails();
   }, [id]);
 
-  async function loadData() {
-    setError("");
-    try {
-      const res = await fetch("/api/internal/namespaces");
-      const data = await res.json();
-      if (!res.ok) {
-        new Error(data.error || "Failed to load namespaces");
-      }
-      const nsList = Array.isArray(data.namespaces) ? data.namespaces : [];
-      setNamespaces(nsList);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to load data";
-      setError(msg);
-    }
-  }
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  async function deleteNamespace() {
-    if (!details) return;
-    const ok = window.confirm(
-      `Delete namespace "${details.name}"? This cannot be undone.`,
-    );
-    if (!ok) return;
-
-    const res = await fetch(`/api/internal/namespaces/${id}`, {
-      method: "DELETE",
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(data.error || "Failed to delete namespace");
-      return;
-    }
-
-    setMessage("Namespace deleted");
-    setTimeout(() => {
-      window.location.href = "/namespaces";
-    }, 1000);
+  const renderActions = () => {
+    return (
+      <div
+        style={{ display: "flex", alignItems: "center", marginTop: 24 , gap:'16px'}}
+      >
+        <CreateAuthKey
+          onSuccess={(key) => {
+            setMessage(
+              `Key generated for ${key.user?.name || "namespace"}`,
+            );
+          }}
+        />
+        <DeleteNamespace
+          namespace={details}
+          onError={setError}
+          onSuccess={
+            (message) => {
+              setMessage(message);
+              loadDetails();
+            }
+          }
+        />
+      </div>
+    )
   }
 
   return (
-    <div className="page">
-      <div className="container">
-        <div className="card">
-          <h1 className="title">Namespace Details</h1>
-
-          {error ? <div className="error">{error}</div> : null}
-          {message ? (
-            <div className="pill online" style={{ marginBottom: 16 }}>
-              {message}
-            </div>
-          ) : null}
-
-          {details ? (
-            <>
-              <div style={{ marginTop: 16, marginBottom: 24 }}>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>Name:</strong> {details.name}
-                </div>
-                <div style={{ marginBottom: 8 }}>
-                  <strong>ID:</strong> {details.id}
-                </div>
-                {details.createdAt && (
-                  <div style={{ marginBottom: 8 }}>
-                    <strong>Created:</strong>{" "}
-                    {new Date(details.createdAt).toLocaleString()}
-                  </div>
-                )}
-              </div>
-
-              <div
-                style={{ display: "flex", alignItems: "center", marginTop: 24 }}
-              >
-                <button
-                  className="button"
-                  onClick={deleteNamespace}
-                  style={{ backgroundColor: "#dc3545", borderColor: "#dc3545" }}
-                >
-                  Delete Namespace
-                </button>
-                <GeneratePreAuthKey
-                  onSuccess={(key) => {
-                    setMessage(
-                      `Key generated for ${key.user?.name || "namespace"}`,
-                    );
-                  }}
-                  namespaces={namespaces}
-                />
-              </div>
-
-              <div className="card" style={{ marginTop: 24 }}>
-                <h2 className="title" style={{ fontSize: 22 }}>
-                  Pre-Auth Keys
-                </h2>
-                <AuthKeysTable />
-              </div>
-            </>
-          ) : (
-            <div className="subtitle">Loading...</div>
-          )}
-
-          <div className="row" style={{ marginTop: 24 }}>
-            <a className="button" href="/namespaces">
-              Back
-            </a>
-          </div>
+    <Page title={'Namespace Details'} subtitle={details?.name}>
+      {error ? <div className="error">{error}</div> : null}
+      {message ? (
+        <div className="pill online" style={{marginBottom: 16}}>
+          {message}
         </div>
-      </div>
-    </div>
-  );
+      ) : null}
+
+      {details ? (
+        <>
+          <NameSpaceCard
+            details={details}
+            actions={renderActions}
+            rightAction={
+              () => (
+                <div style={{alignSelf:'end'}}>
+                  <Button mode={'primary'} label={'Back'} onClick={goBack}/>
+                </div>
+              )
+            }
+            full
+          />
+
+          <div className="card" style={{ marginTop: 24 }}>
+            <h2 className="title" style={{ fontSize: 22 }}>
+              Pre-Auth Keys
+            </h2>
+            <AuthKeysTable />
+          </div>
+        </>
+      ) : (
+        <div className="subtitle">Loading...</div>
+      )}
+    </Page>
+  )
 }
 
 export const getServerSideProps: GetServerSideProps<

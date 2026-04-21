@@ -3,10 +3,11 @@ import type { GetServerSideProps } from "next";
 import {CreateNamespace, UpdateNamespace} from "@/features/namespaces"
 import {CreateAuthKey} from "@/features/authKey";
 import { type Namespace, NameSpaceCard } from "@/entities/namespace";
-import { Button, Page, Card } from "@/shared/ui";
+import { Page, Card } from "@/shared/ui";
 import { getAuthRedirect } from "@/shared/lib";
 
 import styles from "./namespaces.module.css";
+import {DeleteNamespace} from "@/features/namespaces/ui/deleteNameSpace/DeleteNamespace";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -39,24 +40,6 @@ export default function NamespacesPage() {
     loadData();
   }, []);
 
-  async function deleteNamespace(id: string, name: string) {
-    const ok = window.confirm(`Delete namespace "${name}"? This cannot be undone.`);
-    if (!ok) return;
-
-    const res = await fetch(`/api/internal/namespaces/${id}`, {
-      method: "DELETE"
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(data.error || "Failed to delete namespace");
-      return;
-    }
-
-    setMessage("Namespace deleted");
-    await loadData();
-  }
-
   const renderActions = useCallback((row) => {
     return (
       <>
@@ -75,13 +58,16 @@ export default function NamespacesPage() {
               `Key generated for ${key.user?.name || "namespace"}`,
             );
           }}
-          namespaces={namespaces}
         />
-        <Button
-          label={'Delete'}
-          mode={'danger'}
-          type={'button'}
-          onClick={() => deleteNamespace(row.id, row.name)}
+        <DeleteNamespace
+          namespace={row}
+          onError={setError}
+          onSuccess={
+            (message) => {
+              setMessage(message);
+              loadData();
+            }
+          }
         />
       </>
     )

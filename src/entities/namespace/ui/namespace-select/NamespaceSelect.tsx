@@ -1,8 +1,11 @@
-import {Select} from "@/shared/ui";
 import {useEffect, useState} from "react";
+import {useParams} from "next/navigation";
+import {Select} from "@/shared/ui";
 import type {Namespace} from "../../types";
 
 export const NamespaceSelect = ({value,onChange, placeholder='Select user' }) => {
+  const {id} = useParams();
+
   const [namespaces, setNamespaces] = useState<Namespace[]>([]);
   const [_namespacesLoading, setNamespacesLoading] = useState(true);
   const [_namespacesError, setNamespacesError] = useState<string | null>(null);
@@ -33,7 +36,7 @@ export const NamespaceSelect = ({value,onChange, placeholder='Select user' }) =>
 
   useEffect(() => {
     if (!value && namespaces.length > 0) {
-      onChange(namespaces[0].name);
+      onChange(id || namespaces[0].id);
     }
   }, [namespaces, value]);
 
@@ -43,6 +46,7 @@ export const NamespaceSelect = ({value,onChange, placeholder='Select user' }) =>
       onChange={onChange}
       items={namespaces.map(({id, name}) => ({label: name, value: id}))}
       placeholder={placeholder}
+      disabled={!!id}
     />
   )
 }

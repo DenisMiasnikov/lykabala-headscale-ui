@@ -1,28 +1,38 @@
 import React from "react";
-
+import {useRouter} from "next/router";
+import {formatDate} from "@/shared/lib";
+import {Avatar} from "@/shared/ui";
 import type {Namespace} from "../../types";
-import {formatDate} from "../../../../shared/lib/date";
-import {Avatar} from "../../../../shared/ui/avatar/Avatar";
 
 import styles from "./namespaceCard.module.css";
 
 interface MachineCardProps {
   details: Namespace;
   actions?: () => React.ReactNode;
+  rightAction?: () => React.ReactNode;
+  full?: boolean;
 }
 
-export default function NameSpaceCard({ details, actions }: MachineCardProps) {
+export default function NameSpaceCard({ details, actions,rightAction, full }: MachineCardProps) {
+  const route = useRouter();
+
+  const goToMachine = () => {
+    route.push(`/namespaces/${details?.id}`)
+  }
   return (
     <>
         {details && (
-          <div className={styles.card}>
+          <div className={`${styles.card} ${full && styles.fullCard}`}>
             <div className={styles.header}>
               <Avatar src={details.profilePicUrl}/>
 
               <div className={styles.userInfo}>
-                <h2 className={styles.title}>{details.name}</h2>
+                <h2 className={styles.title} onClick={goToMachine}>{details.name}</h2>
                 <p className={styles.subtitle}>{details.displayName}</p>
               </div>
+              {rightAction && (
+                <div style={{marginLeft: 'auto'}}>{rightAction()}</div>
+              )}
             </div>
 
             {/* Info */}
