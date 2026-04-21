@@ -1,14 +1,12 @@
 import {useCallback, useEffect, useState} from "react";
 import type { GetServerSideProps } from "next";
-import CreateNamespace from "@/features/namespaces/ui/createNamespace/CreateNameSpace";
-import GeneratePreAuthKey from "@/features/authKey/ui/createAuthKey/CreateAuthKey";
-import type { Namespace } from "@/entities/namespace";
-import { NameSpaceCard } from "@/entities/namespace";
+import {CreateNamespace, UpdateNamespace} from "@/features/namespaces"
+import {CreateAuthKey} from "@/features/authKey";
+import { type Namespace, NameSpaceCard } from "@/entities/namespace";
 import { Button, Page, Card } from "@/shared/ui";
-import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
+import { getAuthRedirect } from "@/shared/lib";
 
 import styles from "./namespaces.module.css";
-import UpdateNamespaceImage from "@/features/namespaces/ui/updateNamespaceImage/UpdateNamespaceImage";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -20,8 +18,6 @@ export default function NamespacesPage() {
   const [namespaces, setNamespaces] = useState<Namespace[]>([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editName, setEditName] = useState("");
 
   async function loadData() {
     setError("");
@@ -42,41 +38,6 @@ export default function NamespacesPage() {
   useEffect(() => {
     loadData();
   }, []);
-
-  function startEdit(ns: Namespace, e: React.MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    setEditingId(ns.id);
-    setEditName(ns.name);
-    setError("");
-    setMessage("");
-  }
-
-  async function saveEdit(id: string) {
-    const trimmed = editName.trim();
-    if (!trimmed) {
-      setError("Name cannot be empty");
-      return;
-    }
-
-    const res = await fetch(`/api/internal/namespaces/${id}/rename`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: trimmed,
-      }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(data.error || "Failed to update namespace");
-      return;
-    }
-
-    setEditingId(null);
-    setMessage("Namespace updated");
-    await loadData();
-  }
 
   async function deleteNamespace(id: string, name: string) {
     const ok = window.confirm(`Delete namespace "${name}"? This cannot be undone.`);
@@ -99,54 +60,29 @@ export default function NamespacesPage() {
   const renderActions = useCallback((row) => {
     return (
       <>
-        {editingId === row.id ? (
-          <>
-            <Button
-              label={'Save'}
-              mode={'action'}
-              type={'button'}
-              onClick={() => setEditingId(null)}
-            />
-            <Button
-              label={'Cancel'}
-              mode={'primary'}
-              type={'button'}
-              onClick={() => saveEdit(row.id)}
-            />
-          </>
-        ) : (
-          <>
-            <Button
-              label={'Edit'}
-              mode={'action'}
-              type={'button'}
-              onClick={(e) => startEdit(row, e)}
-            />
+        <UpdateNamespace
+          onSuccess={() => {
+            setMessage(
+              `Image for ${row.user?.name || "namespace"} updated`,
+            );
+          }}
+          namespace={row}
+        />
 
-            <GeneratePreAuthKey
-              onSuccess={(key) => {
-                setMessage(
-                  `Key generated for ${key.user?.name || "namespace"}`,
-                );
-              }}
-              namespaces={namespaces}
-            />
-            <UpdateNamespaceImage
-              onSuccess={() => {
-                setMessage(
-                  `Image for ${row.user?.name || "namespace"} updated`,
-                );
-              }}
-              id={row.id}
-            />
-            <Button
-              label={'Delete'}
-              mode={'danger'}
-              type={'button'}
-              onClick={() => deleteNamespace(row.id, row.name)}
-            />
-          </>
-        )}
+        <CreateAuthKey
+          onSuccess={(key) => {
+            setMessage(
+              `Key generated for ${key.user?.name || "namespace"}`,
+            );
+          }}
+          namespaces={namespaces}
+        />
+        <Button
+          label={'Delete'}
+          mode={'danger'}
+          type={'button'}
+          onClick={() => deleteNamespace(row.id, row.name)}
+        />
       </>
     )
   }, [namespaces])

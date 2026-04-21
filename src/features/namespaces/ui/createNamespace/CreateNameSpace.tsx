@@ -1,9 +1,6 @@
-import { useState, useRef } from "react";
-import Modal from "../../../../shared/ui/modal/Modal";
-import {Button} from "../../../../shared/ui/button/Button";
-import {Card} from "../../../../shared/ui/card/Card";
-import {Input} from "../../../../shared/ui/input/Input";
-import {Avatar} from "../../../../shared/ui/avatar/Avatar";
+import { useState } from "react";
+import { Modal, Button, Card, Input, Avatar } from "@/shared";
+import { useFileUpload } from "@/shared/lib/hooks/useFileUpload";
 
 interface ICreateNamespaceProps {
   onClose?: () => void;
@@ -21,39 +18,10 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
   const [newDisplayName, setNewDisplayName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPictureUrl, setNewPictureUrl] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result as string;
-        const res = await fetch("/api/internal/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            fileName: file.name,
-            contentType: file.type,
-            base64Data: base64,
-          }),
-        });
-        const data = await res.json();
-        if (data.key) {
-          setNewPictureUrl(data.key);
-        }
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
-    } catch {
-      onError?.("Upload failed");
-      setUploading(false);
-    }
-  }
+  const { uploading, fileInputRef, handleFileUpload, triggerUpload } = useFileUpload({
+    onSuccess: setNewPictureUrl,
+    onError: onError,
+  });
 
   async function createNamespace() {
     if (!newNamespace.trim()) return;
@@ -104,30 +72,18 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
             onChange={setNewNamespace}
             type="text"
             placeholder="e.g. personal"
-
-            // onKeyDown={(e) => {
-            //   if (e.key === "Enter") createNamespace();
-            // }}
           />
           <Input
             value={newDisplayName}
             onChange={setNewDisplayName}
             type="text"
             placeholder="e.g. Personal Space"
-
-            // onKeyDown={(e) => {
-            //   if (e.key === "Enter") createNamespace();
-            // }}
           />
           <Input
             value={newEmail}
             onChange={setNewEmail}
             type="email"
             placeholder="user@example.com"
-
-            // onKeyDown={(e) => {
-            //   if (e.key === "Enter") createNamespace();
-            // }}
           />
 
           <div style={{ marginBottom: "1rem" }}>
@@ -141,7 +97,7 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
             <Button
               label={uploading ? "Uploading..." : "Upload Image"}
               type="button"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={triggerUpload}
               disabled={uploading}
             />
             {newPictureUrl && (
@@ -156,10 +112,6 @@ export const CreateNamespace: React.FC<ICreateNamespaceProps> = ({
             onChange={setNewPictureUrl}
             type="text"
             placeholder="Or paste image URL"
-
-            // onKeyDown={(e) => {
-            //   if (e.key === "Enter") createNamespace();
-            // }}
           />
 
           <Button label={'Add Namespace'} mode={'primary'} onClick={createNamespace}/>

@@ -9,13 +9,11 @@ interface ICreateAuthKeyProps {
   onClose?: () => void;
   onSuccess?: (key: AuthKey) => void;
   onError?: (message?: string) => void;
-  namespaces: Array<{ id: string; name: string }>;
 }
 
-const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
+export const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
   onClose,
   onSuccess,
-  namespaces,
 }) => {
   const {
     isOpen,
@@ -170,5 +168,3 @@ const CreateAuthKey: React.FC<ICreateAuthKeyProps> = ({
     </Fragment>
   );
 };
-
-export default CreateAuthKey;
