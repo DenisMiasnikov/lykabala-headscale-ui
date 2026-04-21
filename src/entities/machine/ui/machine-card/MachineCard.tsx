@@ -1,22 +1,22 @@
 import React from "react";
-
+import {formatDate} from "@/shared/lib";
+import {Avatar} from "@/shared/ui";
 import type {MachineDetails} from "../../types";
-import {formatDate} from "@/shared/lib/date";
 
 import styles from "./machineCard.module.css";
-import {Avatar} from "@/shared/ui";
 
 interface MachineCardProps {
   machine: MachineDetails;
   actions?: () => React.ReactNode;
   details?: boolean;
+  full?: boolean;
 }
 
-export default function MachineCard({ machine, actions, details }: MachineCardProps) {
+export default function MachineCard({ machine, actions, details, full }: MachineCardProps) {
   return (
     <>
         {machine && (
-          <div className={styles.card}>
+          <div className={`${styles.card} ${full && styles.fullCard}`}>
             <div className={styles.header}>
               <Avatar src={machine.user.profilePicUrl}/>
 

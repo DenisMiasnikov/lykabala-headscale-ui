@@ -52,26 +52,40 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
 
   const renderActions = () => {
     return (
-      <div
-        style={{ display: "flex", alignItems: "center", marginTop: 24 , gap:'16px'}}
-      >
-        <CreateAuthKey
-          onSuccess={(key) => {
-            setMessage(
-              `Key generated for ${key.user?.name || "namespace"}`,
-            );
-          }}
-        />
-        <DeleteNamespace
-          namespace={details}
-          onError={setError}
-          onSuccess={
-            (message) => {
-              setMessage(message);
-              loadDetails();
+      <div style={{display: "flex", flexDirection: "column", width: "100%"}}>
+        <div
+          style={{display: "flex", alignItems: "center", marginTop: 24, gap: '16px'}}
+        >
+          <CreateAuthKey
+            onSuccess={(key) => {
+              setMessage(
+                `Key generated for ${key.user?.name || "namespace"}`,
+              );
+            }}
+          />
+          <DeleteNamespace
+            namespace={details}
+            onError={setError}
+            onSuccess={
+              (message) => {
+                setMessage(message);
+                loadDetails();
+              }
             }
-          }
-        />
+          />
+        </div>
+
+        <div className="card" style={{marginTop: 16}}>
+          <h2 className="title" style={{
+            fontSize: '22px',
+            margin: 'unset',
+            color: '#222222',
+            fontWeight: '400',
+          }}>
+            Pre-Auth Keys
+          </h2>
+          <AuthKeysTable/>
+        </div>
       </div>
     )
   }
@@ -99,13 +113,6 @@ export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
             }
             full
           />
-
-          <div className="card" style={{ marginTop: 24 }}>
-            <h2 className="title" style={{ fontSize: 22 }}>
-              Pre-Auth Keys
-            </h2>
-            <AuthKeysTable />
-          </div>
         </>
       ) : (
         <div className="subtitle">Loading...</div>

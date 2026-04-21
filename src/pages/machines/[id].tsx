@@ -77,7 +77,7 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
   return (
       <Page title={`${details?.givenName} details`} subtitle={`Machine ID: ${details?.id}`}>
         {details && (
-          <Card>
+          <>
             {error ? <div className="error">{error}</div> : null}
             {actionMessage ? (
               <div className="pill online" style={{ marginTop: 12 }}>
@@ -85,8 +85,8 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
               </div>
             ) : null}
 
-            <MachineCard machine={details} actions={() => actions(details, handleSuccess, setError)} details/>
-          </Card>
+            <MachineCard machine={details} actions={() => actions(details, handleSuccess, setError)} details full/>
+          </>
         )}
       </Page>
   );

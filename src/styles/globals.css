@@ -293,7 +293,7 @@ body {
   width: 100%;
   border-collapse: collapse;
   margin-top: 12px;
-  background-color: #fff;
+  /*background-color: #fff;*/
   border-radius: 20px;
   padding: 20px;
 }
@@ -301,8 +301,8 @@ body {
 .table-wrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 12px -12px -12px -12px;
-  padding: 0 12px 12px 12px;
+  /*margin: 12px -12px -12px -12px;*/
+  /*padding: 0 12px 12px 12px;*/
 }
 
 .table th,

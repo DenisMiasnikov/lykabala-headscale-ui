@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import type { AuthKey } from "../types";
-
-import Table from "../../../shared/ui/table/Table";
-import {Button} from "@/shared";
 import {useParams} from "next/navigation";
+import {Button, Table} from "@/shared";
+import type { AuthKey } from "../types";
 
 export const AuthKeysTable = () => {
   const [preauthKeys, setPreauthKeys] = useState<AuthKey[]>([]);
@@ -45,7 +43,7 @@ export const AuthKeysTable = () => {
       label: "Prefix",
       render: (value) => `${value.substring(0, 8)}...`,
     },
-    {
+    userId ? undefined : {
       key: "user",
       label: "Namespace",
       render: (value) => value?.name || "-",
@@ -91,7 +89,7 @@ export const AuthKeysTable = () => {
         />
       ),
     },
-  ];
+  ].filter(Boolean);
 
   useEffect(() => {
     loadPreAuthKeys();

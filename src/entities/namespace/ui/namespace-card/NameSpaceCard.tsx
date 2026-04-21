@@ -37,9 +37,9 @@ export default function NameSpaceCard({ details, actions,rightAction, full }: Ma
 
             {/* Info */}
             <div className={styles.grid}>
-              <Info label="Namespace ID" value={details.id} />
-              <Info label="Email" value={details.email} />
-              <Info label="Created" value={formatDate(details.createdAt)} />
+              {details.id && <Info label="Namespace ID" value={details.id} />}
+              {details.email && <Info label="Email" value={details.email} />}
+              {details.createdAt && <Info label="Created" value={formatDate(details.createdAt)} />}
             </div>
 
             {/* Actions */}
