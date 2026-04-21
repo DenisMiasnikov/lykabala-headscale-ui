@@ -6,7 +6,6 @@ import {getActiveServerId, getServers, removeServer, setActiveServerId} from "@/
 
 
 export const ChangeServer = () => {
-
   const [isOpen, setIsOpen] = useState(false);
   const [servers, setServers] = useState<{ id: string; name: string; url: string; lastUsed: number }[]>([]);
   const [activeId, setActiveId] = useState(null);
@@ -24,6 +23,7 @@ export const ChangeServer = () => {
   function handleSelect(id: string) {
     setActiveServerId(id);
     setActiveId(id);
+    setActServer(getServers().find(s => s.id === id) || servers[0])
     setIsOpen(false);
   }
 
@@ -44,7 +44,7 @@ export const ChangeServer = () => {
         (Change)
       </button>
       <Modal2
-        title="Approved Routes"
+        title="Connected servers"
         onClose={() => setIsOpen(false)}
         isOpen={isOpen}
       >
@@ -83,10 +83,9 @@ export const ChangeServer = () => {
                 )}
               </div>
             ))}
+            <Button label="Close" onClick={() => setIsOpen(false)} style={{ marginTop: 16, width: "100%" }} />
           </div>
         )}
-
-        <Button label="Close" onClick={() => setIsOpen(false)} style={{ marginTop: 16, width: "100%" }} />
       </Modal2>
     </div>
   );
