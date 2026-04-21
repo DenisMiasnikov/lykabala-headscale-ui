@@ -1,10 +1,10 @@
 import { GetServerSideProps } from "next";
-import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
-import { useUsers } from "../../features/user/hooks/useUsers";
-import CurrentUserCard from "../../features/user/components/CurrentUserCard";
-import CreateUserForm from "../../features/user/components/CreateUserForm";
-import UsersTable from "../../features/user/components/UsersTable";
-import {Page} from "../../shared/ui/page/Page";
+import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
+import { useUsers } from "@/features/user/hooks/useUsers";
+import CurrentUserCard from "@/features/user/components/CurrentUserCard";
+import CreateUserForm from "@/features/user/components/CreateUserForm";
+import UsersTable from "@/features/user/components/UsersTable";
+import {Page} from "@/shared/ui";
 
 import styles from './index.module.css'
 

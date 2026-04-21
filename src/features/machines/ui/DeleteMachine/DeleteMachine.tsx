@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TrashIcon, XIcon } from "../../../../shared/ui/icons/Icons";
+import { TrashIcon, XIcon } from "@/shared/ui";
 
 interface IDeleteMachineProps {
   machineId: string;

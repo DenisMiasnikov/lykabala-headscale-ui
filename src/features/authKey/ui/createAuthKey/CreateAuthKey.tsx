@@ -1,10 +1,7 @@
 import {Fragment} from "react";
-import type { AuthKey } from "../../../../entities/authKey/types";
-import {NamespaceSelect} from "../../../../entities/namespace/ui/namespace-select/NamespaceSelect";
-import {Button} from "../../../../shared/ui/button/Button";
-import Modal from "../../../../shared/ui/modal/Modal";
-import {Input} from '../../../../shared/ui/input/Input'
-import {Toggle} from "../../../../shared/ui/toggle/Toggle";
+import type { AuthKey } from "@/entities/authKey";
+import {NamespaceSelect} from "@/entities/namespace/ui/namespace-select/NamespaceSelect";
+import {Button, Input, Toggle, Modal} from "@/shared/ui";
 
 import { useCreateAuthKey } from "../../model/hooks/useCreateAuthKey";
 

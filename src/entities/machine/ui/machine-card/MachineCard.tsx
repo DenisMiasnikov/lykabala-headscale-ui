@@ -1,10 +1,10 @@
 import React from "react";
 
 import type {MachineDetails} from "../../types";
-import {formatDate} from "../../../../shared/lib/date";
+import {formatDate} from "@/shared/lib/date";
 
 import styles from "./machineCard.module.css";
-import {Avatar} from "../../../../shared/ui/avatar/Avatar";
+import {Avatar} from "@/shared/ui";
 
 interface MachineCardProps {
   machine: MachineDetails;

@@ -1,11 +1,9 @@
 import Image from "next/image";
 import {useRouter} from "next/router";
 import { useState, MouseEvent, useEffect } from "react";
-import {ChangeServer} from "../features/login";
-import { Input } from "../shared/ui/input/Input";
-import { Form } from "../shared/ui/form/Form";
-import { Button } from "../shared/ui/button/Button";
-import {getActiveServerId, getServers, ServerConfig} from "../shared/lib/storage";
+import {ChangeServer} from "@/features/login";
+import { Input, Form, Button } from "@/shared/ui";
+import {getActiveServerId, getServers, ServerConfig} from "@/shared/lib/storage";
 
 export default function LoginPage() {
   const router = useRouter();

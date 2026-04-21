@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react";
 
 import styles from "./changeServer.module.css";
-import {Modal2} from "../../../../shared/ui/modal2/Modal2";
-import {Button} from "../../../../shared/ui/button/Button";
-import {getActiveServerId, getServers, removeServer, setActiveServerId} from "../../../../shared/lib/storage";
+import {Modal2, Button} from "@/shared/ui";
+import {getActiveServerId, getServers, removeServer, setActiveServerId} from "@/shared/lib/storage";
 
 
 export const ChangeServer = () => {

@@ -1,16 +1,14 @@
 import {useCallback, useEffect, useState} from "react";
 import type { GetServerSideProps } from "next";
-import CreateNamespace from "../../features/namespaces/ui/createNamespace/CreateNameSpace";
-import GeneratePreAuthKey from "../../features/authKey/ui/createAuthKey/CreateAuthKey";
-import type { Namespace } from "../../entities/namespace/types";
-import NameSpaceCard from "../../entities/namespace/ui/namespace-card/NameSpaceCard";
-import {Button} from "../../shared/ui/button/Button";
-import {Page} from "../../shared/ui/page/Page";
-import {Card} from "../../shared/ui/card/Card";
-import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
+import CreateNamespace from "@/features/namespaces/ui/createNamespace/CreateNameSpace";
+import GeneratePreAuthKey from "@/features/authKey/ui/createAuthKey/CreateAuthKey";
+import type { Namespace } from "@/entities/namespace";
+import { NameSpaceCard } from "@/entities/namespace";
+import { Button, Page, Card } from "@/shared/ui";
+import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
 
 import styles from "./namespaces.module.css";
-import UpdateNamespaceImage from "../../features/namespaces/ui/updateNamespaceImage/UpdateNamespaceImage";
+import UpdateNamespaceImage from "@/features/namespaces/ui/updateNamespaceImage/UpdateNamespaceImage";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);

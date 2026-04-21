@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import type { GetServerSideProps } from "next";
-import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
+import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
 import type {
   Namespace,
   NamespaceDetailsProps,
   NamespaceDetails,
-} from "../../entities/namespace/types";
-import GeneratePreAuthKey from "../../features/authKey/ui/createAuthKey/CreateAuthKey";
-import { AuthKeysTable } from "../../entities/authKey/ui/AuthKeysTable";
+} from "@/entities/namespace";
+import GeneratePreAuthKey from "@/features/authKey/ui/createAuthKey/CreateAuthKey";
+import { AuthKeysTable } from "@/entities/authKey";
 
 export default function NamespaceDetails({ id }: NamespaceDetailsProps) {
   const [namespaces, setNamespaces] = useState<Namespace[]>([]);

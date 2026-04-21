@@ -1,4 +1,4 @@
-import {Select} from "../../../../shared/ui/select/Select";
+import {Select} from "@/shared/ui";
 import {useEffect, useState} from "react";
 import type {Namespace} from "../../types";
 

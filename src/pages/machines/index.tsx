@@ -1,13 +1,12 @@
 import {useEffect, useState} from "react";
-import { RegisterMachine } from "../../features/machines";
-import {Machine} from "../../entities/machine/types";
-import {Page} from "../../shared/ui/page/Page";
+import { RegisterMachine } from "@/features/machines";
+import {Machine} from "@/entities/machine";
+import {Page, Card} from "@/shared/ui";
 
 import styles from './machines.module.css'
-import {Card} from "../../shared/ui/card/Card";
-import MachineCard from "../../entities/machine/ui/machine-card/MachineCard";
+import { MachineCard } from "@/entities/machine";
 import {useRouter} from "next/router";
-import {getAuthRedirect} from "../../shared/lib/auth/requireAuth";
+import {getAuthRedirect} from "@/shared/lib/auth/requireAuth";
 import {GetServerSideProps} from "next";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

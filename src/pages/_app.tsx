@@ -1,12 +1,10 @@
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import Toolbar from "../shared/ui/toolbar/Toolbar";
-import {Layout} from "../shared/ui/layout/Layout";
-import LogOutIcon from "../shared/ui/icons/Icons";
+import { Toolbar, Layout, LogOutIcon } from "@/shared/ui";
 
-import "../styles/globals.css";
-import { hasServers } from "../shared/lib/storage";
+import "@/styles/globals.css";
+import { hasServers } from "@/shared/lib/storage";
 
 const navItems = [
   { href: "/machines", label: "Machines" },

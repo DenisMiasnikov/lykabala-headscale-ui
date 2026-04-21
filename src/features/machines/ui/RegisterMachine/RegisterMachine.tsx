@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {NamespaceSelect} from "../../../../entities/namespace/ui/namespace-select/NamespaceSelect";
-import {Input} from "../../../../shared/ui/input/Input";
-import {Button} from "../../../../shared/ui/button/Button";
-import {Card} from "../../../../shared/ui/card/Card";
+import {NamespaceSelect} from "@/entities/namespace";
+import {Button, Input, Card } from "@/shared/ui";
 
 import styles from './index.module.css'
 

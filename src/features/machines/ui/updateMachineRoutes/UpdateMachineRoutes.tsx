@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 
 import styles from "./updateMachineRoutes.module.css";
-import { Modal2 } from "../../../../shared/ui/modal2/Modal2";
-import { MachineDetails } from "../../../../entities/machine/types";
-import {Toggle} from "../../../../shared/ui/toggle/Toggle";
+import { Modal2, Toggle } from "@/shared/ui";
+import type { MachineDetails } from "@/entities/machine";
 
 interface IUpdateMachineRoutesProps {
   data: MachineDetails;

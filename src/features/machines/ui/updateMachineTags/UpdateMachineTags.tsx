@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import styles from "./updateMachineTags.module.css";
-import { Modal2 } from "../../../../shared/ui/modal2/Modal2";
-import { MachineDetails } from "../../../../entities/machine/types";
+import { Modal2 } from "@/shared/ui";
+import type { MachineDetails } from "@/entities/machine";
 
 interface IUpdateMachineTagsProps {
   data: MachineDetails;

@@ -1,18 +1,17 @@
 import React, {useEffect, useState, useCallback} from "react";
 import type { GetServerSideProps } from "next";
-import { getAuthRedirect } from "../../shared/lib/auth/requireAuth";
-import { RenameMachine } from "../../features/machines/ui/renameMachine/RenameMachine";
-import { UpdateMachineTags } from "../../features/machines/ui/updateMachineTags/UpdateMachineTags";
-import { UpdateMachineRoutes } from "../../features/machines/ui/updateMachineRoutes/UpdateMachineRoutes";
-import { ExpireMachine } from "../../features/machines/ui/expireMachine/ExpireMachine";
-import { BackFlipIps } from "../../features/machines/ui/backfilips/BackFlipIps";
+import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
+import { RenameMachine } from "@/features/machines/ui/renameMachine/RenameMachine";
+import { UpdateMachineTags } from "@/features/machines/ui/updateMachineTags/UpdateMachineTags";
+import { UpdateMachineRoutes } from "@/features/machines/ui/updateMachineRoutes/UpdateMachineRoutes";
+import { ExpireMachine } from "@/features/machines/ui/expireMachine/ExpireMachine";
+import { BackFlipIps } from "@/features/machines/ui/backfilips/BackFlipIps";
 import type {
   MachineDetailsProps,
   MachineDetails,
-} from "../../entities/machine/types";
-import {Page} from "../../shared/ui/page/Page";
-import MachineCard from "../../entities/machine/ui/machine-card/MachineCard";
-import {Card} from "../../shared/ui/card/Card";
+} from "@/entities/machine";
+import {Page, Card} from "@/shared/ui";
+import { MachineCard } from "@/entities/machine";
 
 export default function MachineDetails({ id }: MachineDetailsProps) {
   const [details, setDetails] = useState<MachineDetails | null>(null);

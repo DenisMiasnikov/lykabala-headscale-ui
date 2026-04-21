@@ -22,3 +22,5 @@ npm-debug.log*
 
 # Misc
 .cache/
+
+users.json
