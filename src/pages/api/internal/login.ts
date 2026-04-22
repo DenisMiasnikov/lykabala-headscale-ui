@@ -2,9 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import {
   createSessionCookie,
   sessionCookieName,
-} from "../../../shared/lib/auth/session";
-import { validatePassword, getUser } from "../../../shared/lib/auth/users";
-import { decrypt } from "../../../shared/lib/crypto";
+} from "@/shared/lib/auth/session";
+import { validatePassword, getUser } from "@/shared/lib/auth/users";
+import { decrypt } from "@/shared/lib/crypto";
+import fs from "fs";
 
 const ONE_DAY = 60 * 60 * 24;
 
@@ -27,14 +28,27 @@ function serializeCookie(
   return attrs.join("; ");
 }
 
+function getEnvApiKey(): string {
+  if (process.env.HEADSCALE_API_KEY) {
+    return process.env.HEADSCALE_API_KEY.trim();
+  }
+  if (process.env.HEADSCALE_API_KEY_FILE) {
+    try {
+      return fs.readFileSync(process.env.HEADSCALE_API_KEY_FILE, "utf8").trim();
+    } catch {
+      return "";
+    }
+  }
+  return "";
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { username, password, headscaleUrl, encryptedApiKey } = req.body || {};
-    console.log("Login attempt:", username);
+    const { username, password, headscaleUrl, encryptedApiKey, useEnvKey } = req.body || {};
 
     if (!username || !password) {
       return res.status(400).json({ error: "Missing credentials" });
@@ -62,7 +76,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let headscaleApiKey: string | undefined;
     let hsUrl: string | undefined;
 
-    if (headscaleUrl && encryptedApiKey && password) {
+    if (useEnvKey === "true" && process.env.HEADSCALE_URL) {
+      headscaleApiKey = getEnvApiKey();
+      hsUrl = process.env.HEADSCALE_URL.replace(/\/$/, "");
+    } else if (headscaleUrl && encryptedApiKey && password) {
       const decrypted = await decrypt(encryptedApiKey, password);
       if (decrypted) {
         headscaleApiKey = decrypted;

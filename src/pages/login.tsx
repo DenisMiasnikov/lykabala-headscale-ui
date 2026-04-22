@@ -11,11 +11,31 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [activeServer, setActiveServer] = useState<ServerConfig>(null);
+  const [activeServer, setActiveServer] = useState<ServerConfig | null>(null);
+  const [isEnvServer, setIsEnvServer] = useState(false);
+  const [envUrl, setEnvUrl] = useState("");
 
   useEffect(() => {
-    const servers = getServers().find(s => s.id === getActiveServerId()) || getServers()[0]
-    setActiveServer(servers);
+    const servers = getServers();
+    const activeId = getActiveServerId();
+
+    if (activeId === "env") {
+      setIsEnvServer(true);
+    } else {
+      const server = servers.find(s => s.id === activeId) || servers[0];
+      setActiveServer(server);
+    }
+
+    const fetchEnvConfig = async () => {
+      try {
+        const res = await fetch("/api/internal/env-config");
+        const data = await res.json();
+        if (data.available && data.url) {
+          setEnvUrl(data.url);
+        }
+      } catch {}
+    };
+    fetchEnvConfig();
   }, []);
 
   async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
@@ -23,7 +43,11 @@ export default function LoginPage() {
     setError("");
 
     const loginData: Record<string, string> = { username, password };
-    if (activeServer) {
+
+    if (isEnvServer && envUrl) {
+      loginData.headscaleUrl = envUrl;
+      loginData.useEnvKey = "true";
+    } else if (activeServer) {
       loginData.headscaleUrl = activeServer.url;
       loginData.encryptedApiKey = activeServer.encryptedKey;
     }
