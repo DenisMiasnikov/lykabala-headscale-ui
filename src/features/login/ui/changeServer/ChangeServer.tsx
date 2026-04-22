@@ -1,29 +1,80 @@
 import React, {useEffect, useState} from "react";
 
-import styles from "./changeServer.module.css";
 import {Modal2, Button} from "@/shared/ui";
 import {getActiveServerId, getServers, removeServer, setActiveServerId} from "@/shared/lib/storage";
 
+interface ServerInfo {
+  id: string;
+  name: string;
+  url: string;
+  lastUsed: number;
+  isEnv?: boolean;
+}
 
 export const ChangeServer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [servers, setServers] = useState<{ id: string; name: string; url: string; lastUsed: number }[]>([]);
-  const [activeId, setActiveId] = useState(null);
-  const [activeServer, setActServer] = useState(null);
+  const [servers, setServers] = useState<ServerInfo[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeServer, setActServer] = useState<ServerInfo | null>(null);
 
   useEffect(() => {
-      setServers(getServers());
-      setActiveId(getActiveServerId())
-      setActServer(getServers().find(s => s.id === getActiveServerId()) || servers[0])
+    const fetchEnvConfig = async () => {
+      try {
+        const res = await fetch("/api/internal/env-config");
+        const data = await res.json();
+        if (data.available) {
+          const newEnv = { id: "env", name: "Environment", url: data?.url, lastUsed: 0, isEnv: true };
+          const storedServers = getServers();
+          const allServers = [...storedServers, newEnv];
+          setServers(allServers);
+
+          const id = getActiveServerId();
+          setActiveId(id);
+          if (id === "env") {
+            setActServer(newEnv);
+            setActiveServerId("env");
+          } else {
+            const actServer = allServers.find(s => s.id === id) || allServers[0] || null;
+            setActServer(actServer);
+            setActiveServerId(actServer?.id);
+          }
+        } else {
+          const storedServers = getServers();
+          const allServers = [...storedServers];
+          setServers(allServers);
+
+          const id = getActiveServerId();
+          setActiveId(id);
+          if (id === "env" || !allServers.find(s => s.id === id)) {
+            const actServer = allServers[0] || null;
+            setActServer(actServer);
+            setActiveServerId(actServer?.id || "");
+          } else {
+            const actServer = allServers.find(s => s.id === id) || allServers[0] || null;
+            setActServer(actServer);
+            setActiveServerId(actServer?.id || "");
+          }
+        }
+      } catch {}
+    };
+
+    fetchEnvConfig()
   }, []);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
 
   function handleSelect(id: string) {
-    setActiveServerId(id);
+    const server = servers.find(s => s.id === id);
+    if (!server) return;
+
+    if (!server.isEnv) {
+      setActiveServerId(id);
+    } else {
+      setActiveServerId("env");
+    }
     setActiveId(id);
-    setActServer(getServers().find(s => s.id === id) || servers[0])
+    setActServer(server);
     setIsOpen(false);
   }
 
@@ -62,24 +113,27 @@ export const ChangeServer = () => {
                   padding: 12,
                   border: "1px solid #e5e5e5",
                   borderRadius: 8,
+                  background: activeId === server?.id ? "#f0f8ff" : "transparent",
                 }}
               >
                 <div style={{ flex: 1, cursor: "pointer" }} onClick={() => handleSelect(server.id)}>
-                  <div style={{ fontWeight: 500 }}>{server.name}</div>
+                  <div style={{ fontWeight: 500 }}>{server.name} {server.isEnv && "(Environment)"}</div>
                   <div style={{ fontSize: 12, color: "#666" }}>{server.url}</div>
                 </div>
-                {deleteId === server.id ? (
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <Button label="Yes" mode="danger" onClick={() => handleDelete(server.id)} type="button" />
-                    <Button label="No" onClick={() => setDeleteId(null)} />
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setDeleteId(server.id)}
-                    style={{ background: "none", border: "none", color: "#666", cursor: "pointer" }}
-                  >
-                    ✕
-                  </button>
+                {!server.isEnv && (
+                  deleteId === server.id ? (
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <Button label="Yes" mode="danger" onClick={() => handleDelete(server.id)} type="button" />
+                      <Button label="No" onClick={() => setDeleteId(null)} />
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setDeleteId(server.id)}
+                      style={{ background: "none", border: "none", color: "#666", cursor: "pointer" }}
+                    >
+                      ✕
+                    </button>
+                  )
                 )}
               </div>
             ))}

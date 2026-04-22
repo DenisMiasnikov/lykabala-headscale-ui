@@ -1,10 +1,8 @@
 import { useState } from "react";
 import Image from "next/image";
-import { Input } from "../shared/ui/input/Input";
-import { Form } from "../shared/ui/form/Form";
-import { Button } from "../shared/ui/button/Button";
-import { addServer, hasServers } from "../shared/lib/storage";
-import { encrypt } from "../shared/lib/crypto";
+import { Input, Form, Button } from "@/shared/ui";
+import { addServer } from "@/shared/lib/storage";
+import { encrypt } from "@/shared/lib/crypto";
 
 export default function SetupPage() {
   const [serverName, setServerName] = useState("");
@@ -140,14 +138,4 @@ export default function SetupPage() {
       {error ? <div className="error">{error}</div> : null}
     </Form>
   );
-}
-
-export async function getServerSideProps() {
-  if (hasServers()) {
-    return { redirect: { destination: "/login", permanent: false } };
-  }
-  if ((process.env.HEADSCALE_URL && process.env.HEADSCALE_API_KEY) || process.env.HEADSCALE_API_KEY_FILE) {
-    return { redirect: { destination: "/login", permanent: false } };
-  }
-  return { props: {} };
 }

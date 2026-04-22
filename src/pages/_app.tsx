@@ -38,14 +38,16 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (!checked) return;
 
+    if (router.pathname === "/setup") {
+      return;
+    }
+
     const hasLocalServers = hasServers();
     if (hasLocalServers || hasEnvConfig || loggedIn) {
       return;
     }
 
-    if (router.pathname !== "/setup") {
-      router.push("/setup");
-    }
+    router.push("/setup");
   }, [checked, hasEnvConfig, router.pathname, loggedIn]);
 
   async function handleLogout() {

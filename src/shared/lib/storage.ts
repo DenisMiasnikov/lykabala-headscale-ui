@@ -42,6 +42,10 @@ export function getActiveServerId(): string | null {
 
 export function setActiveServerId(id: string): void {
   if (typeof window === "undefined") return;
+  if (id === "env") {
+    localStorage.setItem(ACTIVE_KEY, "env");
+    return;
+  }
   const servers = getServersFromStorage();
   const server = servers.find((s) => s.id === id);
   if (server) {
@@ -100,6 +104,22 @@ export async function getActiveServerConfig(
 ): Promise<{ url: string; apiKey: string; name: string } | null> {
   const activeId = getActiveServerId();
   if (!activeId) return null;
+
+  if (activeId === "env") {
+    try {
+      const res = await fetch("/api/internal/env-config");
+      const data = await res.json();
+      if (data.available) {
+        return {
+          url: data.url,
+          apiKey: data.apiKey,
+          name: "Environment",
+        };
+      }
+    } catch {}
+    return null;
+  }
+
   const servers = getServersFromStorage();
   const server = servers.find((s) => s.id === activeId);
   if (!server) return null;
