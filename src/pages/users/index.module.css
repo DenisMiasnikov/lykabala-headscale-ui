@@ -5,6 +5,25 @@
     gap: 24px;
 }
 
+.createUser {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px
+}
+
+.error {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 450px;
+}
+
+.errorPill {
+    padding: 12px 16px
+}
+
 @media (max-width: 768px) {
     .usersPage {
         display: flex;

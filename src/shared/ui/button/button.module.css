@@ -1,14 +1,14 @@
 .default {
     background: #0071e3;
     color: white;
-    padding: 12px;
+    padding: 8px 16px;
     border-radius: 20px;
     border: none;
     width: 100%
 }
 
 .action {
-    padding: 6px 10px;
+    padding: 8px 16px;
     border-radius: 10px;
     background: #f3f4f6;
     border: none;
@@ -23,11 +23,11 @@
 
 .secondary {
     flex: 1;
-    padding: 10px;
+    padding: 8px 16px;
     border-radius: 12px;
     border: none;
     background: #f3f4f6;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
     color: #111;
 }
@@ -42,12 +42,12 @@
 
 .primary {
     flex: 1;
-    padding: 10px;
+    padding: 8px 16px;
     border-radius: 12px;
     border: none;
     background: #000;
     color: #fff;
-    font-size: 14px;
+    font-size: 12px;
     cursor: pointer;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .danger {
-    padding: 6px 10px;
+    padding: 8px 16px;
     border-radius: 10px;
     background: #fee2e2;
     color: #b91c1c;

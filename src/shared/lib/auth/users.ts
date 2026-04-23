@@ -9,10 +9,15 @@ if (!fs.existsSync(USERS_DIR)) {
   fs.mkdirSync(USERS_DIR, { recursive: true });
 }
 
+function generateId(): string {
+  return crypto.randomUUID();
+}
+
 export type User = {
+  id: string;
   username: string;
   passwordHash: string;
-  salt?: string; // optional for legacy users
+  salt?: string;
   isAdmin: boolean;
   createdAt: string;
 };
@@ -52,9 +57,32 @@ export function getUser(username: string): User | null {
   return data.users.find((u) => u.username === username) || null;
 }
 
-export function getAllUsers(): User[] {
+export function getUserWithId(username: string): (Omit<User, 'passwordHash' | 'salt'> & { passwordHash: string; salt: string }) | null {
   const data = readUsers();
-  return data.users.map((u) => ({ ...u, passwordHash: "********" }));
+  const user = data.users.find((u) => u.username === username);
+  if (!user) return null;
+  return { ...user, passwordHash: "********", salt: "********" };
+}
+
+export function getUserById(id: string): (Omit<User, 'passwordHash' | 'salt'> & { passwordHash: string; salt: string }) | null {
+  const data = readUsers();
+  const user = data.users.find((u) => u.id === id);
+  if (!user) return null;
+  return { ...user, passwordHash: "********", salt: "********" };
+}
+
+export function deleteUserById(id: string): boolean {
+  const data = readUsers();
+  const index = data.users.findIndex((u) => u.id === id);
+  if (index === -1) return false;
+  data.users.splice(index, 1);
+  writeUsers(data);
+  return true;
+}
+
+export function getAllUsers(): (Omit<User, 'passwordHash' | 'salt'> & { passwordHash: string; salt: string })[] {
+  const data = readUsers();
+  return data.users.map((u) => ({ ...u, passwordHash: "********", salt: "********" }));
 }
 
 export function validatePassword(username: string, password: string): boolean {
@@ -76,6 +104,35 @@ export function createUser(username: string, password: string, isAdmin: boolean 
     const salt = crypto.randomBytes(16).toString("hex");
     const passwordHash = hashPassword(password, salt);
     data.users.push({
+      id: generateId(),
+      username,
+      passwordHash,
+      salt,
+      isAdmin,
+      createdAt: new Date().toISOString()
+    });
+    writeUsers(data);
+    console.log("User created:", username, "isAdmin:", isAdmin);
+    return true;
+  } catch (err) {
+    console.error("Failed to create user:", err);
+    return false;
+  }
+}
+
+export function createUserWithPasswordHash(
+  username: string,
+  passwordHash: string,
+  isAdmin: boolean = false
+): boolean {
+  try {
+    const data = readUsers();
+    if (data.users.find((u) => u.username === username)) {
+      return false;
+    }
+    const salt = crypto.randomBytes(16).toString("hex");
+    data.users.push({
+      id: generateId(),
       username,
       passwordHash,
       salt,
@@ -119,8 +176,8 @@ export function updateUser(
   }
 
   if (updates.username) {
-    // Check if new username already exists
-    if (data.users.find((u) => u.username === updates.username)) {
+    const existingUser = data.users.find((u) => u.username === updates.username);
+    if (existingUser && existingUser.username !== user.username) {
       return false;
     }
     data.users[index].username = updates.username;

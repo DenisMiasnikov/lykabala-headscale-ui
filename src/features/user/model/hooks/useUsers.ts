@@ -90,7 +90,7 @@ export function useUsers() {
       const res = await fetch("/api/internal/users/me", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ newUsername: editUsername.trim() })
+        body: JSON.stringify({ username: editUsername.trim() })
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -143,9 +143,9 @@ export function useUsers() {
     }
   }, [newUsername, newPassword, newIsAdmin, loadUsers]);
 
-  const toggleAdmin = useCallback(async (username: string, isAdmin: boolean) => {
+  const toggleAdmin = useCallback(async (userId: string, isAdmin: boolean) => {
     try {
-      const res = await fetch(`/api/internal/users/${username}`, {
+      const res = await fetch(`/api/internal/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isAdmin })
@@ -158,11 +158,11 @@ export function useUsers() {
     }
   }, [loadUsers]);
 
-  const deleteUser = useCallback(async (username: string) => {
-    const ok = window.confirm(`Delete user "${username}"?`);
+  const deleteUser = useCallback(async (userId: string) => {
+    const ok = window.confirm(`Delete user?`);
     if (!ok) return;
     try {
-      const res = await fetch(`/api/internal/users/${username}`, { method: "DELETE" });
+      const res = await fetch(`/api/internal/users/${userId}`, { method: "DELETE" });
       if (res.ok) {
         setMessage("User deleted");
         loadUsers();
@@ -175,24 +175,16 @@ export function useUsers() {
     }
   }, [loadUsers]);
 
-  const updateUser = useCallback(async (username: string, password?: string, isAdmin?: boolean) => {
+  const updateUser = useCallback(async (userId: string, updates: { username?: string; password?: string; isAdmin?: boolean }) => {
     setError("");
-    const updates: { password?: string; isAdmin?: boolean } = {};
-
-    if (password) {
-      updates.password = password;
-    }
-    if (isAdmin !== undefined) {
-      updates.isAdmin = isAdmin;
-    }
-
+    
     if (Object.keys(updates).length === 0) {
       setError("No changes provided");
       return;
     }
 
     try {
-      const res = await fetch(`/api/internal/users/${username}`, {
+      const res = await fetch(`/api/internal/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updates)

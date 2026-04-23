@@ -3,6 +3,7 @@ import { requireAuth } from "../_auth";
 import {
   getAllUsers,
   createUser,
+  createUserWithPasswordHash,
 } from "../../../../shared/lib/auth/users";
 
 function validUsername(username: string | string[] | undefined): string | null {
@@ -28,7 +29,7 @@ export default async function handler(
   }
 
   if (req.method === "POST") {
-    const { username, password, isAdmin } = req.body || {};
+    const { username, password, passwordHash, isAdmin } = req.body || {};
     const validName = validUsername(username);
 
     if (!validName) {
@@ -40,10 +41,19 @@ export default async function handler(
         });
     }
 
-    if (!username || !password) {
-      return res.status(400).json({ error: "Missing username or password" });
+    if (!username) {
+      return res.status(400).json({ error: "Missing username" });
     }
-    const ok = createUser(username, password, isAdmin || false);
+
+    let ok = false;
+    if (passwordHash) {
+      ok = createUserWithPasswordHash(username, passwordHash, isAdmin || false);
+    } else if (password) {
+      ok = createUser(username, password, isAdmin || false);
+    } else {
+      return res.status(400).json({ error: "Missing password or passwordHash" });
+    }
+
     if (!ok) {
       return res.status(400).json({ error: "User already exists" });
     }

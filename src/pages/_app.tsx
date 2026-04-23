@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toolbar, Layout, LogOutIcon } from "@/shared/ui";
 
 import "@/styles/globals.css";
@@ -11,10 +12,19 @@ const navItems = [
   { href: "/namespaces", label: "Namespaces" },
   { href: "/users", label: "Users" },
   { href: "/apikeys", label: "Api Keys" },
-  // { href: "/policy", label: "Policy" },
 ];
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+      retry: 1,
+    },
+  },
+})
+
 export default function App({ Component, pageProps }: AppProps) {
+
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -61,17 +71,15 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <Layout>
+      <QueryClientProvider client={queryClient}>
       {showNavbar && (
         <Toolbar navItems={navItems} right={<div onClick={handleLogout}><LogOutIcon /></div>}/>
       )}
-
       <div className={`body ${showNavbar ? 'withToolBar' : ''}`}>
         <Component {...pageProps} />
       </div>
 
-      {/*<footer className={styles.footer}>*/}
-      {/*  © 2026 Apple Clone. All rights reserved.*/}
-      {/*</footer>*/}
+      </QueryClientProvider>
     </Layout>
   );
 }

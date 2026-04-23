@@ -10,18 +10,25 @@ export default async function handler(
   if (!session) return;
 
   if (req.method === "GET") {
+    const user = getUser(session.username);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
     return res.json({
-      username: session.username,
-      isAdmin: session.isAdmin,
+      id: user.id,
+      username: user.username,
+      passwordHash: "********",
+      salt: "********",
+      isAdmin: user.isAdmin,
+      createdAt: user.createdAt,
     });
   }
 
   if (req.method === "PUT") {
-    const { password, newUsername } = req.body || {};
+    const { password, username, passwordHash } = req.body || {};
 
-    // Handle username change (no current password required)
-    if (newUsername !== undefined) {
-      if (!/^[a-zA-Z0-9_.-]+$/.test(newUsername)) {
+    if (username !== undefined) {
+      if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
         return res
           .status(400)
           .json({
@@ -29,24 +36,28 @@ export default async function handler(
               "Invalid username. Username can only contain letters, numbers, underscores, dots, and hyphens",
           });
       }
-      if (newUsername === session.username) {
+      if (username === session.username) {
         return res
           .status(400)
           .json({ error: "New username must be different" });
       }
-      if (getUser(newUsername)) {
+      const exists = getUser(username);
+      if (exists) {
         return res.status(400).json({ error: "Username already exists" });
       }
-      const ok = updateUser(session.username, { username: newUsername });
+      const ok = updateUser(session.username, { username });
       if (!ok) {
         return res.status(400).json({ error: "Failed to update username" });
       }
       return res.json({ success: true, usernameChanged: true });
     }
 
-    // Handle password change
-    if (password) {
-      const ok = updateUser(session.username, { password });
+    if (password || passwordHash) {
+      const updates: { password?: string; passwordHash?: string } = {};
+      if (password) updates.password = password;
+      if (passwordHash) updates.passwordHash = passwordHash;
+      
+      const ok = updateUser(session.username, updates);
       if (!ok) {
         return res.status(400).json({ error: "Failed to update password" });
       }

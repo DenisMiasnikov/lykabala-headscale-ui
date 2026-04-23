@@ -1,7 +1,8 @@
 import {GetServerSideProps} from "next";
-import {useUsers} from "@/features/user/model/hooks/useUsers";
 import {UpdateUser} from "@/features/user/ui/updateUser/UpdateUser";
+import {DeleteUser} from "@/features/user/ui/deleteUser/DeleteUser";
 import UserCard from "@/entities/user/ui/UserCard";
+import {useCurrentUser, useUsersList} from "@/entities/user/model";
 import {Page} from "@/shared/ui";
 import {getAuthRedirect} from "@/shared/lib/auth/requireAuth";
 
@@ -15,55 +16,53 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function UsersPage() {
-  const {
-    currentUser,
-    users,
-    error,
-    message,
-  } = useUsers();
+  const { data: currentUser, isPending: isPendingCurrent, isError: isErrorCurrent } = useCurrentUser()
+  const { data: users, isPending, isError } = useUsersList(!currentUser?.isAdmin)
 
-  if (!currentUser) {
-    return <div className="page">Loading...</div>;
-  }
+  const isPend = currentUser?.isAdmin ?  (isPendingCurrent || isPending) : isPendingCurrent;
+  const isErr = currentUser?.isAdmin ?  (isError || isErrorCurrent) : isErrorCurrent;
+
+  if (isPend) return <div className="page">Loading...</div>
+  if (isErr)   return <div className="page">Something went wrong</div>
 
   return (
-    <Page title={'User Settings'} subtitle={'Manage your account and other users.'}>
-      {(error || message) && (
-        <div
-          style={{
-            position: "fixed",
-            top: 16,
-            right: 16,
-            zIndex: 1000,
-            minWidth: 300,
-            maxWidth: 450,
-          }}
-        >
-          <div
-            className={`pill ${error ? "error" : "online"}`}
-            style={{ padding: "12px 16px" }}
-          >
-            {error || message}
+    <Page title={'User Settings'} subtitle={`Manage your account ${currentUser?.isAdmin ? 'and other users' : ''}.`}>
+      {(isError) && (
+        <div className={styles.error}>
+          <div className={`pill ${isError ? "error" : "online"} ${styles.errorPill}`}>
+            {isError}
           </div>
         </div>
       )}
 
-      <div style={{marginBottom: 24, display: 'flex', gap: 12}}>
+      <div className={styles.createUser}>
         {currentUser.isAdmin && (
           <UpdateUser/>
         )}
       </div>
 
-      <div className={styles.usersPage}>
-        {users.map((user) => (
-          <UserCard
-            key={user.username}
-            user={user}
-            currentUser={currentUser}
-            actions={<UpdateUser user={user}/>}
-          />
-        ))}
-      </div>
+      {currentUser.isAdmin ? (
+        <div className={styles.usersPage}>
+          {users.map((user) => (
+            <UserCard
+              key={user.id}
+              user={user}
+              currentUser={currentUser}
+              rightAction={currentUser?.isAdmin && currentUser?.id !== user.id && (
+                <DeleteUser user={user}/>
+              )}
+              actions={<UpdateUser user={user}/>}
+            />
+          ))}
+        </div>
+      ) : (
+        <UserCard
+          key={currentUser.id}
+          user={currentUser}
+          currentUser={currentUser}
+          actions={<UpdateUser user={currentUser}/>}
+        />
+      )}
     </Page>
   )
 }
