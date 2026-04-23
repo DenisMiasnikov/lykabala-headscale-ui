@@ -1,10 +1,10 @@
-import { GetServerSideProps } from "next";
-import { getAuthRedirect } from "@/shared/lib/auth/requireAuth";
-import { useUsers } from "@/features/user/hooks/useUsers";
-import CurrentUserCard from "@/features/user/components/CurrentUserCard";
-import CreateUserForm from "@/features/user/components/CreateUserForm";
-import UsersTable from "@/features/user/components/UsersTable";
+import {GetServerSideProps} from "next";
+import {useUsers} from "@/features/user/model/hooks/useUsers";
+import {UpdateUser} from "@/features/user/ui/updateUser/UpdateUser";
+import UserCard from "@/entities/user/ui/UserCard";
 import {Page} from "@/shared/ui";
+import {getAuthRedirect} from "@/shared/lib/auth/requireAuth";
+
 
 import styles from './index.module.css'
 
@@ -20,21 +20,6 @@ export default function UsersPage() {
     users,
     error,
     message,
-    newUsername,
-    setNewUsername,
-    newPassword,
-    setNewPassword,
-    newIsAdmin,
-    setNewIsAdmin,
-    editPassword,
-    setEditPassword,
-    editUsername,
-    setEditUsername,
-    updateMyPassword,
-    updateMyUsername,
-    createUser,
-    toggleAdmin,
-    deleteUser,
   } = useUsers();
 
   if (!currentUser) {
@@ -42,7 +27,7 @@ export default function UsersPage() {
   }
 
   return (
-    <Page title={'User Settings'} subtitle={'Manage your account.'}>
+    <Page title={'User Settings'} subtitle={'Manage your account and other users.'}>
       {(error || message) && (
         <div
           style={{
@@ -63,36 +48,21 @@ export default function UsersPage() {
         </div>
       )}
 
-      <div className={styles.usersPage}>
-        <CurrentUserCard
-          currentUser={currentUser}
-          editPassword={editPassword}
-          setEditPassword={setEditPassword}
-          onUpdatePassword={updateMyPassword}
-          editUsername={editUsername}
-          setEditUsername={setEditUsername}
-          onUpdateUsername={updateMyUsername}
-        />
-
+      <div style={{marginBottom: 24, display: 'flex', gap: 12}}>
         {currentUser.isAdmin && (
-          <>
-            <CreateUserForm
-              newUsername={newUsername}
-              setNewUsername={setNewUsername}
-              newPassword={newPassword}
-              setNewPassword={setNewPassword}
-              newIsAdmin={newIsAdmin}
-              setNewIsAdmin={setNewIsAdmin}
-              onCreateUser={createUser}
-            />
-            <UsersTable
-              users={users}
-              currentUser={currentUser}
-              onToggleAdmin={toggleAdmin}
-              onDeleteUser={deleteUser}
-            />
-          </>
+          <UpdateUser/>
         )}
+      </div>
+
+      <div className={styles.usersPage}>
+        {users.map((user) => (
+          <UserCard
+            key={user.username}
+            user={user}
+            currentUser={currentUser}
+            actions={<UpdateUser user={user}/>}
+          />
+        ))}
       </div>
     </Page>
   )

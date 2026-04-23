@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import type { CurrentUser, User } from "./types";
+import type { CurrentUser, User } from "../../../../entities/user/types";
 
 export function useUsers() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
@@ -175,6 +175,40 @@ export function useUsers() {
     }
   }, [loadUsers]);
 
+  const updateUser = useCallback(async (username: string, password?: string, isAdmin?: boolean) => {
+    setError("");
+    const updates: { password?: string; isAdmin?: boolean } = {};
+
+    if (password) {
+      updates.password = password;
+    }
+    if (isAdmin !== undefined) {
+      updates.isAdmin = isAdmin;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      setError("No changes provided");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/internal/users/${username}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates)
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || "Failed to update user");
+        return;
+      }
+      setMessage("User updated");
+      loadUsers();
+    } catch (err) {
+      setError("Failed to update user");
+    }
+  }, [loadUsers]);
+
   useEffect(() => {
     loadCurrentUser();
   }, [loadCurrentUser]);
@@ -226,5 +260,6 @@ export function useUsers() {
     createUser,
     toggleAdmin,
     deleteUser,
+    updateUser,
   };
 }
