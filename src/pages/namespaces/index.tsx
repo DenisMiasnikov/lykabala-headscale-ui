@@ -1,13 +1,15 @@
-import {useCallback, useEffect, useState} from "react";
+import {useCallback} from "react";
 import type { GetServerSideProps } from "next";
-import {CreateNamespace, UpdateNamespace} from "@/features/namespaces"
+import {UpdateNamespace} from "@/features/namespaces"
 import {CreateAuthKey} from "@/features/authKey";
-import { type Namespace, NameSpaceCard } from "@/entities/namespace";
+import {DeleteNamespace} from "@/features/namespaces/ui/deleteNameSpace/DeleteNamespace";
+import {useNamespaceList} from "@/entities/namespace/model";
+import { NameSpaceCard } from "@/entities/namespace";
 import { Page, Card } from "@/shared/ui";
 import { getAuthRedirect } from "@/shared/lib";
 
 import styles from "./namespaces.module.css";
-import {DeleteNamespace} from "@/features/namespaces/ui/deleteNameSpace/DeleteNamespace";
+
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = await getAuthRedirect(context);
@@ -16,80 +18,35 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function NamespacesPage() {
-  const [namespaces, setNamespaces] = useState<Namespace[]>([]);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
-
-  async function loadData() {
-    setError("");
-    try {
-      const res = await fetch("/api/internal/namespaces");
-      const data = await res.json();
-      if (!res.ok) {
-       new Error(data.error || "Failed to load namespaces");
-      }
-      const nsList = Array.isArray(data.namespaces) ? data.namespaces : [];
-      setNamespaces(nsList);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to load data";
-      setError(msg);
-    }
-  }
-
-  useEffect(() => {
-    loadData();
-  }, []);
+  const {data: namespaces, isPending, isError, error } = useNamespaceList()
 
   const renderActions = useCallback((row) => {
     return (
       <>
-        <UpdateNamespace
-          onSuccess={() => {
-            setMessage(
-              `Image for ${row.user?.name || "namespace"} updated`,
-            );
-          }}
-          namespace={row}
-        />
-
-        <CreateAuthKey
-          onSuccess={(key) => {
-            setMessage(
-              `Key generated for ${key.user?.name || "namespace"}`,
-            );
-          }}
-        />
-        <DeleteNamespace
-          namespace={row}
-          onError={setError}
-          onSuccess={
-            (message) => {
-              setMessage(message);
-              loadData();
-            }
-          }
-        />
+        <UpdateNamespace namespace={row} />
+        <CreateAuthKey />
+        <DeleteNamespace namespace={row} />
       </>
     )
   }, [namespaces])
 
+  if (isPending) return (
+    <div className="page">Loading...</div>
+  )
+
+  if (isError) return (
+    <div className="page">{error.message}</div>
+  )
+
   return (
     <Page title={'Headscale Control'} subtitle={'Manage namespaces'}>
-      {error && <div className="error">{error}</div>}
-      {message && (
-        <div className="pill online" style={{ marginBottom: 16 }}>
-          {message}
-        </div>
-      )}
-      <Card title={'Namespaces'} rightAction={
-        <CreateNamespace
-          onSuccess={(msg) => {
-            setMessage(msg);
-            loadData();
-          }}
-          onError={setError}
-        />
-      }>
+      {error && <div className="error">{error.message}</div>}
+      <Card
+        title={'Namespaces'}
+        rightAction={
+          <UpdateNamespace />
+        }
+      >
         {namespaces.length === 0 ? (
           <Card title={'No namespaces yet.'} subTitle={'Create a namespace to see namespaces appear here.'} empty={true} />
         ) : (

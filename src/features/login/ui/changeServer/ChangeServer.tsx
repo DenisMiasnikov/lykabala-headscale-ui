@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 
-import {Modal2, Button} from "@/shared/ui";
+import {Modal, Button} from "@/shared/ui";
 import {getActiveServerId, getServers, removeServer, setActiveServerId} from "@/shared/lib/storage";
 
 interface ServerInfo {
@@ -94,7 +94,7 @@ export const ChangeServer = () => {
       >
         (Change)
       </button>
-      <Modal2
+      <Modal
         title="Connected servers"
         onClose={() => setIsOpen(false)}
         isOpen={isOpen}
@@ -140,7 +140,7 @@ export const ChangeServer = () => {
             <Button label="Close" onClick={() => setIsOpen(false)} style={{ marginTop: 16, width: "100%" }} />
           </div>
         )}
-      </Modal2>
+      </Modal>
     </div>
   );
 };

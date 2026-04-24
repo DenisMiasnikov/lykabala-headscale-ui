@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
-import styles from "./Modal.module.css";
+import styles from "./modal.module.css";
 
 interface IModalProps {
   isOpen: boolean;
@@ -8,8 +8,7 @@ interface IModalProps {
   title: string;
   children: React.ReactNode;
 }
-
-const Modal: React.FC<IModalProps> = ({ isOpen, onClose, title, children }) => {
+export const Modal = ({ isOpen, title, children, onClose }:IModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
 
@@ -41,38 +40,40 @@ const Modal: React.FC<IModalProps> = ({ isOpen, onClose, title, children }) => {
       document.addEventListener("keydown", handleEscape);
       document.addEventListener("keydown", handleFocusTrap);
       document.body.style.overflow = "hidden";
+      modalRef.current?.querySelector<HTMLElement>("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")?.focus();
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("keydown", handleFocusTrap);
       document.body.style.overflow = "unset";
+      previousActiveElement.current?.focus();
     };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={onClose}>
       <div
         ref={modalRef}
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby="modal2-title"
       >
-        <div className={styles.header}>
-          <h2 id="modal-title" className={styles.title}>{title}</h2>
-          <button className={styles.closeButton} onClick={onClose} aria-label="Close">
-            ✕
+        <div className={styles.modalHeader}>
+          <h3 id="modal2-title" className={styles.modalTitle}>{title}</h3>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+            <span style={{ fontSize: 12 }}>×</span>
           </button>
         </div>
-        <div className={styles.content}>{children}</div>
+
+        <div className={styles.modalContent}>{children}</div>
       </div>
     </div>,
     document.body
   );
 };
 
-export default Modal;

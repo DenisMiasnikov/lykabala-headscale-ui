@@ -1,4 +1,4 @@
-import {Button, Modal2} from "@/shared";
+import {Button, Modal} from "@/shared";
 import React, {useState} from "react";
 import UserForm from "@/entities/user/ui/UserForm";
 import {useCreateClient, useUpdateClient} from "@/entities/user/model";
@@ -42,7 +42,7 @@ export const UpdateUser: React.FC<UpdateUserProps> = ({user}) => {
         mode={user ? 'secondary' : 'default'}
         onClick={user ? () => openEdit(user) : openCreate}
       />
-      <Modal2
+      <Modal
         title={!selectedUser ? "Create User" : `Edit User: ${selectedUser.username}`}
         onClose={close}
         isOpen={isOpen}
@@ -54,7 +54,7 @@ export const UpdateUser: React.FC<UpdateUserProps> = ({user}) => {
           }}
           user={selectedUser}
         />
-      </Modal2>
+      </Modal>
     </>
   );
 };

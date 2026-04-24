@@ -1,6 +1,15 @@
 import styles from "./input.module.css";
 
-export const Input = ({value, onChange,onBlur, type, placeholder, disabled = false}) => {
+interface IInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  onBlur?: () => void;
+  type?: string;
+  placeholder?: string;
+  disabled?: boolean;
+}
+
+export const Input = ({ value, onChange, onBlur, type, placeholder, disabled = false }: IInputProps) => {
   return (
     <input
       type={type}
@@ -11,5 +20,5 @@ export const Input = ({value, onChange,onBlur, type, placeholder, disabled = fal
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
     />
-  )
-}
+  );
+};

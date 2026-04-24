@@ -5,6 +5,9 @@ export type Namespace = {
   displayName?: string;
   email?: string;
   profilePicUrl?: string;
+  providerId?: string;
+  provider?: string;
+
 };
 
 export type NamespaceDetailsProps = {

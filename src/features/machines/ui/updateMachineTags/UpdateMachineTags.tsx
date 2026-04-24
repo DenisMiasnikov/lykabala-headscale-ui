@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import styles from "./updateMachineTags.module.css";
-import { Modal2 } from "@/shared/ui";
+import { Modal } from "@/shared/ui";
 import type { MachineDetails } from "@/entities/machine";
 
 interface IUpdateMachineTagsProps {
@@ -60,7 +60,7 @@ export const UpdateMachineTags = ({
         Tags
       </button>
 
-      <Modal2
+      <Modal
         title="Edit Tags"
         onClose={() => setIsOpen(false)}
         isOpen={isOpen}
@@ -93,7 +93,7 @@ export const UpdateMachineTags = ({
             Save
           </button>
         </div>
-      </Modal2>
+      </Modal>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import styles from "./renameMachine.module.css";
-import { Modal2 } from "@/shared/ui";
+import { Modal } from "@/shared/ui";
 import type { MachineDetails } from "@/entities/machine";
 
 interface IRenameMachineProps {
@@ -46,7 +46,7 @@ export const RenameMachine = ({
         Rename
       </button>
 
-      <Modal2
+      <Modal
         title="Rename Machine"
         onClose={() => setIsOpen(false)}
         isOpen={isOpen}
@@ -78,7 +78,7 @@ export const RenameMachine = ({
             Save
           </button>
         </div>
-      </Modal2>
+      </Modal>
     </>
   );
 };

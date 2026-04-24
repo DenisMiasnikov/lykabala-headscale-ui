@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import styles from "./updateMachineRoutes.module.css";
-import { Modal2, Toggle } from "@/shared/ui";
+import { Modal, Toggle } from "@/shared/ui";
 import type { MachineDetails } from "@/entities/machine";
 
 interface IUpdateMachineRoutesProps {
@@ -65,7 +65,7 @@ export const UpdateMachineRoutes = ({
         Routes
       </button>
 
-      <Modal2
+      <Modal
         title="Approved Routes"
         onClose={() => setIsOpen(false)}
         isOpen={isOpen}
@@ -96,7 +96,7 @@ export const UpdateMachineRoutes = ({
             Save
           </button>
         </div>
-      </Modal2>
+      </Modal>
     </>
   );
 };

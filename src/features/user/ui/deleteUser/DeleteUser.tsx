@@ -1,4 +1,4 @@
-import {Button, Modal2} from "@/shared";
+import {Button, Modal} from "@/shared";
 import React, {useState} from "react";
 import {useDeleteClient} from "@/entities/user/model";
 
@@ -33,7 +33,7 @@ export const DeleteUser: React.FC<UpdateUserProps> = ({user}) => {
         label={'Delete user'}
         onClick={open}
       />
-      <Modal2
+      <Modal
         title={`Delete user ${user?.username}`}
         onClose={close}
         isOpen={isOpen}
@@ -48,7 +48,7 @@ export const DeleteUser: React.FC<UpdateUserProps> = ({user}) => {
             <Button mode={'secondary'} label={'Cancel'} onClick={close}/>
           </div>
         </div>
-      </Modal2>
+      </Modal>
     </>
   );
 };
