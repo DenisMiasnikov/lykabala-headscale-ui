@@ -5,6 +5,8 @@ import {Namespace} from "@/entities";
 
 interface IDeleteNamespaceProps {
   namespace: Namespace;
+  onError?: (error: string) => void;
+  onSuccess?: (message: string) => void;
 }
 
 export const DeleteNamespace = (

@@ -44,7 +44,7 @@ export const NamespaceSelect = ({value,onChange, placeholder='Select user' }) =>
     <Select
       value={value}
       onChange={onChange}
-      items={namespaces.map(({id, name}) => ({label: name, value: id}))}
+      items={namespaces.map(({id, name}) => ({label: name, value: name}))}
       placeholder={placeholder}
       disabled={!!id}
     />
