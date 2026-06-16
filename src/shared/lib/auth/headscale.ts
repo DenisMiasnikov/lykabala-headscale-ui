@@ -30,8 +30,8 @@ export async function headscaleFetch(
   let apiKey = getApiKey();
 
   if (!apiKey) {
-    finalUrl = config.url;
-    apiKey = config.apiKey;
+    finalUrl = config?.url || HEADSCALE_URL;
+    apiKey = config?.apiKey || "";
   }
 
   const controller = new AbortController();

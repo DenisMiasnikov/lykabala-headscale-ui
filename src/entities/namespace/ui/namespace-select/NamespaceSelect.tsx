@@ -17,7 +17,7 @@ export const NamespaceSelect = ({value,onChange, placeholder='Select user' }) =>
       const res = await fetch("/api/internal/namespaces");
       const data = await res.json();
       if (!res.ok) {
-        new Error(data.error || "Failed to load namespaces");
+        throw new Error(data.error || "Failed to load namespaces");
       }
       const list = Array.isArray(data.namespaces) ? data.namespaces : [];
       setNamespaces(list);

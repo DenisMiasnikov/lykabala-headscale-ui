@@ -20,14 +20,19 @@ class ApiInstance {
   }
 
   private buildUrl(path: string, params?: RequestConfig['params']): string {
-    const url = new URL(path, this.baseUrl)
+    if (!this.baseUrl) {
+      if (!params) return path
+      const searchParams = new URLSearchParams()
+      Object.entries(params).forEach(([k, v]) => searchParams.set(k, String(v)))
+      return `${path}?${searchParams.toString()}`
+    }
 
+    const url = new URL(path, this.baseUrl)
     if (params) {
       Object.entries(params).forEach(([k, v]) =>
         url.searchParams.set(k, String(v))
       )
     }
-
     return url.toString()
   }
 
@@ -100,5 +105,5 @@ export class ApiError extends Error {
 }
 
 export const apiInstance = new ApiInstance({
-  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api',
+  baseUrl: process.env.NEXT_PUBLIC_API_URL ?? '',
 })

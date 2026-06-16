@@ -22,7 +22,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const secret = process.env.SESSION_SECRET || "secret";
   const cookies = req.cookies || parseCookies(req.headers.cookie);
   const cookie = cookies?.[sessionCookieName()];
-  const session = verifySessionCookie(cookie, secret);
+  let session;
+  try {
+    session = verifySessionCookie(cookie, secret);
+  } catch (err) {
+    console.error("Session verification error:", (err as Error).message);
+    session = null;
+  }
 
   if (session) {
     return res.status(200).json({ ok: true });
