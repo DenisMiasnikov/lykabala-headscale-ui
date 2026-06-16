@@ -12,7 +12,7 @@ export default async function handler(
 ) {
   if (!requireAuth(req, res)) return;
   const config = getHeadscaleConfig(req);
-  const { id } = req.query;
+  const { id, expiry } = req.query;
   if (!validId(id)) return res.status(400).json({ error: "Invalid id" });
 
   if (req.method !== "POST") {
@@ -20,9 +20,15 @@ export default async function handler(
   }
 
   try {
-    const response = await headscaleFetch(`/api/v1/node/${id}/expire`, {
-      method: "POST",
-    }, config);
+    let url = `/api/v1/node/${id}/expire`;
+    if (expiry && typeof expiry === "string") {
+      const date = new Date(expiry);
+      if (isNaN(date.getTime())) {
+        return res.status(400).json({ error: "Invalid expiry date format" });
+      }
+      url += `?expiry=${encodeURIComponent(date.toISOString())}`;
+    }
+    const response = await headscaleFetch(url, { method: "POST" }, config);
     if (!response.ok) {
       return res.status(502).json({ error: "Headscale API error" });
     }
