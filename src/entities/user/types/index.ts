@@ -1,8 +1,8 @@
 export type User = {
-  id: string;
-  username: string;
-  isAdmin: boolean;
-  createdAt: string;
+  id?: string;
+  username?: string;
+  isAdmin?: boolean;
+  createdAt?: string;
 };
 
 export type CurrentUser = User & {

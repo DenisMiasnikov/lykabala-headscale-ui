@@ -28,10 +28,10 @@ export const Modal = ({ isOpen, title, children, onClose }:IModalProps) => {
 
       if (e.shiftKey && document.activeElement === firstElement) {
         e.preventDefault();
-        lastElement?.focus();
+        // lastElement?.focus();
       } else if (!e.shiftKey && document.activeElement === lastElement) {
         e.preventDefault();
-        firstElement?.focus();
+        // firstElement?.focus();
       }
     };
 
@@ -40,14 +40,14 @@ export const Modal = ({ isOpen, title, children, onClose }:IModalProps) => {
       document.addEventListener("keydown", handleEscape);
       document.addEventListener("keydown", handleFocusTrap);
       document.body.style.overflow = "hidden";
-      modalRef.current?.querySelector<HTMLElement>("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")?.focus();
+      // modalRef.current?.querySelector<HTMLElement>("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")?.focus();
     }
 
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("keydown", handleFocusTrap);
       document.body.style.overflow = "unset";
-      previousActiveElement.current?.focus();
+      // previousActiveElement.current?.focus();
     };
   }, [isOpen, onClose]);
 

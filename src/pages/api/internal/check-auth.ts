@@ -30,14 +30,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     session = null;
   }
 
+  const envConfig = getEnvConfig();
+
   if (session) {
-    return res.status(200).json({ ok: true });
+    const configured = !!(session.headscaleUrl && session.headscaleApiKey);
+    return res.status(200).json({ ok: true, configured });
   }
 
-  const envConfig = getEnvConfig();
   if (envConfig) {
-    res.setHeader("X-Env-Auth", "true");
-    return res.status(200).json({ ok: true, ...envConfig });
+    return res.status(200).json({ ok: true, configured: true });
   }
 
   return res.status(401).json({ error: "Unauthorized" });

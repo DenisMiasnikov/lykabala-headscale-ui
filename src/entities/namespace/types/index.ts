@@ -1,6 +1,6 @@
 export type Namespace = {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
   createdAt?: string;
   displayName?: string;
   email?: string;

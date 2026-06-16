@@ -1,9 +1,10 @@
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { clientApi } from '../api/api'
 import { clientKeys } from './query-keys'
+import type { User } from '../api/constracts'
 
 export const useUsersList = (skip?: boolean) =>
-  useQuery({
+  useQuery<User[]>({
     queryKey: clientKeys.list(),
     queryFn: clientApi.getUsers,
     enabled: !skip,
@@ -11,7 +12,7 @@ export const useUsersList = (skip?: boolean) =>
   })
 
 export const useCurrentUser = () =>
-  useQuery({
+  useQuery<User>({
     queryKey: clientKeys.details(),
     queryFn: clientApi.getCurrentUser,
     staleTime: 1000 * 60 * 5,

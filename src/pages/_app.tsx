@@ -28,17 +28,15 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [hasEnvConfig, setHasEnvConfig] = useState(false);
+  const [configured, setConfigured] = useState(false);
 
   useEffect(() => {
     fetch("/api/internal/check-auth", { method: "POST" })
-      .then((res) => {
+      .then(async (res) => {
         setLoggedIn(res.ok);
         if (res.ok) {
-          const isEnvAuth = res.headers.get("X-Env-Auth") === "true";
-          if (isEnvAuth) {
-            setHasEnvConfig(true);
-          }
+          const data = await res.json().catch(() => ({}));
+          setConfigured(data.configured === true);
         }
       })
       .catch(() => setLoggedIn(false))
@@ -48,17 +46,17 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     if (!checked) return;
 
-    if (router.pathname === "/setup") {
+    if (router.pathname === "/setup" || router.pathname === "/login") {
       return;
     }
 
     const hasLocalServers = hasServers();
-    if (hasLocalServers || hasEnvConfig || loggedIn) {
+    if (hasLocalServers || configured) {
       return;
     }
 
     router.push("/setup");
-  }, [checked, hasEnvConfig, router.pathname, loggedIn]);
+  }, [checked, configured, router.pathname, loggedIn]);
 
   async function handleLogout() {
     await fetch("/api/internal/logout", { method: "POST" });

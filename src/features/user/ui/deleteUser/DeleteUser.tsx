@@ -3,9 +3,9 @@ import React, {useState} from "react";
 import {useDeleteClient} from "@/entities/user/model";
 
 interface UserData {
-  id: string;
-  username: string;
-  isAdmin: boolean;
+  id?: string;
+  username?: string;
+  isAdmin?: boolean;
   createdAt?: string;
 }
 

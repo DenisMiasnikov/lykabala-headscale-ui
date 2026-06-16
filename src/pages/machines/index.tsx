@@ -28,20 +28,22 @@ export const mapMachinesByUserName = (machines: Machine[]) => {
 
 export default function MachinesPage() {
   const [machines, setMachines] = useState<{name: string, machines: Machine[]}[]>([]);
+  const [loadError, setLoadError] = useState("");
 
   async function loadData() {
+    setLoadError("");
     try {
       const res = await fetch("/api/internal/machines");
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        new Error(data.error || "Failed to load machines");
-      }
       const data = await res.json();
+      if (!res.ok) {
+        setLoadError(data.error || "Failed to load machines");
+        return;
+      }
       setMachines(mapMachinesByUserName(Array.isArray(data.machines) ? data.machines : []));
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to load data";
-      console.error(message);
+      setLoadError(message);
     }
   }
 
@@ -60,7 +62,9 @@ export default function MachinesPage() {
       <RegisterMachine onSuccess={loadData}/>
 
       <div className={styles.namespaces}>
-        {!machines.length ? (
+        {loadError ? (
+          <Card title={'Error'} subTitle={loadError} empty={true} />
+        ) : !machines.length ? (
           <Card title={'No machines yet.'} subTitle={'Register a node to see machines appear here.'} empty={true} />
         ) : (
           <>

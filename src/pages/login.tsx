@@ -19,28 +19,40 @@ export default function LoginPage() {
     const servers = getServers();
     const activeId = getActiveServerId();
 
-    if (activeId === "env") {
-      setIsEnvServer(true);
-    } else {
-      const server = servers.find(s => s.id === activeId) || servers[0];
-      setActiveServer(server);
-    }
-
     const fetchEnvConfig = async () => {
       try {
         const res = await fetch("/api/internal/env-config");
         const data = await res.json();
         if (data.available && data.url) {
           setEnvUrl(data.url);
+          if (activeId === "env") {
+            setIsEnvServer(true);
+            return;
+          }
         }
       } catch {}
+      setIsEnvServer(false);
+      const server = servers.find(s => s.id === activeId) || servers[0] || null;
+      setActiveServer(server);
     };
-    fetchEnvConfig();
+
+    if (activeId === "env") {
+      fetchEnvConfig();
+    } else {
+      const server = servers.find(s => s.id === activeId) || servers[0] || null;
+      setActiveServer(server);
+      setIsEnvServer(false);
+    }
   }, []);
 
   async function handleSubmit(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     setError("");
+
+    if (!isEnvServer && !activeServer) {
+      setError("Headscale server not configured. Click '+ Add Server' to configure one.");
+      return;
+    }
 
     const loginData: Record<string, string> = { username, password };
 

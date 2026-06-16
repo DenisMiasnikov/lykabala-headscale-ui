@@ -4,9 +4,9 @@ import UserForm from "@/entities/user/ui/UserForm";
 import {useCreateClient, useUpdateClient} from "@/entities/user/model";
 
 interface UserData {
-  id: string;
-  username: string;
-  isAdmin: boolean;
+  id?: string;
+  username?: string;
+  isAdmin?: boolean;
   createdAt?: string;
 }
 
