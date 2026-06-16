@@ -61,6 +61,7 @@ export default function MachineDetails({ id }: MachineDetailsProps) {
 
         <ExpireMachine
           id={details.id}
+          expiry={details.expiry}
           onSuccess={onSuccess}
           onError={onError}
         />

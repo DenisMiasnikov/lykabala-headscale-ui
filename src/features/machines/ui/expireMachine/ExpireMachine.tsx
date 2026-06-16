@@ -2,9 +2,17 @@ import { useState } from "react";
 import { Modal } from "@/shared/ui";
 import styles from "./expireMachine.module.css";
 
-export const ExpireMachine = ({ id, onSuccess, onError }) => {
+function toDatetimeLocal(iso: string | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+export const ExpireMachine = ({ id, expiry, onSuccess, onError }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [expiryDate, setExpiryDate] = useState("");
+  const [expiryDate, setExpiryDate] = useState(toDatetimeLocal(expiry));
 
   async function expireMachine() {
     const res = await fetch(`/api/internal/machines/${id}/expire`, { method: "POST" });

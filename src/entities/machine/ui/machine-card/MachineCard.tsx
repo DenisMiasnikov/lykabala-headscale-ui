@@ -13,6 +13,8 @@ interface MachineCardProps {
 }
 
 export default function MachineCard({ machine, actions, details, full }: MachineCardProps) {
+  const expiryClass = useExpiryStyle(machine.expiry);
+
   return (
     <>
         {machine && (
@@ -54,6 +56,11 @@ export default function MachineCard({ machine, actions, details, full }: Machine
               <Info label="User" value={machine.user.name} />
               <Info label="Node ID" value={machine.id} />
               <Info label="Last Seen" value={formatDate(machine.lastSeen)} />
+              <Info
+                label="Expiry"
+                value={machine.expiry ? formatDate(machine.expiry) : "No expiration"}
+                valueClass={expiryClass}
+              />
               <Info label="Created" value={formatDate(machine.createdAt)} />
             </div>
 
@@ -84,10 +91,21 @@ export default function MachineCard({ machine, actions, details, full }: Machine
   );
 }
 
-const Info = ({ label, value }) => (
+function useExpiryStyle(expiry: string | undefined): string | undefined {
+  if (!expiry) return styles.noExpiry;
+
+  const ms = new Date(expiry).getTime() - Date.now();
+  const days = ms / (1000 * 60 * 60 * 24);
+
+  if (days < 7) return styles.expiryCritical;
+  if (days < 30) return styles.expiryWarning;
+  return undefined;
+}
+
+const Info = ({ label, value, valueClass = "" }) => (
   <div>
     <p className={styles.infoLabel}>{label}</p>
-    <p className={styles.infoValue}>{value}</p>
+    <p className={`${styles.infoValue} ${valueClass || ""}`}>{value}</p>
   </div>
 );
 
