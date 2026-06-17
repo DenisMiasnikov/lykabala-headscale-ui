@@ -27,7 +27,11 @@ export default function NamespaceForm(
 
   const newPictureUrl = form.getFieldValue('pictureUrl');
 
-  const {uploading, fileInputRef, handleFileUpload, triggerUpload} = useFileUpload();
+  const {uploading, fileInputRef, handleFileUpload, triggerUpload} = useFileUpload({
+    onSuccess: (key) => {
+      form.setFieldValue('pictureUrl', key);
+    }
+  });
 
   async function updateUserImage() {
     const res = await fetch("/api/internal/update-image", {
