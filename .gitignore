@@ -24,3 +24,5 @@ npm-debug.log*
 .cache/
 
 users.json
+
+tsconfig.tsbuildinfo

@@ -112,8 +112,12 @@ export default function NamespaceForm(
           disabled={uploading}
         />
         {newPictureUrl && (
-          <div style={{marginTop: "0.5rem"}}>
-            <Avatar src={newPictureUrl}/>
+          <div style={{
+            marginTop: '16px',
+            display: 'flex',
+            justifyContent: 'center'
+          }}>
+            <Avatar src={newPictureUrl} size={'large'}/>
           </div>
         )}
       </div>
